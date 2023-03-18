@@ -1,0 +1,164 @@
+package com.monstrous.pixelwar;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+public class MenuScreen extends ScreenAdapter {
+
+    static public int BUTTON_WIDTH = 250;
+    static public int BUTTON_HEIGHT = 50;
+    static public int BUTTON_PAD = 15;
+
+    private Main game;
+    private Stage stage;
+    private Skin skin;
+
+    public MenuScreen(Main game) {
+        this.game = game;
+    }
+
+    @Override
+    public void show() {
+        Gdx.app.debug("MenuScreen", "show()");
+
+        skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
+        stage = new Stage(new ScreenViewport());
+        rebuild();
+        Gdx.input.setInputProcessor(stage);
+
+        //game.music.play();
+
+    }
+
+    private void rebuild() {
+
+        stage.clear();
+
+        // root table that fills the whole screen
+        Table screenTable = new Table();
+
+        stage.addActor(screenTable);
+        screenTable.setFillParent(true);        // size to match stage size
+
+        Label labelTitle = new Label(Settings.title, skin, "title");
+
+        Table menuTable = new Table();
+        TextButton newCampaignButton = new TextButton("NEW CAMPAIGN", skin);
+//        TextButton resumeButton = new TextButton("RESUME", skin);               // disable at first play?
+//        TextButton instructionsButton = new TextButton("INSTRUCTIONS", skin);
+        TextButton optionsButton = new TextButton("OPTIONS", skin);
+        TextButton creditsButton = new TextButton("CREDITS", skin);
+        TextButton quitButton = new TextButton("QUIT", skin);
+
+//        Label labelVersion = new Label( game.VERSION, skin, "small");
+
+        menuTable.add(newCampaignButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
+//        menuTable.add(resumeButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
+//        menuTable.add(instructionsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
+        menuTable.add(optionsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
+        menuTable.add(creditsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
+
+//        menuTable.add(quitButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();            // todo omit for HTML version
+
+
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.DARK_GRAY);
+        pixmap.fill();
+        screenTable.setBackground( new TextureRegionDrawable(new TextureRegion(new Texture(pixmap))) );
+
+        screenTable.add(labelTitle).top().pad(100).row();    // title
+        screenTable.add(menuTable).row();                   // menu buttons
+ //       screenTable.add(labelVersion).right().bottom().expandX().expandY(); // version string in the bottom right corner of the screen
+
+        screenTable.pack();
+
+        newCampaignButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                game.setScreen( new GameScreen(game, true) );
+            }
+        });
+
+//        resumeButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                super.clicked(event, x, y);
+//                game.setScreen( new GameScreen(game, false) );
+//            }
+//        });
+//
+//        instructionsButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                super.clicked(event, x, y);
+//                game.setScreen( new InstructionsScreen(game) );
+//            }
+//        });
+
+        optionsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                //game.setScreen( new OptionsScreen(game) );
+            }
+        });
+
+        creditsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                //game.setScreen( new CreditsScreen(game) );
+            }
+        });
+
+
+        // todo: does this make sense for HTML ?
+        quitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                Gdx.app.exit();
+            }
+        });
+    }
+
+
+    @Override
+    public void render(float delta) {
+        stage.act(delta);
+        stage.draw();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        Gdx.app.debug("MenuScreen", "resize()");
+        stage.getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void hide() {
+        Gdx.app.debug("MenuScreen", "hide()");
+        dispose();
+    }
+
+    @Override
+    public void dispose() {
+        Gdx.app.debug("MenuScreen", "dispose()");
+        stage.dispose();
+    }
+}
