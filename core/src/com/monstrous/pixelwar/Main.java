@@ -11,7 +11,8 @@ public class Main extends Game {
 	
 	@Override
 	public void create () {
-		setScreen( new SplashScreen(this) );
+		setScreen( new GameScreen(this, false) );
+		//setScreen( new SplashScreen(this) );
 	}
 
 

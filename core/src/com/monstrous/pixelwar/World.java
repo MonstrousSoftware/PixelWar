@@ -15,14 +15,35 @@ public class World implements Disposable {
 
     public Array<ModelInstance> instances;
     private Array<Model> models;
+    private ModelAssets modelAssets;
 
     public World() {
         Gdx.app.debug("World", "constructor");
+
+        modelAssets = new ModelAssets();
+
         models = new Array<>();
         instances = new Array<>();
 
         makeArrows();
         makeGrid();
+        populate();
+    }
+
+    private void populate() {
+        Model model;
+        ModelInstance modelInstance;
+
+        model = ModelAssets.getModel("AA");
+        modelInstance =  new ModelInstance(model);
+        models.add(model);
+        instances.add(modelInstance);
+
+        modelInstance =  new ModelInstance(model);
+        modelInstance.transform.translate(0,0,15);
+        models.add(model);
+        instances.add(modelInstance);
+
     }
 
 
@@ -47,5 +68,6 @@ public class World implements Disposable {
         Gdx.app.debug("World", "dispose");
         for(Model model : models)
             model.dispose();
+        modelAssets.dispose();
     }
 }

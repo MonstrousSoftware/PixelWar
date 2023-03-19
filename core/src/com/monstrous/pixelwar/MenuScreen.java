@@ -58,7 +58,7 @@ public class MenuScreen extends ScreenAdapter {
 
         Table menuTable = new Table();
         TextButton newCampaignButton = new TextButton("NEW CAMPAIGN", skin);
-//        TextButton resumeButton = new TextButton("RESUME", skin);               // disable at first play?
+        TextButton resumeButton = new TextButton("RESUME", skin);               // disable at first play?
 //        TextButton instructionsButton = new TextButton("INSTRUCTIONS", skin);
         TextButton optionsButton = new TextButton("OPTIONS", skin);
         TextButton creditsButton = new TextButton("CREDITS", skin);
@@ -67,7 +67,7 @@ public class MenuScreen extends ScreenAdapter {
 //        Label labelVersion = new Label( game.VERSION, skin, "small");
 
         menuTable.add(newCampaignButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
-//        menuTable.add(resumeButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
+        menuTable.add(resumeButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
 //        menuTable.add(instructionsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
         menuTable.add(optionsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
         menuTable.add(creditsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
@@ -94,14 +94,14 @@ public class MenuScreen extends ScreenAdapter {
             }
         });
 
-//        resumeButton.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                super.clicked(event, x, y);
-//                game.setScreen( new GameScreen(game, false) );
-//            }
-//        });
-//
+        resumeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                game.setScreen( new GameScreen(game, false) );
+            }
+        });
+
 //        instructionsButton.addListener(new ClickListener() {
 //            @Override
 //            public void clicked(InputEvent event, float x, float y) {
