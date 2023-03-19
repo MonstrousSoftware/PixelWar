@@ -46,12 +46,15 @@ public class World implements Disposable {
     private void populate() {
         placeAA(0,0);
         placeAA(0,15);
-        placeAA(50,0);
-        placeAA(10,15);
-        placeAA(20,0);
-        placeAA(30,15);
-        placeAA(60,20);
-        placeAA(50,45);
+
+        for(int n = 0; n < 600; n++) {
+            float xx = (float) (Math.random()-0.5f)*Settings.worldSize;
+            float zz = (float) (Math.random()-0.5f)*Settings.worldSize;
+            float r = (float) (Math.random()*360f);
+            placeTree(xx, zz, r);
+        }
+
+
 
         placeBridge(50,15);
     }
@@ -80,6 +83,18 @@ public class World implements Disposable {
         modelInstance =  new ModelInstance(model, "Bridge");
         float y = terrain.getHeight(x, z);
         modelInstance.transform.translate(x,y,z);
+        instances.add(modelInstance);
+    }
+
+    private void placeTree(float x, float z, float angle){
+        Model model;
+        ModelInstance modelInstance;
+
+        model = ModelAssets.getModel("Assets");
+        modelInstance =  new ModelInstance(model, "Tree1");
+        float y = terrain.getHeight(x, z);
+        modelInstance.transform.translate(x,y,z);
+        modelInstance.transform.rotate(Vector3.Y, angle);
         instances.add(modelInstance);
     }
 
