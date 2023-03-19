@@ -45,7 +45,7 @@ public class ModelAssets implements Disposable {
             ;
 
 
-        map.put("AA", assets.get("models/assets.g3db", Model.class));
+        map.put("Assets", assets.get("models/assets.g3db", Model.class));
     }
 
     public static Model getModel(String name) {

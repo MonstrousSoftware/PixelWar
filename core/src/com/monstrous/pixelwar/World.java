@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -34,16 +35,26 @@ public class World implements Disposable {
         Model model;
         ModelInstance modelInstance;
 
-        model = ModelAssets.getModel("AA");
-        modelInstance =  new ModelInstance(model);
+        model = ModelAssets.getModel("Assets");
+        modelInstance =  new ModelInstance(model, "AntiAircraftBase");
         models.add(model);
         instances.add(modelInstance);
 
-        modelInstance =  new ModelInstance(model);
+        modelInstance =  new ModelInstance(model, "AntiAircraft");
+        modelInstance.transform.rotate(Vector3.Y, 60f);
+        models.add(model);
+        instances.add(modelInstance);
+
+        modelInstance =  new ModelInstance(model, "AntiAircraftBase");
         modelInstance.transform.translate(0,0,15);
         models.add(model);
         instances.add(modelInstance);
 
+
+        modelInstance =  new ModelInstance(model, "Bridge");
+        modelInstance.transform.translate(50,0,15);
+        models.add(model);
+        instances.add(modelInstance);
     }
 
 

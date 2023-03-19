@@ -32,7 +32,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void show() {
 
-        cam = new PerspectiveCamera(120, viewWidth, viewHeight);
+        cam = new PerspectiveCamera(70, viewWidth, viewHeight);
         cam.position.set(5f, 20f, 10f);
         cam.lookAt(0, 0, 0);
         cam.near = .1f;
