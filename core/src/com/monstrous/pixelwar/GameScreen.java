@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen extends ScreenAdapter {
 
@@ -21,7 +22,7 @@ public class GameScreen extends ScreenAdapter {
     private int viewHeight, viewWidth;
     private ModelBatch modelBatch;
     private World world;
-    private CameraInputController camController;
+    private MyCamController camController;
     private Environment environment;
 
     public GameScreen(Main game, boolean newGame) {
@@ -32,15 +33,16 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void show() {
 
-        cam = new PerspectiveCamera(70, viewWidth, viewHeight);
-        cam.position.set(5f, 20f, 10f);
+        cam = new PerspectiveCamera(50, viewWidth, viewHeight);
+        cam.position.set(40f, 10f, 20f);
         cam.lookAt(0, 0, 0);
-        cam.near = .1f;
-        cam.far = 500f;
+        cam.near = 0.1f;
+        cam.far = Settings.worldSize*.7f;
         cam.update();
 
 
-        camController = new CameraInputController(cam);
+        camController = new MyCamController(cam);
+        //camController = new OrthographicCameraController(cam);
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(camController);
@@ -53,14 +55,16 @@ public class GameScreen extends ScreenAdapter {
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f));
         float dl = Settings.directionalLightLevel;
         environment.add(new DirectionalLight().set(new Color(dl, dl, dl, 1), lightVector));
+        environment.set(new ColorAttribute(ColorAttribute.Fog, Settings.skyColour));			// fog
 
         modelBatch = new ModelBatch();
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(100,100,100,  1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+        camController.update();
+
+        ScreenUtils.clear(Settings.skyColour, true);
 
         modelBatch.begin(cam);
         modelBatch.render(world.instances, environment);

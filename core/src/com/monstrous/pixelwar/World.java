@@ -16,6 +16,7 @@ public class World implements Disposable {
 
     public Array<ModelInstance> instances;
     private Array<Model> models;
+    private Terrain terrain;
     private ModelAssets modelAssets;
 
     public World() {
@@ -23,37 +24,62 @@ public class World implements Disposable {
 
         modelAssets = new ModelAssets();
 
-        models = new Array<>();
+        terrain = new Terrain();
+
+        models = new Array<>();         // todo take care in assets to dispose
         instances = new Array<>();
 
-        makeArrows();
-        makeGrid();
+        Model model = terrain.getModel();
+        ModelInstance modelInstance = new ModelInstance(model);
+        instances.add(modelInstance);
+
+//        model = terrain.getGridModel();
+//        modelInstance = new ModelInstance(model);
+//        modelInstance.transform.translate(0,.1f, 0.1f);
+//        instances.add(modelInstance);
+
+        //makeArrows();
+        //makeGrid();
         populate();
     }
 
     private void populate() {
+        placeAA(0,0);
+        placeAA(0,15);
+        placeAA(50,0);
+        placeAA(10,15);
+        placeAA(20,0);
+        placeAA(30,15);
+        placeAA(60,20);
+        placeAA(50,45);
+
+        placeBridge(50,15);
+    }
+
+    private void placeAA(float x, float z){
         Model model;
         ModelInstance modelInstance;
 
         model = ModelAssets.getModel("Assets");
         modelInstance =  new ModelInstance(model, "AntiAircraftBase");
-        models.add(model);
+        float y = terrain.getHeight(x, z);
+        modelInstance.transform.translate(x,y,z);
         instances.add(modelInstance);
 
         modelInstance =  new ModelInstance(model, "AntiAircraft");
+        modelInstance.transform.translate(x,y,z);
         modelInstance.transform.rotate(Vector3.Y, 60f);
-        models.add(model);
         instances.add(modelInstance);
+    }
 
-        modelInstance =  new ModelInstance(model, "AntiAircraftBase");
-        modelInstance.transform.translate(0,0,15);
-        models.add(model);
-        instances.add(modelInstance);
+    private void placeBridge(float x, float z){
+        Model model;
+        ModelInstance modelInstance;
 
-
+        model = ModelAssets.getModel("Assets");
         modelInstance =  new ModelInstance(model, "Bridge");
-        modelInstance.transform.translate(50,0,15);
-        models.add(model);
+        float y = terrain.getHeight(x, z);
+        modelInstance.transform.translate(x,y,z);
         instances.add(modelInstance);
     }
 
@@ -80,5 +106,6 @@ public class World implements Disposable {
         for(Model model : models)
             model.dispose();
         modelAssets.dispose();
+        terrain.dispose();
     }
 }
