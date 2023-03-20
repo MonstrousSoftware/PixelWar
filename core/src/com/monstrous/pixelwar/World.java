@@ -47,7 +47,9 @@ public class World implements Disposable {
         placeAA(0,0);
         placeAA(0,15);
 
+        placeTank(20,20);
 
+        placeTank(40,40);
 
         for(int n = 0; n < 2600; n++) {
             float xx = (float) (Math.random()-0.5f)*Settings.worldSize;
@@ -72,6 +74,22 @@ public class World implements Disposable {
         instances.add(modelInstance);
 
         modelInstance =  new ModelInstance(model, "AntiAircraft");
+        modelInstance.transform.translate(x,y,z);
+        modelInstance.transform.rotate(Vector3.Y, 60f);
+        instances.add(modelInstance);
+    }
+
+    private void placeTank(float x, float z){
+        Model model;
+        ModelInstance modelInstance;
+
+        model = ModelAssets.getModel("Assets");
+        modelInstance =  new ModelInstance(model, "TankBody");
+        float y = terrain.getHeight(x, z);
+        modelInstance.transform.translate(x,y,z);
+        instances.add(modelInstance);
+
+        modelInstance =  new ModelInstance(model, "TankTurret");
         modelInstance.transform.translate(x,y,z);
         modelInstance.transform.rotate(Vector3.Y, 60f);
         instances.add(modelInstance);
