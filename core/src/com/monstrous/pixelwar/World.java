@@ -47,7 +47,9 @@ public class World implements Disposable {
         placeAA(0,0);
         placeAA(0,15);
 
-        for(int n = 0; n < 600; n++) {
+
+
+        for(int n = 0; n < 2600; n++) {
             float xx = (float) (Math.random()-0.5f)*Settings.worldSize;
             float zz = (float) (Math.random()-0.5f)*Settings.worldSize;
             float r = (float) (Math.random()*360f);
@@ -93,8 +95,9 @@ public class World implements Disposable {
         model = ModelAssets.getModel("Assets");
         modelInstance =  new ModelInstance(model, "Tree1");
         float y = terrain.getHeight(x, z);
+        //modelInstance.transform.rotate(Vector3.Y, angle);
         modelInstance.transform.translate(x,y,z);
-        modelInstance.transform.rotate(Vector3.Y, angle);
+
         instances.add(modelInstance);
     }
 

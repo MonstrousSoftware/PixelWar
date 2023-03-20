@@ -54,7 +54,7 @@ public class Terrain implements Disposable {
     }
 
     public float getHeight(float x, float y) {
-        if(x < 0 || x > SCALE || y < 0 || y > SCALE)
+        if(x < -SCALE/2 || x > SCALE/2 || y < -SCALE/2 || y > SCALE/2 )
             return 0;
         int ix = (int)(MAP_SIZE * ((x/SCALE)+0.5f));
         int iy = (int)(MAP_SIZE * ((y/SCALE)+0.5f));
