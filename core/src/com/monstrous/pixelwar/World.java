@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Disposable;
 public class World implements Disposable {
 
     public Array<ModelInstance> instances;
+    public Array<ModelInstance> sceneryInstances;
     private Array<Model> models;
     private Terrain terrain;
     private ModelAssets modelAssets;
@@ -28,10 +29,11 @@ public class World implements Disposable {
 
         models = new Array<>();         // todo take care in assets to dispose
         instances = new Array<>();
+        sceneryInstances = new Array<>();
 
         Model model = terrain.getModel();
         ModelInstance modelInstance = new ModelInstance(model);
-        instances.add(modelInstance);
+        sceneryInstances.add(modelInstance);
 
 //        model = terrain.getGridModel();
 //        modelInstance = new ModelInstance(model);
@@ -44,23 +46,33 @@ public class World implements Disposable {
     }
 
     private void populate() {
-        placeAA(0,0);
-        placeAA(0,15);
+        placeAA(50,0);
+        placeAA(70,15);
 
         placeTank(20,20);
 
         placeTank(40,40);
 
-        for(int n = 0; n < 2600; n++) {
+        placeItem("Flag", 100, 0, 0);
+
+
+        placeRandom("Tree1", 2600);
+        placeRandom("Stone1", 200);
+        placeRandom("Stone2", 200);
+        placeRandom("Stone3", 200);
+
+        placeItem("AirShip", 0, 0, 0);
+
+        placeBridge(50,15);
+    }
+
+    private void placeRandom(String name, int count){
+        for(int n = 0; n < count; n++) {
             float xx = (float) (Math.random()-0.5f)*Settings.worldSize;
             float zz = (float) (Math.random()-0.5f)*Settings.worldSize;
             float r = (float) (Math.random()*360f);
-            placeTree(xx, zz, r);
+            placeSceneryItem(name, xx, zz, r);
         }
-
-
-
-        placeBridge(50,15);
     }
 
     private void placeAA(float x, float z){
@@ -107,16 +119,34 @@ public class World implements Disposable {
     }
 
     private void placeTree(float x, float z, float angle){
+        placeItem("Tree1", x, z, angle);
+    }
+
+    private void placeItem(String name, float x, float z, float angle){
         Model model;
         ModelInstance modelInstance;
 
         model = ModelAssets.getModel("Assets");
-        modelInstance =  new ModelInstance(model, "Tree1");
+        modelInstance =  new ModelInstance(model, name);
         float y = terrain.getHeight(x, z);
         //modelInstance.transform.rotate(Vector3.Y, angle);
         modelInstance.transform.translate(x,y,z);
 
         instances.add(modelInstance);
+    }
+
+    private void placeSceneryItem(String name, float x, float z, float angle){
+        Model model;
+        ModelInstance modelInstance;
+
+        model = ModelAssets.getModel("Assets");
+        modelInstance =  new ModelInstance(model, name);
+        float y = terrain.getHeight(x, z);
+        //
+        modelInstance.transform.translate(x,y,z);
+        modelInstance.transform.rotate(Vector3.Y, angle);
+
+        sceneryInstances.add(modelInstance);
     }
 
 

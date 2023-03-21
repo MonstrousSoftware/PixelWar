@@ -12,7 +12,10 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen extends ScreenAdapter {
@@ -24,6 +27,7 @@ public class GameScreen extends ScreenAdapter {
     private World world;
     private MyCamController camController;
     private Environment environment;
+    private MiniMap miniMap;
 
     public GameScreen(Main game, boolean newGame) {
         this.game = game;
@@ -58,17 +62,24 @@ public class GameScreen extends ScreenAdapter {
         environment.set(new ColorAttribute(ColorAttribute.Fog, Settings.skyColour));			// fog
 
         modelBatch = new ModelBatch();
+
+        miniMap = new MiniMap(Settings.worldSize, Settings.worldSize, -500);
+
     }
 
     @Override
     public void render(float delta) {
         camController.update();
+        miniMap.update(cam, world, environment);
 
         ScreenUtils.clear(Settings.skyColour, true);
 
         modelBatch.begin(cam);
+        modelBatch.render(world.sceneryInstances, environment);
         modelBatch.render(world.instances, environment);
         modelBatch.end();
+
+        miniMap.render();
     }
 
     @Override
@@ -81,6 +92,8 @@ public class GameScreen extends ScreenAdapter {
         cam.viewportWidth = width;
         cam.viewportHeight = height;
         cam.update();
+
+        miniMap.resize(width, height);
     }
 
     @Override
@@ -93,4 +106,7 @@ public class GameScreen extends ScreenAdapter {
         world.dispose();
         modelBatch.dispose();
     }
+
+
+
 }
