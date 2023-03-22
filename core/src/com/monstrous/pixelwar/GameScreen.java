@@ -93,6 +93,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         camController.update();
+        world.update(delta);
         miniMap.update(cam, world, environment);
 
         shadowLight.begin(Vector3.Zero, cam.direction);
@@ -140,16 +141,26 @@ public class GameScreen extends ScreenAdapter {
         game.stopMusic();
     }
 
+    private Vector3 tmpPos = new Vector3();
+
     public boolean mouseDown(int screenX, int screenY, int button) {
         Gdx.app.log("mouse clicked", "");
         cam.update();
         GameObject result = world.pickObject(cam, screenX, screenY);
+
         if(result != null) {
             Gdx.app.log("clicked on", result.type.name);
+            selectedObject = result;
             result.modelInstance.materials.first().set(ColorAttribute.createDiffuse(Color.YELLOW));
         }
-        selectedObject = result;
-        return false;
+        else if(selectedObject != null){
+            boolean hit = world.pickLocation(cam, screenX, screenY, tmpPos);
+            if(hit) {
+                Gdx.app.log("location", "hit: " + hit + " at " + tmpPos);
+                selectedObject.setDestination(tmpPos);
+            }
+        }
+        return false;  // ?
     }
 
     public boolean pressedEscape() {

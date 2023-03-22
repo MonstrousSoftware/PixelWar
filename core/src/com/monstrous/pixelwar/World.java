@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Disposable;
 
 public class World implements Disposable {
 
-    private Terrain terrain;
+    public Terrain terrain;
     private ModelAssets modelAssets;
     private Array<GameObject> gameObjects;
     private Vector3 tmpPosition = new Vector3();
@@ -63,6 +63,12 @@ public class World implements Disposable {
     }
 
 
+    public void update( float deltaTime ){
+        for(GameObject go : gameObjects ) {
+            go.update(deltaTime);
+        }
+    }
+
     public void render(ModelBatch modelBatch, Environment environment, boolean mapView ) {
         terrain.render(modelBatch, environment);
         for(GameObject go : gameObjects ) {
@@ -108,13 +114,18 @@ public class World implements Disposable {
 
             return result;
         }
-
-        // find where screen ray hits the terrain
-        boolean hit = terrain.intersect(ray, tmpPos);
-        Gdx.app.log("terrain", "pos: "+tmpPos+" hit: "+hit);
-        placeItem("Flag", tmpPos.x, tmpPos.z, 0);
-
-
         return null;
     }
+
+    public boolean pickLocation(Camera cam, int screenX, int screenY, Vector3 location ) {
+        Ray ray = cam.getPickRay(screenX, screenY);
+
+        // find where screen ray hits the terrain
+        boolean hit = terrain.intersect(ray, location);
+        Gdx.app.log("terrain", "pos: "+location+" hit: "+hit);
+        if(hit)
+            placeItem("Flag", location.x, location.z, 0);
+        return hit;
+    }
+
 }

@@ -22,12 +22,9 @@ public class Terrain implements Disposable {
 
     private Model model;
     private ModelInstance modelInstance;
-    private Model gridModel;
-    private ModelInstance gridModelInstance;
-    private  float heightMap[][];
-    private float verts[];  // for collision detection
-    private short indices[];
-    private int numFloats;  // size of verts[]
+    private  static float heightMap[][];
+    private float verts[];  // for collision detection, 3 floats per vertex
+    private short indices[];    // 3 indices per triangle
     private int numIndices;
 
     public Terrain() {
@@ -56,12 +53,11 @@ public class Terrain implements Disposable {
         //Material material =  new Material(ColorAttribute.createDiffuse(Color.BROWN));
         Material material =  new Material(TextureAttribute.createDiffuse(terrainTexture));
         model = makeGridModel(heightMap, SCALE, MAP_SIZE-1, GL20.GL_TRIANGLES, material);
-        //gridModel = makeGridModel(heightMap, SCALE, MAP_SIZE-1, GL20.GL_LINES,  new Material(ColorAttribute.createDiffuse(Color.GRAY)));
         modelInstance =  new ModelInstance(model);
-       // gridModelInstance =  new ModelInstance(gridModel);
     }
 
-    public float getHeight(float x, float y) {
+    // hmmm.... static...
+    public static float getHeight(float x, float y) {
         if(x < -SCALE/2 || x > SCALE/2 || y < -SCALE/2 || y > SCALE/2 )
             return 0;
         int ix = (int)(MAP_SIZE * ((x/SCALE)+0.5f));
@@ -73,7 +69,6 @@ public class Terrain implements Disposable {
     @Override
     public void dispose() {
         model.dispose();
-        gridModel.dispose();
     }
 
     public void render(ModelBatch modelBatch, Environment environment ) {
@@ -84,7 +79,7 @@ public class Terrain implements Disposable {
     public Model makeGridModel(float[][] heightMap, float scale, int divisions, int primitive, Material material) {
         final int N = divisions;
         numIndices = 0;
-        numFloats = 0;
+        int numFloats = 0;
 
         int attr = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates;
 
@@ -166,7 +161,7 @@ public class Terrain implements Disposable {
     private void addRect(MeshBuilder meshBuilder, final Vector3[] vertices, Vector3[] normals, short v0, short v1, short v2, short v3) {
         meshBuilder.rect(v0, v1, v2, v3);
         calcNormal(vertices, normals, v0, v1, v2, v3);
-        // 6 indices to make 2 triangles
+        // 6 indices to make 2 triangles, follows order of meshBuilder.rect()
         indices[numIndices++] = v0;
         indices[numIndices++] = v1;
         indices[numIndices++] = v2;
