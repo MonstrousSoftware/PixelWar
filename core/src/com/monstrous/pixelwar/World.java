@@ -56,10 +56,10 @@ public class World implements Disposable {
         placeItem("Flag", 100, 0, 0);
 
 
-        placeRandom("Tree1", 2600);
-        placeRandom("Stone1", 200);
-        placeRandom("Stone2", 200);
-        placeRandom("Stone3", 200);
+//        placeRandom("Tree1", 2600);
+//        placeRandom("Stone1", 200);
+//        placeRandom("Stone2", 200);
+//        placeRandom("Stone3", 200);
 
         placeItem("AirShip", 0, 0, 0);
 

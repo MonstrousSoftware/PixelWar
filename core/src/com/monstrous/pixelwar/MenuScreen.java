@@ -1,8 +1,10 @@
 package com.monstrous.pixelwar;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -40,7 +42,8 @@ public class MenuScreen extends ScreenAdapter {
         rebuild();
         Gdx.input.setInputProcessor(stage);
 
-        //game.music.play();
+        // allow to continue music that is already playing if we come from splash screen
+        game.startMusic("music/Title Screen.wav");
 
     }
 
@@ -59,20 +62,20 @@ public class MenuScreen extends ScreenAdapter {
         Table menuTable = new Table();
         TextButton newCampaignButton = new TextButton("NEW CAMPAIGN", skin);
         TextButton resumeButton = new TextButton("RESUME", skin);               // disable at first play?
-//        TextButton instructionsButton = new TextButton("INSTRUCTIONS", skin);
+        TextButton instructionsButton = new TextButton("INSTRUCTIONS", skin);
         TextButton optionsButton = new TextButton("OPTIONS", skin);
         TextButton creditsButton = new TextButton("CREDITS", skin);
         TextButton quitButton = new TextButton("QUIT", skin);
 
-//        Label labelVersion = new Label( game.VERSION, skin, "small");
+        Label labelVersion = new Label( game.VERSION, skin, "small");
 
         menuTable.add(newCampaignButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
-        menuTable.add(resumeButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
-//        menuTable.add(instructionsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
+        //menuTable.add(resumeButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
+        menuTable.add(instructionsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
         menuTable.add(optionsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
         menuTable.add(creditsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
 
-//        menuTable.add(quitButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();            // todo omit for HTML version
+        menuTable.add(quitButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();            // todo omit for HTML version
 
 
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -80,9 +83,9 @@ public class MenuScreen extends ScreenAdapter {
         pixmap.fill();
         screenTable.setBackground( new TextureRegionDrawable(new TextureRegion(new Texture(pixmap))) );
 
-        screenTable.add(labelTitle).top().pad(100).row();    // title
+        screenTable.add(labelTitle).top().pad(50).row();    // title
         screenTable.add(menuTable).row();                   // menu buttons
- //       screenTable.add(labelVersion).right().bottom().expandX().expandY(); // version string in the bottom right corner of the screen
+        screenTable.add(labelVersion).right().bottom().expandX().expandY(); // version string in the bottom right corner of the screen
 
         screenTable.pack();
 
@@ -102,13 +105,13 @@ public class MenuScreen extends ScreenAdapter {
             }
         });
 
-//        instructionsButton.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                super.clicked(event, x, y);
-//                game.setScreen( new InstructionsScreen(game) );
-//            }
-//        });
+        instructionsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                game.setScreen( new InstructionsScreen(game) );
+            }
+        });
 
         optionsButton.addListener(new ClickListener() {
             @Override
@@ -160,5 +163,6 @@ public class MenuScreen extends ScreenAdapter {
     public void dispose() {
         Gdx.app.debug("MenuScreen", "dispose()");
         stage.dispose();
+        // don't stop the music in case we go to credits or instructions, etc.
     }
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class SplashScreen extends ScreenAdapter {
 
+
     private SpriteBatch batch;
     private Main game;
     private Texture texture;

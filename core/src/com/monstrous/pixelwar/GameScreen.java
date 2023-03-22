@@ -1,5 +1,6 @@
 package com.monstrous.pixelwar;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
@@ -11,7 +12,9 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalShadowLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
@@ -28,6 +31,9 @@ public class GameScreen extends ScreenAdapter {
     private MyCamController camController;
     private Environment environment;
     private MiniMap miniMap;
+    private DirectionalLight lightSource;
+    private DirectionalShadowLight shadowLight;
+    private ModelBatch shadowBatch;
 
     public GameScreen(Main game, boolean newGame) {
         this.game = game;
@@ -41,7 +47,7 @@ public class GameScreen extends ScreenAdapter {
         cam.position.set(40f, 10f, 20f);
         cam.lookAt(0, 0, 0);
         cam.near = 0.1f;
-        cam.far = Settings.worldSize*.7f;
+        cam.far = Settings.worldSize * .7f;
         cam.update();
 
 
@@ -53,24 +59,44 @@ public class GameScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(multiplexer);
 
         // define some lighting
-        Vector3 lightVector = new Vector3(-.2f, -.8f, -.2f).nor();
+        Vector3 lightVector = new Vector3(-.2f, -.8f, -.0f).nor();
 
         environment = new Environment();
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f));
+        float al = Settings.ambientLightLevel;
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, al, al, al, 1f));
         float dl = Settings.directionalLightLevel;
-        environment.add(new DirectionalLight().set(new Color(dl, dl, dl, 1), lightVector));
-        environment.set(new ColorAttribute(ColorAttribute.Fog, Settings.skyColour));			// fog
+//        lightSource = new DirectionalLight().set(new Color(dl, dl, dl, 1), lightVector);
+//        environment.add( lightSource );
+        environment.set(new ColorAttribute(ColorAttribute.Fog, Settings.skyColour));            // fog
+
+        shadowLight = new DirectionalShadowLight(2048, 2048, 256, 256, 1f, 256);
+        // tweak these values so that all the scene is covered and the shadows are not too blocky
+        shadowLight.set(new Color(dl, dl, dl, 1), lightVector);
+        environment.add(shadowLight);
+        environment.shadowMap = shadowLight;
+        shadowBatch = new ModelBatch(new DepthShaderProvider());
+
 
         modelBatch = new ModelBatch();
 
         miniMap = new MiniMap(Settings.worldSize, Settings.worldSize, -500);
 
+        game.stopMusic();
+        if(Settings.musicEnabled)
+            game.startMusic("music/Level 1.wav");
     }
 
     @Override
     public void render(float delta) {
         camController.update();
         miniMap.update(cam, world, environment);
+
+        shadowLight.begin(Vector3.Zero, cam.direction);
+        shadowBatch.begin(shadowLight.getCamera());
+        shadowBatch.render(world.sceneryInstances);
+        shadowBatch.render(world.instances);
+        shadowBatch.end();
+        shadowLight.end();
 
         ScreenUtils.clear(Settings.skyColour, true);
 
@@ -105,6 +131,7 @@ public class GameScreen extends ScreenAdapter {
     public void dispose() {
         world.dispose();
         modelBatch.dispose();
+        game.stopMusic();
     }
 
 
