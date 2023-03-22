@@ -9,7 +9,9 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Disposable;
 
 public class Terrain implements Disposable {
@@ -23,6 +25,10 @@ public class Terrain implements Disposable {
     private Model gridModel;
     private ModelInstance gridModelInstance;
     private  float heightMap[][];
+    private float verts[];  // for collision detection
+    private short indices[];
+    private int numFloats;  // size of verts[]
+    private int numIndices;
 
     public Terrain() {
 
@@ -50,9 +56,9 @@ public class Terrain implements Disposable {
         //Material material =  new Material(ColorAttribute.createDiffuse(Color.BROWN));
         Material material =  new Material(TextureAttribute.createDiffuse(terrainTexture));
         model = makeGridModel(heightMap, SCALE, MAP_SIZE-1, GL20.GL_TRIANGLES, material);
-        gridModel = makeGridModel(heightMap, SCALE, MAP_SIZE-1, GL20.GL_LINES,  new Material(ColorAttribute.createDiffuse(Color.GRAY)));
+        //gridModel = makeGridModel(heightMap, SCALE, MAP_SIZE-1, GL20.GL_LINES,  new Material(ColorAttribute.createDiffuse(Color.GRAY)));
         modelInstance =  new ModelInstance(model);
-        gridModelInstance =  new ModelInstance(gridModel);
+       // gridModelInstance =  new ModelInstance(gridModel);
     }
 
     public float getHeight(float x, float y) {
@@ -77,6 +83,8 @@ public class Terrain implements Disposable {
     // make a Model consisting of a square grid
     public Model makeGridModel(float[][] heightMap, float scale, int divisions, int primitive, Material material) {
         final int N = divisions;
+        numIndices = 0;
+        numFloats = 0;
 
         int attr = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates;
 
@@ -87,6 +95,9 @@ public class Terrain implements Disposable {
         final int numTris = 2 * N * N;
         Vector3 vertices[] = new Vector3[numVerts];
         Vector3 normals[] = new Vector3[numVerts];
+
+        verts = new float[3*numVerts];
+        indices = new short[3*numTris];
 
         meshBuilder.ensureVertices(numVerts);
         meshBuilder.ensureTriangleIndices(numTris);
@@ -142,6 +153,10 @@ public class Terrain implements Disposable {
             vert.uv.x = u;					// texture needs to have repeat wrapping enables to handle u,v > 1
             vert.uv.y = v;
             meshBuilder.vertex(vert);
+
+            verts[numFloats++] = vert.position.x;
+            verts[numFloats++] = vert.position.y;
+            verts[numFloats++] = vert.position.z;
         }
 
         Model model = modelBuilder.end();
@@ -151,6 +166,13 @@ public class Terrain implements Disposable {
     private void addRect(MeshBuilder meshBuilder, final Vector3[] vertices, Vector3[] normals, short v0, short v1, short v2, short v3) {
         meshBuilder.rect(v0, v1, v2, v3);
         calcNormal(vertices, normals, v0, v1, v2, v3);
+        // 6 indices to make 2 triangles
+        indices[numIndices++] = v0;
+        indices[numIndices++] = v1;
+        indices[numIndices++] = v2;
+        indices[numIndices++] = v2;
+        indices[numIndices++] = v3;
+        indices[numIndices++] = v0;
     }
 
     /*
@@ -181,6 +203,9 @@ public class Terrain implements Disposable {
         normals[v3].add(n);
     }
 
-
+    public boolean intersect(Ray ray, Vector3 intersection ) {
+        boolean hit = Intersector.intersectRayTriangles(ray, verts, indices, 3, intersection);
+        return hit;
+    }
 
 }

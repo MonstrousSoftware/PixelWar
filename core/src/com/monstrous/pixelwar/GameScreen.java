@@ -34,6 +34,7 @@ public class GameScreen extends ScreenAdapter {
     private DirectionalLight lightSource;
     private DirectionalShadowLight shadowLight;
     private ModelBatch shadowBatch;
+    private GameObject selectedObject;
 
     public GameScreen(Main game, boolean newGame) {
         this.game = game;
@@ -55,6 +56,7 @@ public class GameScreen extends ScreenAdapter {
         //camController = new OrthographicCameraController(cam);
 
         InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(new MouseController(this));
         multiplexer.addProcessor(camController);
         Gdx.input.setInputProcessor(multiplexer);
 
@@ -84,6 +86,8 @@ public class GameScreen extends ScreenAdapter {
         game.stopMusic();
         if(Settings.musicEnabled)
             game.startMusic("music/Level 1.wav");
+
+        selectedObject = null;
     }
 
     @Override
@@ -136,6 +140,23 @@ public class GameScreen extends ScreenAdapter {
         game.stopMusic();
     }
 
+    public boolean mouseDown(int screenX, int screenY, int button) {
+        Gdx.app.log("mouse clicked", "");
+        cam.update();
+        GameObject result = world.pickObject(cam, screenX, screenY);
+        if(result != null) {
+            Gdx.app.log("clicked on", result.type.name);
+            result.modelInstance.materials.first().set(ColorAttribute.createDiffuse(Color.YELLOW));
+        }
+        selectedObject = result;
+        return false;
+    }
+
+    public boolean pressedEscape() {
+        Gdx.app.log("ESC pressed", "");
+        game.setScreen(new MenuScreen(game));
+        return true;
+    }
 
 
 }

@@ -1,8 +1,11 @@
 package com.monstrous.pixelwar;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -16,9 +19,8 @@ public class World implements Disposable {
     public World() {
         Gdx.app.debug("World", "constructor");
 
-        GameObjectTypes types = new GameObjectTypes();  // instantiate 'static' class
-
         modelAssets = new ModelAssets();
+        GameObjectTypes types = new GameObjectTypes();  // instantiate 'static' class
 
         terrain = new Terrain();
 
@@ -30,6 +32,8 @@ public class World implements Disposable {
     private void populate() {
         placeItem("Anti-Aircraft", -20, 0, 0);
         placeItem("Tank", -40, 0, 0);
+        placeItem("Tank", -60, 0, 0);
+        placeItem("Tank", -80, 0, 0);
         placeItem("Flag", 0, 0, 0);
 
 
@@ -62,7 +66,7 @@ public class World implements Disposable {
     public void render(ModelBatch modelBatch, Environment environment, boolean mapView ) {
         terrain.render(modelBatch, environment);
         for(GameObject go : gameObjects ) {
-            if(mapView && !go.type.showInMap)   // hide scenery in map view
+            if(mapView && go.type.isScenery)   // hide scenery in map view
                 continue;
 
             modelBatch.render(go.modelInstance, environment);
@@ -78,29 +82,39 @@ public class World implements Disposable {
         terrain.dispose();
     }
 
-//    public GameObject pickObject(Camera cam, int screenX, int screenY ) {
-//        Ray ray = cam.getPickRay(screenX, screenY);
-//        GameObject result = null;
-//        float closestDistance2 = -1;
-//
-//        groundObject.intersect(ray, tmpPos);
-//
-//        hashGrid.getNearbyObjects(tmpPos, 50f, set);      // constant
-//
-//        for (GameObject go : set ) {
-//            if(go.type.isGround)
-//                continue;
-////            if (go.army != Army.PLAYER)        // skip ground and markers, allow selection of buildings
-////                continue;
-//
-//            go.getPosition(tmpPos);
-//            float dist2 = ray.origin.dst2(tmpPos);
-//            if (closestDistance2 >= 0f && dist2 > closestDistance2) continue;
-//            if (Intersector.intersectRaySphere(ray, tmpPos, go.type.radius, null)) {
-//                result = go;
-//                closestDistance2 = dist2;
-//            }
-//        }
-//        return result;
-//    }
+    private Vector3 tmpPos = new Vector3();
+
+    public GameObject pickObject(Camera cam, int screenX, int screenY ) {
+        Ray ray = cam.getPickRay(screenX, screenY);
+        GameObject result = null;
+        float closestDistance = 9999999f;
+
+        for (GameObject go : gameObjects) {
+
+            go.type.bbox.getCenter(tmpPos); // center of volume relative to object origin
+            tmpPos.add(go.position);
+
+            float dist = ray.origin.dst2(tmpPos);  // distance between ray and object
+            if (dist > closestDistance) // skip, we've seen a better candidate already
+                continue;
+
+            if (Intersector.intersectRaySphere(ray, tmpPos, go.type.radius, null)) {
+                result = go;
+                closestDistance = dist;
+            }
+        }
+        if (result != null) {
+            Gdx.app.log("pickObject", "dist: "+closestDistance);
+
+            return result;
+        }
+
+        // find where screen ray hits the terrain
+        boolean hit = terrain.intersect(ray, tmpPos);
+        Gdx.app.log("terrain", "pos: "+tmpPos+" hit: "+hit);
+        placeItem("Flag", tmpPos.x, tmpPos.z, 0);
+
+
+        return null;
+    }
 }

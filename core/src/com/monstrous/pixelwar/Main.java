@@ -37,8 +37,7 @@ public class Main extends Game {
 	
 	@Override
 	public void dispose () {
-		music.stop();
-		music.dispose();
+		stopMusic();
 
 		// save sound settings for next time
 		preferences.putFloat("soundVolume", soundVolume);   // save
@@ -56,6 +55,8 @@ public class Main extends Game {
 	}
 
 	public void stopMusic() {
+		if(music == null)
+			return;
 		music.stop();
 		music.dispose();
 		music = null;
