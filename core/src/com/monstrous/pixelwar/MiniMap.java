@@ -101,7 +101,7 @@ public class MiniMap implements Disposable {
             batch.draw(heightMap,0,0, viewWidth, viewHeight);
             batch.end();
             modelBatch.begin(orthoCam);
-            modelBatch.render(world.instances, environment);
+            world.render(modelBatch, environment, true);
             modelBatch.end();
 
 

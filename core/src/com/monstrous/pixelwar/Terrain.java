@@ -2,8 +2,7 @@ package com.monstrous.pixelwar;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
@@ -20,7 +19,9 @@ public class Terrain implements Disposable {
     public static final float AMPLITUDE  = 20f;
 
     private Model model;
+    private ModelInstance modelInstance;
     private Model gridModel;
+    private ModelInstance gridModelInstance;
     private  float heightMap[][];
 
     public Terrain() {
@@ -50,7 +51,8 @@ public class Terrain implements Disposable {
         Material material =  new Material(TextureAttribute.createDiffuse(terrainTexture));
         model = makeGridModel(heightMap, SCALE, MAP_SIZE-1, GL20.GL_TRIANGLES, material);
         gridModel = makeGridModel(heightMap, SCALE, MAP_SIZE-1, GL20.GL_LINES,  new Material(ColorAttribute.createDiffuse(Color.GRAY)));
-
+        modelInstance =  new ModelInstance(model);
+        gridModelInstance =  new ModelInstance(gridModel);
     }
 
     public float getHeight(float x, float y) {
@@ -62,20 +64,15 @@ public class Terrain implements Disposable {
     }
 
 
-    public Model getModel() {
-        return model;
-    }
-
-    public Model getGridModel() {
-        return gridModel;
-    }
-
     @Override
     public void dispose() {
         model.dispose();
         gridModel.dispose();
     }
 
+    public void render(ModelBatch modelBatch, Environment environment ) {
+        modelBatch.render(modelInstance, environment);
+    }
 
     // make a Model consisting of a square grid
     public Model makeGridModel(float[][] heightMap, float scale, int divisions, int primitive, Material material) {

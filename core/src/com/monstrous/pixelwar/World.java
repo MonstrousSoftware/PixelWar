@@ -1,59 +1,36 @@
 package com.monstrous.pixelwar;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.VertexAttributes;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
 public class World implements Disposable {
 
-    public Array<ModelInstance> instances;
-    public Array<ModelInstance> sceneryInstances;
-    private Array<Model> models;
     private Terrain terrain;
     private ModelAssets modelAssets;
+    private Array<GameObject> gameObjects;
+    private Vector3 tmpPosition = new Vector3();
 
     public World() {
         Gdx.app.debug("World", "constructor");
+
+        GameObjectTypes types = new GameObjectTypes();  // instantiate 'static' class
 
         modelAssets = new ModelAssets();
 
         terrain = new Terrain();
 
-        models = new Array<>();         // todo take care in assets to dispose
-        instances = new Array<>();
-        sceneryInstances = new Array<>();
+        gameObjects = new Array<>();
 
-        Model model = terrain.getModel();
-        ModelInstance modelInstance = new ModelInstance(model);
-        sceneryInstances.add(modelInstance);
-
-//        model = terrain.getGridModel();
-//        modelInstance = new ModelInstance(model);
-//        modelInstance.transform.translate(0,.1f, 0.1f);
-//        instances.add(modelInstance);
-
-        //makeArrows();
-        //makeGrid();
         populate();
     }
 
     private void populate() {
-        placeAA(50,0);
-        placeAA(70,15);
-
-        placeTank(20,20);
-
-        placeTank(40,40);
-
-        placeItem("Flag", 100, 0, 0);
+        placeItem("Anti-Aircraft", -20, 0, 0);
+        placeItem("Tank", -40, 0, 0);
+        placeItem("Flag", 0, 0, 0);
 
 
 //        placeRandom("Tree1", 2600);
@@ -61,9 +38,7 @@ public class World implements Disposable {
 //        placeRandom("Stone2", 200);
 //        placeRandom("Stone3", 200);
 
-        placeItem("AirShip", 0, 0, 0);
-
-        placeBridge(50,15);
+        placeItem("AirShip", 0, 30, 0);
     }
 
     private void placeRandom(String name, int count){
@@ -71,107 +46,61 @@ public class World implements Disposable {
             float xx = (float) (Math.random()-0.5f)*Settings.worldSize;
             float zz = (float) (Math.random()-0.5f)*Settings.worldSize;
             float r = (float) (Math.random()*360f);
-            placeSceneryItem(name, xx, zz, r);
+            placeItem(name, xx, zz, r);
         }
     }
 
-    private void placeAA(float x, float z){
-        Model model;
-        ModelInstance modelInstance;
-
-        model = ModelAssets.getModel("Assets");
-        modelInstance =  new ModelInstance(model, "AntiAircraftBase");
-        float y = terrain.getHeight(x, z);
-        modelInstance.transform.translate(x,y,z);
-        instances.add(modelInstance);
-
-        modelInstance =  new ModelInstance(model, "AntiAircraft");
-        modelInstance.transform.translate(x,y,z);
-        modelInstance.transform.rotate(Vector3.Y, 60f);
-        instances.add(modelInstance);
-    }
-
-    private void placeTank(float x, float z){
-        Model model;
-        ModelInstance modelInstance;
-
-        model = ModelAssets.getModel("Assets");
-        modelInstance =  new ModelInstance(model, "TankBody");
-        float y = terrain.getHeight(x, z);
-        modelInstance.transform.translate(x,y,z);
-        instances.add(modelInstance);
-
-        modelInstance =  new ModelInstance(model, "TankTurret");
-        modelInstance.transform.translate(x,y,z);
-        modelInstance.transform.rotate(Vector3.Y, 60f);
-        instances.add(modelInstance);
-    }
-
-    private void placeBridge(float x, float z){
-        Model model;
-        ModelInstance modelInstance;
-
-        model = ModelAssets.getModel("Assets");
-        modelInstance =  new ModelInstance(model, "Bridge");
-        float y = terrain.getHeight(x, z);
-        modelInstance.transform.translate(x,y,z);
-        instances.add(modelInstance);
-    }
-
-    private void placeTree(float x, float z, float angle){
-        placeItem("Tree1", x, z, angle);
-    }
-
     private void placeItem(String name, float x, float z, float angle){
-        Model model;
-        ModelInstance modelInstance;
 
-        model = ModelAssets.getModel("Assets");
-        modelInstance =  new ModelInstance(model, name);
         float y = terrain.getHeight(x, z);
-        //modelInstance.transform.rotate(Vector3.Y, angle);
-        modelInstance.transform.translate(x,y,z);
-
-        instances.add(modelInstance);
-    }
-
-    private void placeSceneryItem(String name, float x, float z, float angle){
-        Model model;
-        ModelInstance modelInstance;
-
-        model = ModelAssets.getModel("Assets");
-        modelInstance =  new ModelInstance(model, name);
-        float y = terrain.getHeight(x, z);
-        //
-        modelInstance.transform.translate(x,y,z);
-        modelInstance.transform.rotate(Vector3.Y, angle);
-
-        sceneryInstances.add(modelInstance);
+        tmpPosition.set(x, y, z);
+        GameObject go = new GameObject(name, tmpPosition, angle);
+        gameObjects.add(go);
     }
 
 
-    private void makeArrows() {
-        ModelBuilder modelBuilder = new ModelBuilder();
-        Model model = modelBuilder.createXYZCoordinates(10f, new Material(), VertexAttributes.Usage.Position | VertexAttributes.Usage.ColorPacked);
-        ModelInstance modelInstance =  new ModelInstance(model);
-        models.add(model);
-        instances.add(modelInstance);
-    }
+    public void render(ModelBatch modelBatch, Environment environment, boolean mapView ) {
+        terrain.render(modelBatch, environment);
+        for(GameObject go : gameObjects ) {
+            if(mapView && !go.type.showInMap)   // hide scenery in map view
+                continue;
 
-    private void makeGrid() {
-        ModelBuilder modelBuilder = new ModelBuilder();
-        Model model = modelBuilder.createLineGrid(20, 20, 10, 10, new Material(ColorAttribute.createDiffuse(Color.BLUE)),   VertexAttributes.Usage.Position);
-        ModelInstance modelInstance =  new ModelInstance(model);
-        models.add(model);
-        instances.add(modelInstance);
+            modelBatch.render(go.modelInstance, environment);
+            if(go.modelInstance2 != null)
+                modelBatch.render(go.modelInstance2, environment);
+        }
     }
 
     @Override
     public void dispose() {
         Gdx.app.debug("World", "dispose");
-        for(Model model : models)
-            model.dispose();
         modelAssets.dispose();
         terrain.dispose();
     }
+
+//    public GameObject pickObject(Camera cam, int screenX, int screenY ) {
+//        Ray ray = cam.getPickRay(screenX, screenY);
+//        GameObject result = null;
+//        float closestDistance2 = -1;
+//
+//        groundObject.intersect(ray, tmpPos);
+//
+//        hashGrid.getNearbyObjects(tmpPos, 50f, set);      // constant
+//
+//        for (GameObject go : set ) {
+//            if(go.type.isGround)
+//                continue;
+////            if (go.army != Army.PLAYER)        // skip ground and markers, allow selection of buildings
+////                continue;
+//
+//            go.getPosition(tmpPos);
+//            float dist2 = ray.origin.dst2(tmpPos);
+//            if (closestDistance2 >= 0f && dist2 > closestDistance2) continue;
+//            if (Intersector.intersectRaySphere(ray, tmpPos, go.type.radius, null)) {
+//                result = go;
+//                closestDistance2 = dist2;
+//            }
+//        }
+//        return result;
+//    }
 }

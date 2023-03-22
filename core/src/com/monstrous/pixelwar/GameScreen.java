@@ -93,16 +93,18 @@ public class GameScreen extends ScreenAdapter {
 
         shadowLight.begin(Vector3.Zero, cam.direction);
         shadowBatch.begin(shadowLight.getCamera());
-        shadowBatch.render(world.sceneryInstances);
-        shadowBatch.render(world.instances);
+//        shadowBatch.render(world.sceneryInstances);
+//        shadowBatch.render(world.instances);
+        world.render(shadowBatch, environment, false);
         shadowBatch.end();
         shadowLight.end();
 
         ScreenUtils.clear(Settings.skyColour, true);
 
         modelBatch.begin(cam);
-        modelBatch.render(world.sceneryInstances, environment);
-        modelBatch.render(world.instances, environment);
+        world.render(modelBatch, environment, false);
+//        modelBatch.render(world.sceneryInstances, environment);
+//        modelBatch.render(world.instances, environment);
         modelBatch.end();
 
         miniMap.render();
