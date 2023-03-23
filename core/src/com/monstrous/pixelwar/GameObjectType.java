@@ -11,15 +11,21 @@ public class GameObjectType {
     public String modelName;
     public String modelName2;
     public Boolean isScenery;  // show this type in mini map? false for scenery
+    public boolean isMobile;
+    public boolean followsTerrain;
+    public float timeToLive;
     public Vector3 dimensions;
     public BoundingBox bbox;
     public float radius;
 
-    public GameObjectType(String name, String modelName, String modelName2, boolean isScenery) {
+    public GameObjectType(String name, String modelName, String modelName2, boolean isScenery, float timeToLive) {
         this.name = name;
         this.modelName = modelName;
         this.modelName2 = modelName2;
         this.isScenery = isScenery;
+        this.timeToLive = timeToLive;
+        this.followsTerrain = true;
+        this.isMobile = false;
 
         Model model = ModelAssets.getModel("Assets");
         ModelInstance modelInstance =  new ModelInstance(model, modelName);

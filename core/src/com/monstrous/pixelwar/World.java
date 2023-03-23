@@ -11,38 +11,57 @@ import com.badlogic.gdx.utils.Disposable;
 
 public class World implements Disposable {
 
-    public Terrain terrain;
-    private ModelAssets modelAssets;
-    private Array<GameObject> gameObjects;
-    private Vector3 tmpPosition = new Vector3();
+    public static String PLAYER = "Blue";
+    public static String ENEMY = "Red";
+
+    public static Terrain terrain;
+    private static ModelAssets modelAssets;
+    private static Array<GameObject> gameObjects;
+    private static Array<GameObject> deleteList;
+    private static Vector3 tmpPosition = new Vector3();
+    private static Vector3 tmpVelocity = new Vector3();
+    private static Army playerArmy;
 
     public World() {
         Gdx.app.debug("World", "constructor");
 
+        Armies armies = new Armies();
+        playerArmy = Armies.getPlayerArmy();
         modelAssets = new ModelAssets();
         GameObjectTypes types = new GameObjectTypes();  // instantiate 'static' class
 
         terrain = new Terrain();
 
         gameObjects = new Array<>();
+        deleteList = new Array<>();
 
         populate();
     }
 
     private void populate() {
-        placeItem("Anti-Aircraft", -20, 0, 0);
-        placeItem("Tank", -40, 0, 0);
-        placeItem("Tank", -60, 0, 0);
-        placeItem("Tank", -80, 0, 0);
-        placeItem("Flag", 0, 0, 0);
+        placeItem(PLAYER, "Anti-Aircraft", 0, 0, 0);
+        placeItem(PLAYER, "Anti-Aircraft", 10, 10, 90);
+        placeItem(PLAYER, "Tank", -40, 0, 0);
+        placeItem(PLAYER, "Tank", -60, 0, 0);
+        placeItem(PLAYER, "Tank", 10, 0, 0);
+        placeItem(PLAYER, "Flag", -12, 0, 0);
+        placeItem(PLAYER, "AirShip", 0, 30, 0);
+        placeItem(PLAYER, "Tower", 0, 40, 0);
 
+        placeItem(ENEMY, "Anti-Aircraft", 120, 0, 0);
+        placeItem(ENEMY, "Tank", 100, 30, 0);
+        placeItem(ENEMY, "Tank", 60, 20, 0);
+        placeItem(ENEMY, "Tank", 100, 10, 0);
+        placeItem(ENEMY, "Flag", 100, 0, 0);
+        placeItem(ENEMY, "AirShip", 50, 30, 0);
+        placeItem(ENEMY, "Tower", 50, 40, 0);
 
-//        placeRandom("Tree1", 2600);
+        //placeRandom("Tree1", 2600);
 //        placeRandom("Stone1", 200);
 //        placeRandom("Stone2", 200);
 //        placeRandom("Stone3", 200);
 
-        placeItem("AirShip", 0, 30, 0);
+
     }
 
     private void placeRandom(String name, int count){
@@ -50,23 +69,35 @@ public class World implements Disposable {
             float xx = (float) (Math.random()-0.5f)*Settings.worldSize;
             float zz = (float) (Math.random()-0.5f)*Settings.worldSize;
             float r = (float) (Math.random()*360f);
-            placeItem(name, xx, zz, r);
+            placeItem("Neutral", name, xx, zz, r);
         }
     }
 
-    private void placeItem(String name, float x, float z, float angle){
+    public static GameObject placeItem(String armyName, String name, float x, float z, float angle){
 
         float y = terrain.getHeight(x, z);
         tmpPosition.set(x, y, z);
-        GameObject go = new GameObject(name, tmpPosition, angle);
+        tmpVelocity.set(0,0,0);
+        GameObject go = new GameObject(armyName, name, tmpPosition, angle, tmpVelocity);
         gameObjects.add(go);
+        return go;
+    }
+
+    public static GameObject spawnItem(String armyName, String name, Vector3 position, float angle, Vector3 velocity){
+        GameObject go = new GameObject(armyName, name, position, angle, velocity);
+        gameObjects.add(go);
+        return go;
     }
 
 
     public void update( float deltaTime ){
+        deleteList.clear();
         for(GameObject go : gameObjects ) {
             go.update(deltaTime);
+            if(go.toRemove)
+                deleteList.add(go);
         }
+        gameObjects.removeAll(deleteList, true);
     }
 
     public void render(ModelBatch modelBatch, Environment environment, boolean mapView ) {
@@ -96,6 +127,8 @@ public class World implements Disposable {
         float closestDistance = 9999999f;
 
         for (GameObject go : gameObjects) {
+            if(go.army != playerArmy)   // can only select own units, not enemy units or neutral ones
+                continue;
 
             go.type.bbox.getCenter(tmpPos); // center of volume relative to object origin
             tmpPos.add(go.position);
@@ -124,7 +157,7 @@ public class World implements Disposable {
         boolean hit = terrain.intersect(ray, location);
         Gdx.app.log("terrain", "pos: "+location+" hit: "+hit);
         if(hit)
-            placeItem("Flag", location.x, location.z, 0);
+            placeItem("Neutral", "Arrow", location.x, location.z, 0);
         return hit;
     }
 

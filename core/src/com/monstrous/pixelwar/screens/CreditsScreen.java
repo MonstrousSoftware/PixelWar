@@ -1,4 +1,4 @@
-package com.monstrous.pixelwar;
+package com.monstrous.pixelwar.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -15,8 +15,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.monstrous.pixelwar.Main;
 
-public class InstructionsScreen implements Screen {
+public class CreditsScreen implements Screen {
 
     static public int TEXT_WIDTH = 400;
     static public int BUTTON_WIDTH = 200;
@@ -26,13 +27,13 @@ public class InstructionsScreen implements Screen {
     private Stage stage;
     private Skin skin;
 
-    public InstructionsScreen(Main game) {
+    public CreditsScreen(Main game) {
         this.game = game;
     }
 
     @Override
     public void show() {
-        Gdx.app.debug("InstructionsScreen", "show()");
+        Gdx.app.debug("CreditsScreen", "show()");
 
         skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
         stage = new Stage(new ScreenViewport());
@@ -41,10 +42,11 @@ public class InstructionsScreen implements Screen {
     }
 
     private void rebuild() {
-        String explanation = "Few remembered the beginning of the war. Red allied with Blue as the purple alliance. " +
-                "Together they destroyed Green in a protracted campaign of attrition. \n\n" +
-                "Now the former allies turned on each other and faced each other across a field of 256 by 256 pixels for what would be remembered as the Battle of Perlin Hills. " +
-                "Red occupied the North and Blue held the South. Whoever would take this last territory would win the war of the pixels.";
+        String explanation = "Theme:\n\n" +
+                "LibGDX Game Jam March 2023\n\n" +
+                "Music:\n\n" +
+                " - Juhani Junkala (OpenGameArt)\n\n";
+
 
         stage.clear();
 
@@ -53,7 +55,7 @@ public class InstructionsScreen implements Screen {
         stage.addActor(screenTable);
         screenTable.setFillParent(true);        // size to match stage size
 
-        Label labelTitle = new Label("INSTRUCTIONS", skin, "title");
+        Label labelTitle = new Label("CREDITS", skin, "title");
 
         Label labelText = new Label(explanation, skin);
         labelText.setWrap(true);
@@ -96,29 +98,29 @@ public class InstructionsScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        Gdx.app.debug("InstructionsScreen", "resize()");
+        Gdx.app.debug("CreditsScreen", "resize()");
         stage.getViewport().update(width, height, true);
     }
 
     @Override
     public void pause() {
-        Gdx.app.debug("InstructionsScreen", "pause()");
+        Gdx.app.debug("CreditsScreen", "pause()");
     }
 
     @Override
     public void resume() {
-        Gdx.app.debug("InstructionsScreen", "resume()");
+        Gdx.app.debug("CreditsScreen", "resume()");
     }
 
     @Override
     public void hide() {
-        Gdx.app.debug("InstructionsScreen", "hide()");
+        Gdx.app.debug("CreditsScreen", "hide()");
         dispose();
     }
 
     @Override
     public void dispose() {
-        Gdx.app.debug("InstructionsScreen", "dispose()");
+        Gdx.app.debug("CreditsScreen", "dispose()");
         stage.dispose();
     }
 }

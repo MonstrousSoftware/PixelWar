@@ -28,13 +28,6 @@ public class ModelAssets implements Disposable {
         map.clear();
 
         // create models
-        // Each GameObjectType must have a model matching the type name
-
-
-        Model modelBullet = modelBuilder.createBox(1f, 1f, 1f,
-                new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal );
-        map.put("Bullet", modelBullet);
 
 
         AssetManager assets = new AssetManager();

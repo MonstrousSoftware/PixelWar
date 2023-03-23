@@ -18,6 +18,7 @@ public class MyCamController extends CameraInputController {
 
     @Override
     public void update () {
+        // WASD are modified to move across the terrain
         if (rotateRightPressed || rotateLeftPressed || forwardPressed || backwardPressed) {
             final float delta = Gdx.graphics.getDeltaTime();
 
@@ -40,5 +41,7 @@ public class MyCamController extends CameraInputController {
             if (autoUpdate) camera.update();
         }
     }
+
+
 
 }

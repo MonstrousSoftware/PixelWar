@@ -1,4 +1,4 @@
-package com.monstrous.pixelwar;
+package com.monstrous.pixelwar.screens;
 
 import com.badlogic.gdx.Gdx;
 
@@ -6,6 +6,9 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.monstrous.pixelwar.Main;
+import com.monstrous.pixelwar.Settings;
+import com.monstrous.pixelwar.screens.MenuScreen;
 
 
 public class SplashScreen extends ScreenAdapter {
@@ -15,6 +18,7 @@ public class SplashScreen extends ScreenAdapter {
     private Main game;
     private Texture texture;
     private float timer;
+    private float width, height;
 
     public SplashScreen(Main game) {
         this.game = game;
@@ -25,7 +29,8 @@ public class SplashScreen extends ScreenAdapter {
 
         Gdx.app.debug("SplashScreen", "show()");
         batch = new SpriteBatch();
-        texture = new Texture("badlogic.jpg");
+        texture = new Texture( Gdx.files.internal("logo-static.png"));
+        //texture = new Texture("badlogic.jpg");
         timer = Settings.splashTime;
 
     }
@@ -54,13 +59,16 @@ public class SplashScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         batch.begin();
-        batch.draw(texture, 0,0);
+        batch.draw(texture, 0,0, width, height );
         batch.end();
     }
 
     @Override
     public void resize(int width, int height) {
+
         Gdx.app.debug("SplashScreen", "resize("+width+", "+height+")");
+        this.width = width;
+        this.height = height;
     }
 
 }

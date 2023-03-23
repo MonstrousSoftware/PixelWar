@@ -1,0 +1,31 @@
+todo:
+- AI
+- shoot
+- damage
+
+
+
+
+
+
+HTML version
+------------
+1- Generate distributable by ./gradlew html:dist from the terminal command line.
+2- Remove the <a> tag from index.html and remove the refresh.jpg from html/build/dist/
+3- zip the dist folder
+4- upload, e.g. to itch.io.
+
+Caveats: some browsers will refuse to play it if there is audio before the user has clicked anything.
+
+The exit button in the menu has no effect in a browser. Should be disabled for HTML version.
+
+The video doesn't seem to work on mobile Safari browser, the game seems blocked.
+-> added a fall back option to show a static image if we notice the video player is not advancing frames.
+
+Mobile browsers don't allow for a right click, which breaks the game play.
+
+
+Add this to webapp/WEB_INF/index.html to prevent context menu in HTML version
+    // prevent right click
+    document.getElementById('embed-html').addEventListener('contextmenu', handleMouseDown, false);
+

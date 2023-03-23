@@ -1,10 +1,7 @@
-package com.monstrous.pixelwar;
+package com.monstrous.pixelwar.screens;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -18,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.monstrous.pixelwar.Main;
+import com.monstrous.pixelwar.Settings;
 
 public class MenuScreen extends ScreenAdapter {
 
@@ -117,7 +116,7 @@ public class MenuScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                //game.setScreen( new OptionsScreen(game) );
+                game.setScreen( new OptionsScreen(game) );
             }
         });
 
@@ -125,7 +124,7 @@ public class MenuScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                //game.setScreen( new CreditsScreen(game) );
+                game.setScreen( new CreditsScreen(game) );
             }
         });
 

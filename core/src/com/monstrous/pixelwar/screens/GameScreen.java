@@ -1,25 +1,20 @@
-package com.monstrous.pixelwar;
+package com.monstrous.pixelwar.screens;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalShadowLight;
-import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.monstrous.pixelwar.*;
+import com.monstrous.pixelwar.screens.MenuScreen;
 
 public class GameScreen extends ScreenAdapter {
 
@@ -45,7 +40,7 @@ public class GameScreen extends ScreenAdapter {
     public void show() {
 
         cam = new PerspectiveCamera(50, viewWidth, viewHeight);
-        cam.position.set(40f, 10f, 20f);
+        cam.position.set(30f, 10f, 10f);
         cam.lookAt(0, 0, 0);
         cam.near = 0.1f;
         cam.far = Settings.worldSize * .7f;
@@ -93,13 +88,19 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         camController.update();
+
+        // keep camera above terrain level (this is a bit crude)
+        float terrainHeight = world.terrain.getHeight(cam.position.x, cam.position.z);
+        if(cam.position.y < terrainHeight+5f)
+            cam.position.y = terrainHeight+5f;
+
         world.update(delta);
         miniMap.update(cam, world, environment);
 
+
+        // prepare shadow buffer
         shadowLight.begin(Vector3.Zero, cam.direction);
         shadowBatch.begin(shadowLight.getCamera());
-//        shadowBatch.render(world.sceneryInstances);
-//        shadowBatch.render(world.instances);
         world.render(shadowBatch, environment, false);
         shadowBatch.end();
         shadowLight.end();
@@ -108,8 +109,6 @@ public class GameScreen extends ScreenAdapter {
 
         modelBatch.begin(cam);
         world.render(modelBatch, environment, false);
-//        modelBatch.render(world.sceneryInstances, environment);
-//        modelBatch.render(world.instances, environment);
         modelBatch.end();
 
         miniMap.render();
@@ -153,10 +152,10 @@ public class GameScreen extends ScreenAdapter {
             selectedObject = result;
             result.modelInstance.materials.first().set(ColorAttribute.createDiffuse(Color.YELLOW));
         }
-        else if(selectedObject != null){
+        else if(selectedObject != null && selectedObject.type.isMobile){
             boolean hit = world.pickLocation(cam, screenX, screenY, tmpPos);
             if(hit) {
-                Gdx.app.log("location", "hit: " + hit + " at " + tmpPos);
+                //Gdx.app.log("location", "hit: " + hit + " at " + tmpPos);
                 selectedObject.setDestination(tmpPos);
             }
         }
@@ -165,7 +164,7 @@ public class GameScreen extends ScreenAdapter {
 
     public boolean pressedEscape() {
         Gdx.app.log("ESC pressed", "");
-        game.setScreen(new MenuScreen(game));
+        game.setScreen(new MenuScreen(game));               // back to menu
         return true;
     }
 

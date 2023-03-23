@@ -3,6 +3,7 @@ package com.monstrous.pixelwar;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
+import com.monstrous.pixelwar.screens.GameScreen;
 
 public class MouseController extends InputAdapter {
     private GameScreen gameScreen;

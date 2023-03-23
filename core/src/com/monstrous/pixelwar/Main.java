@@ -2,13 +2,12 @@ package com.monstrous.pixelwar;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.monstrous.pixelwar.screens.GameScreen;
+import com.monstrous.pixelwar.screens.SplashScreen;
 
 public class Main extends Game {
 
-	public static final String VERSION = "version 0.1 (22 March 2023)";
+	public static final String VERSION = "version 0.2 (23 March 2023)";
 	public static final boolean RELEASE_BUILD = true;
 	public static String PREFERENCES_NAME = "pixelwar";
 
@@ -60,5 +59,22 @@ public class Main extends Game {
 		music.stop();
 		music.dispose();
 		music = null;
+	}
+
+	public float getSoundVolume() {
+		return soundVolume;
+	}
+
+	public void setSoundVolume(float soundVolume) {
+		this.soundVolume = soundVolume;
+	}
+
+	public float getMusicVolume() {
+		return musicVolume;
+	}
+
+	public void setMusicVolume(float musicVolume) {
+		this.musicVolume = musicVolume;
+		music.setVolume(musicVolume);
 	}
 }
