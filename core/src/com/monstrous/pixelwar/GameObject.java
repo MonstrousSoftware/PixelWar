@@ -1,9 +1,11 @@
 package com.monstrous.pixelwar;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
+import com.monstrous.pixelwar.behaviours.*;
 
 public class GameObject {
     public static float SPEED = 5f;
@@ -17,13 +19,16 @@ public class GameObject {
     public Vector3 velocity;
     public float angle;     // around up axis (0 degrees is on the +X), models have to face forward on +X axis
     public float destAngle;
+    public float targetAngle;
     public Vector3 destination;
     public boolean isMovingToDestination;
     public boolean isRotating;
     private Vector3 tmpVec;
     private float timeToLive;
+    public boolean isDying;
     public boolean toRemove;
     private Behaviour behaviour;
+    public float healthPoints;
 
     public GameObject(String armyName, String typeName, Vector3 position, float angle, Vector3 velocity) {
 
@@ -33,6 +38,7 @@ public class GameObject {
         this.type = GameObjectTypes.findType(typeName);
         if(type == null)
             return;
+        healthPoints = type.healthPoints;
 
         this.position = new Vector3(position);
         this.velocity = new Vector3(velocity);
@@ -41,12 +47,22 @@ public class GameObject {
         isMovingToDestination = false;
         isRotating = false;
         toRemove = false;
+        isDying = false;
+        targetAngle = 60f;
 
         behaviour = null;
         if(type.name.contentEquals("Anti-Aircraft"))
             behaviour = new AntiAircraft(this);
+        if(type.name.contentEquals("Tank"))
+            behaviour = new TankBehaviour(this);
         if(type.name.contentEquals("Bullet"))
             behaviour = new Bullet(this);
+        if(type.name.contentEquals("AirShip"))
+            behaviour = new AirShip(this);
+        if(type.name.contentEquals("Tower"))
+            behaviour = new Tower(this);
+        if(type.name.contentEquals("Flag"))
+            behaviour = new Flag(this);
 
         Model model = ModelAssets.getModel("Assets");
         modelInstance =  new ModelInstance(model, type.modelName);
@@ -58,7 +74,7 @@ public class GameObject {
         if(type.modelName2 != null) {
             modelInstance2 = new ModelInstance(model, type.modelName2);
             //modelInstance2.transform.translate(position);
-            modelInstance2.transform.rotate(Vector3.Y, angle + 60f).trn(position);
+            modelInstance2.transform.rotate(Vector3.Y, targetAngle).trn(position);
         }
         setArmy(army);
         tmpVec = new Vector3();
@@ -112,6 +128,8 @@ public class GameObject {
             float distance = position.dst2(destination);
             if (distance < 1f) {   // reached destination
                 isMovingToDestination = false;
+                Gdx.app.log("reached destination", "");
+                velocity.set(0,0,0);
             }
             else {
                 // don't move if we are facing away from the destination, just turn until we are facing more the right direction
@@ -119,36 +137,22 @@ public class GameObject {
                     // move in direction that the unit is facing
                     velocity.set((float) Math.cos(angle * Math.PI / 180f), 0, (float) Math.sin(angle * Math.PI / 180f));
                     velocity.scl(SPEED);    // scale for speed and time step
-                    //position.add(tmpVec);
-//                    if(type.followsTerrain)
-//                        position.y = Terrain.getHeight(position.x, position.z);   // follow terrain height
                 }
-//                modelInstance.transform.setToRotation(Vector3.Y, -angle).trn(position); // update transform with rotation and position
-//                if (modelInstance2 != null)
-//                    modelInstance2.transform.setTranslation(position);
-
-//                float newDistance = position.dst2(destination);
-//                if (newDistance > distance) {
-//                    isMovingToDestination = false;
-//                    Gdx.app.log("stop moving further away", "");
-//                }
             }
         }
 
         tmpVec.set(velocity).scl(deltaTime);
         position.add(tmpVec);
 
-        if(type.followsTerrain)
+        if(type.followsTerrain && !isDying)
             position.y = Terrain.getHeight(position.x, position.z);   // follow terrain height
 
         modelInstance.transform.setToRotation(Vector3.Y, -angle).trn(position); // update transform with rotation and position
         if (modelInstance2 != null)
-            modelInstance2.transform.setTranslation(position);
+            modelInstance2.transform.setToRotation(Vector3.Y, -targetAngle).setTranslation(position);
 
         if(behaviour != null)
             behaviour.update(deltaTime);
-
-
     }
 
     public void setArmy( Army army ) {

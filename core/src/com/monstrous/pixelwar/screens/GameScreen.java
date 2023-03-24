@@ -22,7 +22,7 @@ public class GameScreen extends ScreenAdapter {
     private PerspectiveCamera cam;
     private int viewHeight, viewWidth;
     private ModelBatch modelBatch;
-    private World world;
+    public World world;
     private MyCamController camController;
     private Environment environment;
     private MiniMap miniMap;
@@ -90,9 +90,9 @@ public class GameScreen extends ScreenAdapter {
         camController.update();
 
         // keep camera above terrain level (this is a bit crude)
-        float terrainHeight = world.terrain.getHeight(cam.position.x, cam.position.z);
-        if(cam.position.y < terrainHeight+5f)
-            cam.position.y = terrainHeight+5f;
+//        float terrainHeight = world.terrain.getHeight(cam.position.x, cam.position.z);
+//        if(cam.position.y < terrainHeight+5f)
+//            cam.position.y = terrainHeight+5f;
 
         world.update(delta);
         miniMap.update(cam, world, environment);
@@ -152,7 +152,7 @@ public class GameScreen extends ScreenAdapter {
             selectedObject = result;
             result.modelInstance.materials.first().set(ColorAttribute.createDiffuse(Color.YELLOW));
         }
-        else if(selectedObject != null && selectedObject.type.isMobile){
+        else if(selectedObject != null && selectedObject.type.isMobile && !selectedObject.isDying){
             boolean hit = world.pickLocation(cam, screenX, screenY, tmpPos);
             if(hit) {
                 //Gdx.app.log("location", "hit: " + hit + " at " + tmpPos);

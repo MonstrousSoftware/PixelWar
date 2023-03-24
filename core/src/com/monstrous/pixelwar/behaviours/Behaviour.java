@@ -1,4 +1,6 @@
-package com.monstrous.pixelwar;
+package com.monstrous.pixelwar.behaviours;
+
+import com.monstrous.pixelwar.GameObject;
 
 public class Behaviour {
     protected GameObject go = null;

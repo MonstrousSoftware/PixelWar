@@ -48,7 +48,9 @@ public class World implements Disposable {
         placeItem(PLAYER, "AirShip", 0, 30, 0);
         placeItem(PLAYER, "Tower", 0, 40, 0);
 
-        placeItem(ENEMY, "Anti-Aircraft", 120, 0, 0);
+        placeItem(ENEMY, "Anti-Aircraft", 50, 0, 0);
+        placeItem(ENEMY, "Anti-Aircraft", 50, 50, 0);
+        placeItem(ENEMY, "Anti-Aircraft", 50, -50, 0);
         placeItem(ENEMY, "Tank", 100, 30, 0);
         placeItem(ENEMY, "Tank", 60, 20, 0);
         placeItem(ENEMY, "Tank", 100, 10, 0);
@@ -56,10 +58,10 @@ public class World implements Disposable {
         placeItem(ENEMY, "AirShip", 50, 30, 0);
         placeItem(ENEMY, "Tower", 50, 40, 0);
 
-        //placeRandom("Tree1", 2600);
-//        placeRandom("Stone1", 200);
-//        placeRandom("Stone2", 200);
-//        placeRandom("Stone3", 200);
+        placeRandom("Tree1", 300);
+        placeRandom("Stone1", 200);
+        placeRandom("Stone2", 200);
+        placeRandom("Stone3", 200);
 
 
     }
@@ -88,6 +90,57 @@ public class World implements Disposable {
         gameObjects.add(go);
         return go;
     }
+
+    public static GameObject testForCollision(GameObject subject) {
+        for(int i = 0; i < gameObjects.size; i++ ) {
+            GameObject go = gameObjects.get(i);
+            if(go == subject)
+                continue;
+            if(go.army == subject.army)
+                continue;
+            float dist2 = subject.position.dst2(go.position);
+            if(dist2 < go.type.radius * go.type.radius)
+                return go;
+        }
+        return null;
+    }
+
+    public static GameObject closestEnemy(GameObject subject, float radius) {
+        GameObject closest = null;
+        float minDist = Float.MAX_VALUE;
+        for(int i = 0; i < gameObjects.size; i++ ) {
+            GameObject go = gameObjects.get(i);
+            if(go.army.isNeutral || go.army == subject.army || go.type.isProjectile)
+                continue;
+            float dist2 = subject.position.dst2(go.position);
+            if(dist2 > radius*radius)
+                continue;
+            if (dist2 < minDist) {
+                minDist = dist2;
+                closest = go;
+            }
+        }
+        return closest;
+    }
+
+    public static GameObject closestEnemyAirship(GameObject subject, float radius) {
+        GameObject closest = null;
+        float minDist = Float.MAX_VALUE;
+        for(int i = 0; i < gameObjects.size; i++ ) {
+            GameObject go = gameObjects.get(i);
+            if(go.army.isNeutral || go.army == subject.army || go.type.isProjectile || !go.type.isAirship)
+                continue;
+            float dist2 = subject.position.dst2(go.position);
+            if(dist2 > radius*radius)
+                continue;
+            if (dist2 < minDist) {
+                minDist = dist2;
+                closest = go;
+            }
+        }
+        return closest;
+    }
+
 
 
     public void update( float deltaTime ){
@@ -127,8 +180,11 @@ public class World implements Disposable {
         float closestDistance = 9999999f;
 
         for (GameObject go : gameObjects) {
-            if(go.army != playerArmy)   // can only select own units, not enemy units or neutral ones
+            if(go.isDying)
                 continue;
+
+//            if(go.army != playerArmy)   // can only select own units, not enemy units or neutral ones
+//                continue;
 
             go.type.bbox.getCenter(tmpPos); // center of volume relative to object origin
             tmpPos.add(go.position);
