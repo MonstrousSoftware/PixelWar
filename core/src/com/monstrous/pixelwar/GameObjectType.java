@@ -14,6 +14,7 @@ public class GameObjectType {
     public boolean isMobile;
     public boolean isProjectile;
     public boolean isAirship;
+    public boolean isTower;
     public boolean followsTerrain;
     public float timeToLive;
     public float healthPoints;
@@ -33,6 +34,7 @@ public class GameObjectType {
         this.isMobile = false;
         this.isProjectile = false;
         this.isAirship = false;
+        this.isTower = false;
         this.maxSpeed = 5f;
 
         Model model = ModelAssets.getModel("Assets");

@@ -64,6 +64,9 @@ public class World implements Disposable {
 
     private void populate() {
         playerFlag = placeItem(PLAYER, "Flag", 0, -100, 90);
+
+
+
         placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
         placeItem(PLAYER, "Anti-Aircraft", -20, -80, 90);
 
@@ -74,6 +77,7 @@ public class World implements Disposable {
 
         placeItem(PLAYER, "AirShip", 0, -60, 0);
         placeItem(PLAYER, "Tower", 10, -60, 0);
+
 
         enemyFlag = placeItem(ENEMY, "Flag", 0, 100, -90);
         placeItem(ENEMY, "Anti-Aircraft", 20, 80, 90);
@@ -161,6 +165,24 @@ public class World implements Disposable {
         return closest;
     }
 
+    public static GameObject closestTower(GameObject subject, float radius) {
+        GameObject closest = null;
+        float minDist = Float.MAX_VALUE;
+        for(int i = 0; i < gameObjects.size; i++ ) {
+            GameObject go = gameObjects.get(i);
+            if( go.army != subject.army || !go.type.isTower || go.isDying)  // friendly tower, not dying
+                continue;
+            float dist2 = subject.position.dst2(go.position);
+            if(dist2 > radius*radius)
+                continue;
+            if (dist2 < minDist) {
+                minDist = dist2;
+                closest = go;
+            }
+        }
+        return closest;
+    }
+
     public static GameObject closestEnemyAirship(GameObject subject, float radius) {
         GameObject closest = null;
         float minDist = Float.MAX_VALUE;
@@ -191,7 +213,7 @@ public class World implements Disposable {
         gameObjects.removeAll(deleteList, true);
 
 
-        //ai.update(deltaTime);
+        ai.update(deltaTime);
     }
 
     public boolean gameOver() {

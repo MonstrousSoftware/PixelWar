@@ -26,6 +26,8 @@ public class InstructionsScreen implements Screen {
     private Main game;
     private Stage stage;
     private Skin skin;
+    private String texts[];
+    private int pageIndex = 0;
 
     public InstructionsScreen(Main game) {
         this.game = game;
@@ -42,10 +44,24 @@ public class InstructionsScreen implements Screen {
     }
 
     private void rebuild() {
-        String explanation = "Few remembered the beginning of the war. Red allied with Blue as the purple alliance. " +
+        String part1 = "Few remembered the beginning of the war. Red allied with Blue as the purple alliance. " +
                 "Together they destroyed Green in a protracted campaign of attrition. \n\n" +
                 "Now the former allies turned on each other and faced each other across a field of 256 by 256 pixels for what would be remembered as the Battle of Perlin Hills. " +
                 "Red occupied the North and Blue held the South. Whoever would take this last territory would win the war of the pixels.";
+
+        String part2 = "Protect your flag at all costs. Try to destroy the enemy flag.\n\n" +
+                "Use tanks to destroy enemy structure and units.\n\n"+
+                "Airships can drop a bomb over an enemy target. Return to a reloading tower to pick up a new bomb. Watch out for anti-aircraft guns\n\n " +
+                "";
+
+        String part3 = "Left click on a unit to select it. Left click on the terrain to direct the unit.\n\n" +
+                "Units will fire automatically if an enemy comes in range.\n\n" +
+                "Use right mouse button to turn the camera. Scroll wheel to zoom.\n\n"+
+                "Press Esc to return from teh game to the menu.";
+        texts = new String[3];
+        texts[0] = part1;
+        texts[1] = part2;
+        texts[2] = part3;
 
         stage.clear();
 
@@ -56,17 +72,26 @@ public class InstructionsScreen implements Screen {
 
         Label labelTitle = new Label("INSTRUCTIONS", skin, "title");
 
-        Label labelText = new Label(explanation, skin);
+        final Label labelText = new Label(texts[pageIndex], skin);
         labelText.setWrap(true);
 
         Table menuTable = new Table();
 
 
-        TextButton backButton = new TextButton("BACK", skin);
+        TextButton backButton = new TextButton("DONE", skin);
+        TextButton prevButton = new TextButton("PREVIOUS", skin);
+        TextButton nextButton = new TextButton("NEXT", skin);
 
+        Table buttons = new Table();
+        buttons.add(backButton).width(BUTTON_WIDTH).pad(BUTTON_PAD);
+        buttons.add(prevButton).width(BUTTON_WIDTH).pad(BUTTON_PAD);
+        buttons.add(nextButton).width(BUTTON_WIDTH).pad(BUTTON_PAD);
+        buttons.pack();
 
         menuTable.add(labelText).width(TEXT_WIDTH).center().row();
-        menuTable.add(backButton).width(BUTTON_WIDTH).pad(BUTTON_PAD).row();
+        menuTable.add(buttons);
+        menuTable.pack();
+
 
 
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -78,12 +103,29 @@ public class InstructionsScreen implements Screen {
 
         screenTable.pack();
 
-
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 game.setScreen( new MenuScreen(game) );
+            }
+        });
+        prevButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if(pageIndex > 0)
+                    pageIndex--;
+                labelText.setText(texts[pageIndex]);
+            }
+        });
+        nextButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if(pageIndex < 2)
+                    pageIndex++;
+                labelText.setText(texts[pageIndex]);
             }
         });
     }

@@ -1,5 +1,6 @@
 package com.monstrous.pixelwar.screens;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
@@ -74,7 +75,8 @@ public class MenuScreen extends ScreenAdapter {
         menuTable.add(optionsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
         menuTable.add(creditsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
 
-        menuTable.add(quitButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();            // todo omit for HTML version
+        if( Gdx.app.getType() != Application.ApplicationType.WebGL)
+            menuTable.add(quitButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();            // omit for HTML version
 
 
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);

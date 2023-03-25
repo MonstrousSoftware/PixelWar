@@ -40,33 +40,12 @@ public class MyCamController extends CameraInputController {
         if(targetObject != null)
             target.set(targetObject.position);
 
-        tmpV1.set(target).sub(prevTarget);
+        // move camera along with the target
+        tmpV1.set(target).sub(prevTarget);      // change in target position
         camera.position.add(tmpV1);
         prevTarget.set(target);
         camera.update();
 
-        // WASD are modified to move across the terrain
-        if (rotateRightPressed || rotateLeftPressed || forwardPressed || backwardPressed) {
-            final float delta = Gdx.graphics.getDeltaTime();
-
-            if (rotateRightPressed) {
-                camera.translate(tmpV1.set(0,0, delta*MOVE_SPEED));
-                if (forwardTarget) target.add(tmpV1);
-            }
-            if (rotateLeftPressed) {
-                camera.translate(tmpV1.set(0,0,-delta*MOVE_SPEED));
-                if (forwardTarget) target.add(tmpV1);
-            }
-            if (forwardPressed) {
-                camera.translate(tmpV1.set(-delta*MOVE_SPEED, 0, 0));
-                if (forwardTarget) target.add(tmpV1);
-            }
-            if (backwardPressed) {
-                camera.translate(tmpV1.set(delta*MOVE_SPEED, 0, 0));
-                if (forwardTarget) target.add(tmpV1);
-            }
-            if (autoUpdate) camera.update();
-        }
     }
 
 

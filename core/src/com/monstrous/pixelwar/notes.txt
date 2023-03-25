@@ -4,11 +4,6 @@ To convert the blender file call convert.bat. You need to have fbx-conv.exe in y
 Then copy assets.g3db to assets\models
 
 
-todo:
-- supply aitrships with bombs
-- AI
-
-
 voices:
 https://lingojam.com/RobotVoiceGenerator
 
@@ -18,7 +13,7 @@ https://lingojam.com/RobotVoiceGenerator
 HTML version
 ------------
 1- Generate distributable by ./gradlew html:dist from the terminal command line.
-2- Remove the <a> tag from index.html and remove the refresh.jpg from html/build/dist/
+2- Remove the <a> tag from index.html under webapp and remove the refresh.jpg from html/build/dist/
 3- zip the dist folder
 4- upload, e.g. to itch.io.
 

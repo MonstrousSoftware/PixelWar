@@ -20,7 +20,7 @@ public class GameObjectTypes {
 
         types.add(new GameObjectType("Anti-Aircraft", "AntiAircraftBase", "AntiAircraft", false, 100, -1f));
 
-        GameObjectType airShip = new GameObjectType("AirShip", "AirShip", null, false, 20,-1f);
+        GameObjectType airShip = new GameObjectType("AirShip", "AirShip", "Bomb", false, 20,-1f);
         airShip.followsTerrain = false;
         airShip.isMobile = true;
         airShip.isAirship = true;
@@ -31,6 +31,7 @@ public class GameObjectTypes {
         types.add(new GameObjectType("Tower", "Tower", null, false, 200, -1f));
         types.add(new GameObjectType("Arrow", "Arrow", null, false, 100, 2f));
         types.add(new GameObjectType("Bullet", "Bullet", null, false, 100, 10f));
+        types.add(new GameObjectType("Bomb", "Bomb", null, false, 100, 5f));
         types.add(new GameObjectType("Missile", "Missile", null, false, 100,10f));
         types.add(new GameObjectType("Tree1", "Tree1", null, true, 100,-1f));
         types.add(new GameObjectType("Stone1", "Stone1", null,true,100,-1f ));
@@ -41,6 +42,9 @@ public class GameObjectTypes {
         findType("Bullet").isProjectile = true;
         findType("Missile").followsTerrain = false;
         findType("Missile").isProjectile = true;
+        findType("Bomb").followsTerrain = false;
+        findType("Bomb").isProjectile = true;
+        findType("Tower").isTower = true;
 ;    }
 
     public static GameObjectType findType(String typeName) {
