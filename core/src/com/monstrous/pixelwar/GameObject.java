@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.monstrous.pixelwar.behaviours.*;
 
 public class GameObject {
-    public static float SPEED = 5f;
     public static float ROTATION_SPEED = 30f;
 
     public Army army;
@@ -133,10 +132,11 @@ public class GameObject {
             }
             else {
                 // don't move if we are facing away from the destination, just turn until we are facing more the right direction
-                if(Math.abs(angle - destAngle) < 45f) {
+                // todo smaller angle if distance is small
+                if(Math.abs(angle - destAngle) < 15f) {
                     // move in direction that the unit is facing
                     velocity.set((float) Math.cos(angle * Math.PI / 180f), 0, (float) Math.sin(angle * Math.PI / 180f));
-                    velocity.scl(SPEED);    // scale for speed and time step
+                    velocity.scl(type.maxSpeed);    // scale for speed and time step
                 }
             }
         }

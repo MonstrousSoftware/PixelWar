@@ -1,5 +1,6 @@
 package com.monstrous.pixelwar.behaviours;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.monstrous.pixelwar.GameObject;
 import com.monstrous.pixelwar.World;
@@ -31,8 +32,9 @@ public class AntiAircraft extends Behaviour {
     @Override
     public void update( float deltaTime ) {
         // death animation
-        if(go.isDying)
-            go.velocity.set(0,-0.2f,0);
+        if(go.isDying) {
+            go.velocity.set(0, -0.2f, 0);
+        }
         if(go.position.y < -5f)
             go.toRemove = true;
 

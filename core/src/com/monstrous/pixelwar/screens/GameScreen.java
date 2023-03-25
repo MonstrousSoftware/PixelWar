@@ -30,14 +30,18 @@ public class GameScreen extends ScreenAdapter {
     private DirectionalShadowLight shadowLight;
     private ModelBatch shadowBatch;
     private GameObject selectedObject;
+    private GUI gui;
 
     public GameScreen(Main game, boolean newGame) {
         this.game = game;
         this.world = new World();
+
     }
 
     @Override
     public void show() {
+
+        gui = new GUI(this);
 
         cam = new PerspectiveCamera(50, viewWidth, viewHeight);
         cam.position.set(30f, 10f, 10f);
@@ -95,6 +99,12 @@ public class GameScreen extends ScreenAdapter {
 //            cam.position.y = terrainHeight+5f;
 
         world.update(delta);
+        if(world.gameOver()) {
+            if(world.haveWon())
+                gui.setMessage("YOU ARE VICTORIOUS!");
+            else
+                gui.setMessage("YOU WERE DEFEATED!");
+        }
         miniMap.update(cam, world, environment);
 
 
@@ -112,6 +122,7 @@ public class GameScreen extends ScreenAdapter {
         modelBatch.end();
 
         miniMap.render();
+        gui.render(delta);
     }
 
     @Override
@@ -138,19 +149,25 @@ public class GameScreen extends ScreenAdapter {
         world.dispose();
         modelBatch.dispose();
         game.stopMusic();
+        gui.dispose();
     }
 
     private Vector3 tmpPos = new Vector3();
 
     public boolean mouseDown(int screenX, int screenY, int button) {
-        Gdx.app.log("mouse clicked", "");
+        //Gdx.app.log("mouse clicked", "");
         cam.update();
+
+        if(world.gameOver())
+            return false;
+
         GameObject result = world.pickObject(cam, screenX, screenY);
 
         if(result != null) {
             Gdx.app.log("clicked on", result.type.name);
             selectedObject = result;
-            result.modelInstance.materials.first().set(ColorAttribute.createDiffuse(Color.YELLOW));
+            //result.modelInstance.materials.first().set(ColorAttribute.createDiffuse(Color.YELLOW));
+            camController.followGameObject(selectedObject);
         }
         else if(selectedObject != null && selectedObject.type.isMobile && !selectedObject.isDying){
             boolean hit = world.pickLocation(cam, screenX, screenY, tmpPos);
@@ -162,11 +179,15 @@ public class GameScreen extends ScreenAdapter {
         return false;  // ?
     }
 
+
     public boolean pressedEscape() {
         Gdx.app.log("ESC pressed", "");
         game.setScreen(new MenuScreen(game));               // back to menu
         return true;
     }
 
+    public GameObject getSelectedObject() {
+        return selectedObject;
+    }
 
 }

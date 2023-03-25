@@ -19,9 +19,12 @@ public class Bullet extends Behaviour {
         else {
             GameObject collider = World.testForCollision(go);
             if(collider != null) {
+                go.toRemove = true; // remove bullet
+
                 collider.healthPoints -= 10;
-                if( collider.healthPoints < 0 )
+                if( collider.healthPoints <= 0 )
                     collider.isDying = true;
+                    collider.healthPoints = 0;
             }
         }
 

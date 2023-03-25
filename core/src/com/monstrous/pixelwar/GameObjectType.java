@@ -20,6 +20,7 @@ public class GameObjectType {
     public Vector3 dimensions;
     public BoundingBox bbox;
     public float radius;
+    public float maxSpeed;
 
     public GameObjectType(String name, String modelName, String modelName2, boolean isScenery, float healthPoints, float timeToLive) {
         this.name = name;
@@ -32,6 +33,7 @@ public class GameObjectType {
         this.isMobile = false;
         this.isProjectile = false;
         this.isAirship = false;
+        this.maxSpeed = 5f;
 
         Model model = ModelAssets.getModel("Assets");
         ModelInstance modelInstance =  new ModelInstance(model, modelName);

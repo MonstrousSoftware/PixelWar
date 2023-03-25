@@ -9,15 +9,39 @@ public class MyCamController extends CameraInputController {
 
     public static final float MOVE_SPEED = 20f;
 
+    private GameObject targetObject;
+    private Vector3 prevTarget;
     private final Vector3 tmpV1 = new Vector3();
     private final Vector3 tmpV2 = new Vector3();
 
     public MyCamController(Camera camera) {
+
         super(camera);
+        targetObject = null;
+        prevTarget = new Vector3();
+    }
+
+    public void followGameObject( GameObject go ) {
+//        tmpV1.set(go.position).sub(target);
+//        camera.position.add(tmpV1);
+        camera.position.set(target.x, 10f, target.z - 20);
+        camera.up.set(Vector3.Y);
+        camera.lookAt(target);
+        camera.update();
+        this.targetObject = go;
     }
 
     @Override
     public void update () {
+
+        if(targetObject != null)
+            target.set(targetObject.position);
+
+        tmpV1.set(target).sub(prevTarget);
+        camera.position.add(tmpV1);
+        prevTarget.set(target);
+        camera.update();
+
         // WASD are modified to move across the terrain
         if (rotateRightPressed || rotateLeftPressed || forwardPressed || backwardPressed) {
             final float delta = Gdx.graphics.getDeltaTime();

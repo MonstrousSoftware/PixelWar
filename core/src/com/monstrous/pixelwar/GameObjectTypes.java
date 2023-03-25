@@ -15,6 +15,7 @@ public class GameObjectTypes {
         types = new Array<>();
         GameObjectType tank = new GameObjectType("Tank", "TankBody", "TankTurret", false, 100, -1f);
         tank.isMobile = true;
+        tank.maxSpeed = 5f;
         types.add(tank);
 
         types.add(new GameObjectType("Anti-Aircraft", "AntiAircraftBase", "AntiAircraft", false, 100, -1f));
@@ -23,6 +24,7 @@ public class GameObjectTypes {
         airShip.followsTerrain = false;
         airShip.isMobile = true;
         airShip.isAirship = true;
+        airShip.maxSpeed = 1f;
         types.add(airShip);
 
         types.add(new GameObjectType("Flag", "Flag", null, false, 200, -1f));

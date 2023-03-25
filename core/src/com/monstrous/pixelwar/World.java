@@ -21,6 +21,8 @@ public class World implements Disposable {
     private static Vector3 tmpPosition = new Vector3();
     private static Vector3 tmpVelocity = new Vector3();
     private static Army playerArmy;
+    private GameObject playerFlag;
+    private GameObject enemyFlag;
 
     public World() {
         Gdx.app.debug("World", "constructor");
@@ -44,7 +46,7 @@ public class World implements Disposable {
         placeItem(PLAYER, "Tank", -40, 0, 0);
         placeItem(PLAYER, "Tank", -60, 0, 0);
         placeItem(PLAYER, "Tank", 10, 0, 0);
-        placeItem(PLAYER, "Flag", -12, 0, 0);
+        playerFlag = placeItem(PLAYER, "Flag", -12, 0, 0);
         placeItem(PLAYER, "AirShip", 0, 30, 0);
         placeItem(PLAYER, "Tower", 0, 40, 0);
 
@@ -54,7 +56,7 @@ public class World implements Disposable {
         placeItem(ENEMY, "Tank", 100, 30, 0);
         placeItem(ENEMY, "Tank", 60, 20, 0);
         placeItem(ENEMY, "Tank", 100, 10, 0);
-        placeItem(ENEMY, "Flag", 100, 0, 0);
+        enemyFlag = placeItem(ENEMY, "Flag", 100, 0, 0);
         placeItem(ENEMY, "AirShip", 50, 30, 0);
         placeItem(ENEMY, "Tower", 50, 40, 0);
 
@@ -152,6 +154,19 @@ public class World implements Disposable {
         }
         gameObjects.removeAll(deleteList, true);
     }
+
+    public boolean gameOver() {
+        if(playerFlag.isDying || enemyFlag.isDying)
+            return true;
+        return false;
+    }
+
+    public boolean haveWon() {
+        if( enemyFlag.isDying)
+            return true;
+        return false;
+    }
+
 
     public void render(ModelBatch modelBatch, Environment environment, boolean mapView ) {
         terrain.render(modelBatch, environment);
