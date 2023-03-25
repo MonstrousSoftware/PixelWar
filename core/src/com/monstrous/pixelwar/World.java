@@ -15,6 +15,7 @@ public class World implements Disposable {
     public static String ENEMY = "Red";
 
     public static Terrain terrain;
+    private ModelCache cache;
     private static ModelAssets modelAssets;
     private static Array<GameObject> gameObjects;
     private static Array<GameObject> deleteList;
@@ -37,18 +38,37 @@ public class World implements Disposable {
         gameObjects = new Array<>();
         deleteList = new Array<>();
 
+
+        buildCache();
         populate();
     }
 
+    // place all scenery in a model cache
+    private void buildCache() {
+        cache = new ModelCache();
+        placeRandom("Tree1", 300);
+        placeRandom("Stone1", 200);
+        placeRandom("Stone2", 200);
+        placeRandom("Stone3", 200);
+
+        cache.begin();
+        cache.add(terrain.modelInstance);
+        for(GameObject go : gameObjects ) {
+            cache.add(go.modelInstance);
+        }
+        cache.end();
+        gameObjects.clear();
+    }
+
     private void populate() {
-        placeItem(PLAYER, "Anti-Aircraft", 0, 0, 0);
-        placeItem(PLAYER, "Anti-Aircraft", 10, 10, 90);
         placeItem(PLAYER, "Tank", -40, 0, 0);
         placeItem(PLAYER, "Tank", -60, 0, 0);
         placeItem(PLAYER, "Tank", 10, 0, 0);
         playerFlag = placeItem(PLAYER, "Flag", -12, 0, 0);
         placeItem(PLAYER, "AirShip", 0, 30, 0);
         placeItem(PLAYER, "Tower", 0, 40, 0);
+        placeItem(PLAYER, "Anti-Aircraft", 0, 0, 0);
+        placeItem(PLAYER, "Anti-Aircraft", 10, 10, 90);
 
         placeItem(ENEMY, "Anti-Aircraft", 50, 0, 0);
         placeItem(ENEMY, "Anti-Aircraft", 50, 50, 0);
@@ -59,13 +79,6 @@ public class World implements Disposable {
         enemyFlag = placeItem(ENEMY, "Flag", 100, 0, 0);
         placeItem(ENEMY, "AirShip", 50, 30, 0);
         placeItem(ENEMY, "Tower", 50, 40, 0);
-
-        placeRandom("Tree1", 300);
-        placeRandom("Stone1", 200);
-        placeRandom("Stone2", 200);
-        placeRandom("Stone3", 200);
-
-
     }
 
     private void placeRandom(String name, int count){
@@ -93,6 +106,7 @@ public class World implements Disposable {
         return go;
     }
 
+
     public static GameObject testForCollision(GameObject subject) {
         for(int i = 0; i < gameObjects.size; i++ ) {
             GameObject go = gameObjects.get(i);
@@ -103,6 +117,16 @@ public class World implements Disposable {
             float dist2 = subject.position.dst2(go.position);
             if(dist2 < go.type.radius * go.type.radius)
                 return go;
+        }
+        return null;
+    }
+
+    public GameObject selectRandomUnit() {
+        for(int i = 0; i < gameObjects.size; i++ ) {
+            GameObject go = gameObjects.get(i);
+            if(go.army != playerFlag.army || !go.type.isMobile || go.type.isProjectile)
+                continue;
+            return go;
         }
         return null;
     }
@@ -169,7 +193,10 @@ public class World implements Disposable {
 
 
     public void render(ModelBatch modelBatch, Environment environment, boolean mapView ) {
-        terrain.render(modelBatch, environment);
+
+        modelBatch.render(cache, environment);
+
+       // terrain.render(modelBatch, environment);
         for(GameObject go : gameObjects ) {
             if(mapView && go.type.isScenery)   // hide scenery in map view
                 continue;
@@ -185,6 +212,7 @@ public class World implements Disposable {
         Gdx.app.debug("World", "dispose");
         modelAssets.dispose();
         terrain.dispose();
+        cache.dispose();
     }
 
     private Vector3 tmpPos = new Vector3();
@@ -198,8 +226,8 @@ public class World implements Disposable {
             if(go.isDying)
                 continue;
 
-//            if(go.army != playerArmy)   // can only select own units, not enemy units or neutral ones
-//                continue;
+            if(go.army != playerArmy)   // can only select own units, not enemy units or neutral ones
+                continue;
 
             go.type.bbox.getCenter(tmpPos); // center of volume relative to object origin
             tmpPos.add(go.position);

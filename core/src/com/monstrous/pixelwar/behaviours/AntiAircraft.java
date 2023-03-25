@@ -7,7 +7,7 @@ import com.monstrous.pixelwar.World;
 
 public class AntiAircraft extends Behaviour {
 
-    public static final float TRACKING_RADIUS = 20f;
+    public static final float TRACKING_RADIUS = 40f;
 
     public static final float FIRE_REPEAT = 0.5f;
     public static final float MAX_SWING = 45f;  // degrees
@@ -35,7 +35,7 @@ public class AntiAircraft extends Behaviour {
         if(go.isDying) {
             go.velocity.set(0, -0.2f, 0);
         }
-        if(go.position.y < -5f)
+        if(go.position.y < -1f)
             go.toRemove = true;
 
 
@@ -62,7 +62,7 @@ public class AntiAircraft extends Behaviour {
             spawnPoint.y += MUZZLE_HEIGHT;
             spawnPoint.x += RADIUS * Math.cos(angleRads);
             spawnPoint.z += RADIUS * Math.sin(angleRads);
-            Vector3 velocity = new Vector3(BULLET_SPEED*(float)Math.cos(angleRads), BULLET_SPEED, BULLET_SPEED*(float)Math.sin(angleRads));
+            Vector3 velocity = new Vector3(BULLET_SPEED*(float)Math.cos(angleRads), BULLET_SPEED/2, BULLET_SPEED*(float)Math.sin(angleRads));
 
             GameObject bullet = World.spawnItem(go.army.name, "Bullet", spawnPoint, go.targetAngle+turretAngle, velocity);
             //Gdx.app.log("Spawn missile", ""+spawnPoint);

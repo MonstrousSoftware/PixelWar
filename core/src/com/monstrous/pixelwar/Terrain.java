@@ -21,7 +21,7 @@ public class Terrain implements Disposable {
     public static final float AMPLITUDE  = 20f;
 
     private Model model;
-    private ModelInstance modelInstance;
+    public ModelInstance modelInstance;
     private  static float heightMap[][];
     private float verts[];  // for collision detection, 3 floats per vertex
     private short indices[];    // 3 indices per triangle

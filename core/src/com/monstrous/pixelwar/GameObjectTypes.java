@@ -24,7 +24,7 @@ public class GameObjectTypes {
         airShip.followsTerrain = false;
         airShip.isMobile = true;
         airShip.isAirship = true;
-        airShip.maxSpeed = 1f;
+        airShip.maxSpeed = 3f;
         types.add(airShip);
 
         types.add(new GameObjectType("Flag", "Flag", null, false, 200, -1f));

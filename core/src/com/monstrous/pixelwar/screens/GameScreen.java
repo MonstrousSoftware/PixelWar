@@ -3,6 +3,7 @@ package com.monstrous.pixelwar.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.Environment;
@@ -31,6 +32,7 @@ public class GameScreen extends ScreenAdapter {
     private ModelBatch shadowBatch;
     private GameObject selectedObject;
     private GUI gui;
+    private Sound messageSound;
 
     public GameScreen(Main game, boolean newGame) {
         this.game = game;
@@ -86,7 +88,10 @@ public class GameScreen extends ScreenAdapter {
         if(Settings.musicEnabled)
             game.startMusic("music/Level 1.wav");
 
-        selectedObject = null;
+        selectObject( world.selectRandomUnit() );
+
+        messageSound = Gdx.audio.newSound(Gdx.files.internal("sounds/commence.wav"));
+        messageSound.play();
     }
 
     @Override
@@ -100,11 +105,23 @@ public class GameScreen extends ScreenAdapter {
 
         world.update(delta);
         if(world.gameOver()) {
-            if(world.haveWon())
+            if(world.haveWon()) {
                 gui.setMessage("YOU ARE VICTORIOUS!");
-            else
+                messageSound.dispose();
+                messageSound = Gdx.audio.newSound(Gdx.files.internal("sounds/victorious.wav"));
+                messageSound.play();
+            } else {
                 gui.setMessage("YOU WERE DEFEATED!");
+                messageSound.dispose();
+                messageSound = Gdx.audio.newSound(Gdx.files.internal("sounds/defeated.wav"));
+                messageSound.play();
+            }
+
+
+
         }
+        if(selectedObject == null || selectedObject.toRemove)
+            selectObject( world.selectRandomUnit() );
         miniMap.update(cam, world, environment);
 
 
@@ -150,6 +167,7 @@ public class GameScreen extends ScreenAdapter {
         modelBatch.dispose();
         game.stopMusic();
         gui.dispose();
+        messageSound.dispose();
     }
 
     private Vector3 tmpPos = new Vector3();
@@ -165,9 +183,7 @@ public class GameScreen extends ScreenAdapter {
 
         if(result != null) {
             Gdx.app.log("clicked on", result.type.name);
-            selectedObject = result;
-            //result.modelInstance.materials.first().set(ColorAttribute.createDiffuse(Color.YELLOW));
-            camController.followGameObject(selectedObject);
+            selectObject(result);
         }
         else if(selectedObject != null && selectedObject.type.isMobile && !selectedObject.isDying){
             boolean hit = world.pickLocation(cam, screenX, screenY, tmpPos);
@@ -177,6 +193,11 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         return false;  // ?
+    }
+
+    private void selectObject(GameObject go ) {
+        selectedObject = go;
+        camController.followGameObject(selectedObject);
     }
 
 

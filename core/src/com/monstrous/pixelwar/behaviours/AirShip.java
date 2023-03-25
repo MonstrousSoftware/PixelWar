@@ -15,12 +15,11 @@ public class AirShip extends Behaviour {
 
         // death animation
         if (go.isDying) {
-            Gdx.app.log("AirShip", "dying");
-            go.modelInstance.transform.setFromEulerAngles(go.angle, 20f, 0).trn(go.position);
+            go.modelInstance.transform.setFromEulerAngles(go.angle, 20f, 15f).trn(go.position);
             go.isMovingToDestination = false;
-            go.velocity.set(0, -0.8f, 0);
+            go.velocity.y = -0.8f;
          }
-        if(go.position.y < -5f)
+        if(go.position.y < -3f)
             go.toRemove = true;
     }
 }

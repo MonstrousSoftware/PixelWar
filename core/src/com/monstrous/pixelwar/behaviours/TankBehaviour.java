@@ -29,7 +29,7 @@ public class TankBehaviour extends Behaviour {
         // death animation
         if(go.isDying)
             go.velocity.set(0,-0.2f,0);
-        if(go.position.y < -5f)
+        if(go.position.y < -1f)
             go.toRemove = true;
 
         target = World.closestEnemy(go, TRACKING_RADIUS);

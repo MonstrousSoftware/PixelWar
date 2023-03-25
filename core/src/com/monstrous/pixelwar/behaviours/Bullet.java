@@ -1,5 +1,6 @@
 package com.monstrous.pixelwar.behaviours;
 
+import com.badlogic.gdx.Gdx;
 import com.monstrous.pixelwar.GameObject;
 import com.monstrous.pixelwar.World;
 
@@ -20,11 +21,12 @@ public class Bullet extends Behaviour {
             GameObject collider = World.testForCollision(go);
             if(collider != null) {
                 go.toRemove = true; // remove bullet
-
+                Gdx.app.log("bullet", "hp:"+collider.healthPoints);
                 collider.healthPoints -= 10;
-                if( collider.healthPoints <= 0 )
+                if( collider.healthPoints <= 0 ) {
                     collider.isDying = true;
                     collider.healthPoints = 0;
+                }
             }
         }
 

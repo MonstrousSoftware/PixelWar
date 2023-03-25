@@ -85,7 +85,7 @@ public class GUI implements Disposable {
             labelMessage.setText("");
 
         int fps = (int)(1.0f/deltaTime);
-        labelFPS.setText(String.format("FPS: %2d", fps));
+        labelFPS.setText("FPS: "+ fps);
     }
 
     public void render( float deltaTime ) {
