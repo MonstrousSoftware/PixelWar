@@ -35,7 +35,7 @@ public class AntiAircraft extends Behaviour {
         if(go.isDying) {
             go.velocity.set(0, -0.2f, 0);
         }
-        if(go.position.y < -1f)
+        if(go.position.y < -5f)
             go.toRemove = true;
 
 

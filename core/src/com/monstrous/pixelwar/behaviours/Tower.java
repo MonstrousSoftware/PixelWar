@@ -15,7 +15,7 @@ public class Tower extends Behaviour {
         if(go.isDying) {
             go.velocity.set(0, -0.8f, 0);
         }
-        if(go.position.y < -3f)
+        if(go.position.y < -5f)
             go.toRemove = true;
     }
 }

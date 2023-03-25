@@ -189,7 +189,10 @@ public class GameScreen extends ScreenAdapter {
             if(hit) {
                 //Gdx.app.log("location", "hit: " + hit + " at " + tmpPos);
                 selectedObject.setDestination(tmpPos);
-                playSound("sounds/affirmative.wav");
+                if(selectedObject.type.isAirship)
+                    playSound("sounds/roger that.wav");
+                else
+                    playSound("sounds/affirmative.wav");
             }
         }
         return false;  // ?

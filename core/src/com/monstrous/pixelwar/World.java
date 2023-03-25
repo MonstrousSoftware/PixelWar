@@ -24,6 +24,7 @@ public class World implements Disposable {
     private static Army playerArmy;
     private GameObject playerFlag;
     private GameObject enemyFlag;
+    private AI ai;
 
     public World() {
         Gdx.app.debug("World", "constructor");
@@ -41,6 +42,7 @@ public class World implements Disposable {
 
         buildCache();
         populate();
+        ai = new AI(enemyFlag, gameObjects);
     }
 
     // place all scenery in a model cache
@@ -61,24 +63,29 @@ public class World implements Disposable {
     }
 
     private void populate() {
-        placeItem(PLAYER, "Tank", -40, 0, 0);
-        placeItem(PLAYER, "Tank", -60, 0, 0);
-        placeItem(PLAYER, "Tank", 10, 0, 0);
-        playerFlag = placeItem(PLAYER, "Flag", -12, 0, 0);
-        placeItem(PLAYER, "AirShip", 0, 30, 0);
-        placeItem(PLAYER, "Tower", 0, 40, 0);
-        placeItem(PLAYER, "Anti-Aircraft", 0, 0, 0);
-        placeItem(PLAYER, "Anti-Aircraft", 10, 10, 90);
+        playerFlag = placeItem(PLAYER, "Flag", 0, -100, 90);
+        placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
+        placeItem(PLAYER, "Anti-Aircraft", -20, -80, 90);
 
-        placeItem(ENEMY, "Anti-Aircraft", 50, 0, 0);
-        placeItem(ENEMY, "Anti-Aircraft", 50, 50, 0);
-        placeItem(ENEMY, "Anti-Aircraft", 50, -50, 0);
-        placeItem(ENEMY, "Tank", 100, 30, 0);
-        placeItem(ENEMY, "Tank", 60, 20, 0);
-        placeItem(ENEMY, "Tank", 100, 10, 0);
-        enemyFlag = placeItem(ENEMY, "Flag", 100, 0, 0);
-        placeItem(ENEMY, "AirShip", 50, 30, 0);
-        placeItem(ENEMY, "Tower", 50, 40, 0);
+        placeItem(PLAYER, "Tank", -40, -70, 90);
+        placeItem(PLAYER, "Tank", -30, -70, 90);
+        placeItem(PLAYER, "Tank", 40, -70, 90);
+        placeItem(PLAYER, "Tank", 30, -70, 90);
+
+        placeItem(PLAYER, "AirShip", 0, -60, 0);
+        placeItem(PLAYER, "Tower", 10, -60, 0);
+
+        enemyFlag = placeItem(ENEMY, "Flag", 0, 100, -90);
+        placeItem(ENEMY, "Anti-Aircraft", 20, 80, 90);
+        placeItem(ENEMY, "Anti-Aircraft", -20, 80, 90);
+
+        placeItem(ENEMY, "Tank", -40, 70, -90);
+        placeItem(ENEMY, "Tank", -30, 70, -90);
+        placeItem(ENEMY, "Tank", 40, 70, -90);
+        placeItem(ENEMY, "Tank", 30, 70, -90);
+
+        placeItem(ENEMY, "AirShip", 0, 60, 0);
+        placeItem(ENEMY, "Tower", 10, 60, 0);
     }
 
     private void placeRandom(String name, int count){
@@ -95,9 +102,7 @@ public class World implements Disposable {
         float y = terrain.getHeight(x, z);
         tmpPosition.set(x, y, z);
         tmpVelocity.set(0,0,0);
-        GameObject go = new GameObject(armyName, name, tmpPosition, angle, tmpVelocity);
-        gameObjects.add(go);
-        return go;
+        return spawnItem(armyName, name, tmpPosition, angle, tmpVelocity);
     }
 
     public static GameObject spawnItem(String armyName, String name, Vector3 position, float angle, Vector3 velocity){
@@ -128,6 +133,13 @@ public class World implements Disposable {
                 continue;
             return go;
         }
+        // fall-back: select structure
+        for(int i = 0; i < gameObjects.size; i++ ) {
+            GameObject go = gameObjects.get(i);
+            if(go.army != playerFlag.army || go.type.isProjectile)
+                continue;
+            return go;
+        }
         return null;
     }
 
@@ -136,7 +148,7 @@ public class World implements Disposable {
         float minDist = Float.MAX_VALUE;
         for(int i = 0; i < gameObjects.size; i++ ) {
             GameObject go = gameObjects.get(i);
-            if(go.army.isNeutral || go.army == subject.army || go.type.isProjectile)
+            if(go.army.isNeutral || go.army == subject.army || go.type.isProjectile || go.isDying)
                 continue;
             float dist2 = subject.position.dst2(go.position);
             if(dist2 > radius*radius)
@@ -177,6 +189,7 @@ public class World implements Disposable {
                 deleteList.add(go);
         }
         gameObjects.removeAll(deleteList, true);
+        ai.update(deltaTime);
     }
 
     public boolean gameOver() {

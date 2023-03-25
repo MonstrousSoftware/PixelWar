@@ -93,7 +93,6 @@ public class GameObject {
                 toRemove = true;    // mark for removal
         }
         if(isRotating) {
-
             // recalculate the destination angle from current position
             tmpVec.set(destination).sub(position).nor();    // unit vector towards destination
             double phi = Math.atan2(tmpVec.z, tmpVec.x);     // angle in horizontal XZ plane (radians)
@@ -149,7 +148,7 @@ public class GameObject {
 
         modelInstance.transform.setToRotation(Vector3.Y, -angle).trn(position); // update transform with rotation and position
         if (modelInstance2 != null)
-            modelInstance2.transform.setToRotation(Vector3.Y, -targetAngle).setTranslation(position);
+            modelInstance2.transform.setToRotation(Vector3.Y, -targetAngle).trn(position);
 
         if(behaviour != null)
             behaviour.update(deltaTime);

@@ -27,7 +27,7 @@ public class GameObjectTypes {
         airShip.maxSpeed = 3f;
         types.add(airShip);
 
-        types.add(new GameObjectType("Flag", "Flag", null, false, 200, -1f));
+        types.add(new GameObjectType("Flag", "Flag", null, false, 80, -1f));
         types.add(new GameObjectType("Tower", "Tower", null, false, 200, -1f));
         types.add(new GameObjectType("Arrow", "Arrow", null, false, 100, 2f));
         types.add(new GameObjectType("Bullet", "Bullet", null, false, 100, 10f));
