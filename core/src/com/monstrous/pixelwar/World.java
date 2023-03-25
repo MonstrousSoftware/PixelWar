@@ -189,7 +189,9 @@ public class World implements Disposable {
                 deleteList.add(go);
         }
         gameObjects.removeAll(deleteList, true);
-        ai.update(deltaTime);
+
+
+        //ai.update(deltaTime);
     }
 
     public boolean gameOver() {

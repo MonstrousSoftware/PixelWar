@@ -131,8 +131,13 @@ public class GameObject {
             }
             else {
                 // don't move if we are facing away from the destination, just turn until we are facing more the right direction
-                // todo smaller angle if distance is small
-                if(Math.abs(angle - destAngle) < 15f) {
+                // smaller angle if distance is small
+                //Gdx.app.log("turn for distance", ""+distance);
+                float factor = distance/120f;
+                if(factor > 1f)
+                    factor = 1f;
+                float maxAngle = 15f * factor;
+                if(Math.abs(angle - destAngle) < maxAngle) {
                     // move in direction that the unit is facing
                     velocity.set((float) Math.cos(angle * Math.PI / 180f), 0, (float) Math.sin(angle * Math.PI / 180f));
                     velocity.scl(type.maxSpeed);    // scale for speed and time step

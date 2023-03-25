@@ -23,9 +23,9 @@ public class Terrain implements Disposable {
     private Model model;
     public ModelInstance modelInstance;
     private  static float heightMap[][];
-    private float verts[];  // for collision detection, 3 floats per vertex
-    private short indices[];    // 3 indices per triangle
-    private int numIndices;
+    private static float verts[];  // for collision detection, 3 floats per vertex
+    private static short indices[];    // 3 indices per triangle
+    private static int numIndices;
 
     public Terrain() {
 
@@ -57,13 +57,20 @@ public class Terrain implements Disposable {
     }
 
     // hmmm.... static...
-    public static float getHeight(float x, float y) {
-        if(x < -SCALE/2 || x > SCALE/2 || y < -SCALE/2 || y > SCALE/2 )
-            return 0;
-        int ix = (int)(MAP_SIZE * ((x/SCALE)+0.5f));
-        int iy = (int)(MAP_SIZE * ((y/SCALE)+0.5f));
-        return heightMap[iy][ix];
-    }
+//    public static float getHeight(float x, float y) {
+//        if(x < -SCALE/2 || x > SCALE/2 || y < -SCALE/2 || y > SCALE/2 )
+//            return 0;
+//        int ix = (int)(MAP_SIZE * ((x/SCALE)+0.5f));
+//        int iy = (int)(MAP_SIZE * ((y/SCALE)+0.5f));
+//
+//        float step = SCALE/MAP_SIZE;
+//
+//        float h0 = heightMap[iy][ix];
+//        float h1 = heightMap[iy][ix+1];
+//        float frac = x - (x/SCALE)
+//
+//        return heightMap[iy][ix];
+//    }
 
 
     @Override
@@ -201,6 +208,16 @@ public class Terrain implements Disposable {
     public boolean intersect(Ray ray, Vector3 intersection ) {
         boolean hit = Intersector.intersectRayTriangles(ray, verts, indices, 3, intersection);
         return hit;
+    }
+
+    private static Ray downRay = new Ray();
+    private static Vector3 hitPoint = new Vector3();
+
+    public static float getHeight(float x, float y) {
+        downRay.set(x, 20f, y, 0, -1, 0);
+        boolean hit = Intersector.intersectRayTriangles(downRay, verts, indices, 3, hitPoint);
+        return hitPoint.y;
+
     }
 
 }
