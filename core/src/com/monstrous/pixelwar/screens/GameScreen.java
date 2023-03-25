@@ -32,7 +32,7 @@ public class GameScreen extends ScreenAdapter {
     private ModelBatch shadowBatch;
     private GameObject selectedObject;
     private GUI gui;
-    private Sound messageSound;
+    private Sound messageSound = null;
 
     public GameScreen(Main game, boolean newGame) {
         this.game = game;
@@ -90,8 +90,7 @@ public class GameScreen extends ScreenAdapter {
 
         selectObject( world.selectRandomUnit() );
 
-        messageSound = Gdx.audio.newSound(Gdx.files.internal("sounds/commence.wav"));
-        messageSound.play();
+        playSound("sounds/commence.wav");
     }
 
     @Override
@@ -107,18 +106,11 @@ public class GameScreen extends ScreenAdapter {
         if(world.gameOver()) {
             if(world.haveWon()) {
                 gui.setMessage("YOU ARE VICTORIOUS!");
-                messageSound.dispose();
-                messageSound = Gdx.audio.newSound(Gdx.files.internal("sounds/victorious.wav"));
-                messageSound.play();
+                playSound("sounds/victorious.wav");
             } else {
                 gui.setMessage("YOU WERE DEFEATED!");
-                messageSound.dispose();
-                messageSound = Gdx.audio.newSound(Gdx.files.internal("sounds/defeated.wav"));
-                messageSound.play();
+                playSound("sounds/defeated.wav");
             }
-
-
-
         }
         if(selectedObject == null || selectedObject.toRemove)
             selectObject( world.selectRandomUnit() );
@@ -140,6 +132,13 @@ public class GameScreen extends ScreenAdapter {
 
         miniMap.render();
         gui.render(delta);
+    }
+
+    private void playSound(String file) {
+        if(messageSound != null)
+            messageSound.dispose();
+        messageSound = Gdx.audio.newSound(Gdx.files.internal(file));
+        messageSound.play(game.getSoundVolume());
     }
 
     @Override
@@ -190,6 +189,7 @@ public class GameScreen extends ScreenAdapter {
             if(hit) {
                 //Gdx.app.log("location", "hit: " + hit + " at " + tmpPos);
                 selectedObject.setDestination(tmpPos);
+                playSound("sounds/affirmative.wav");
             }
         }
         return false;  // ?
