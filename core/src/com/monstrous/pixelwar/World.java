@@ -66,36 +66,31 @@ public class World implements Disposable {
     }
 
     private void populate() {
-        playerFlag = placeItem(PLAYER, "Flag", 0, -100, 90);
+        playerFlag = placeItem(PLAYER, "Flag", 100, -100, 90);
 
-
-
-//        placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
-//        placeItem(PLAYER, "Anti-Aircraft", -20, -80, 90);
+        placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
+        placeItem(PLAYER, "Anti-Aircraft", -20, -80, 90);
 
         placeItem(PLAYER, "Tank", -40, -70, 90);
-//        placeItem(PLAYER, "Tank", -30, -70, 90);
-//        placeItem(PLAYER, "Tank", 40, -70, 90);
-//        placeItem(PLAYER, "Tank", 30, -70, 90);
-//
-//        placeItem(PLAYER, "AirShip", 0, -60, 0);
-//        placeItem(PLAYER, "Tower", 10, -60, 0);
+        placeItem(PLAYER, "Tank", -30, -70, 90);
+        placeItem(PLAYER, "Tank", 40, -70, 90);
+        placeItem(PLAYER, "Tank", 30, -70, 90);
 
-        placeItem(ENEMY, "Tower", 0, -50, -90);
-        placeItem(ENEMY, "AirShip", -30, -40, -90);
+        placeItem(PLAYER, "AirShip", 0, -60, 0);
+        placeItem(PLAYER, "Tower", 10, -60, 0);
 
 
         enemyFlag = placeItem(ENEMY, "Flag", 0, 100, -90);
-//        placeItem(ENEMY, "Anti-Aircraft", 20, 80, 90);
-//        placeItem(ENEMY, "Anti-Aircraft", -20, 80, 90);
-//
-//        placeItem(ENEMY, "Tank", -40, 70, -90);
-//        placeItem(ENEMY, "Tank", -30, 70, -90);
-//        placeItem(ENEMY, "Tank", 40, 70, -90);
-//        placeItem(ENEMY, "Tank", 30, 70, -90);
-//
-//        placeItem(ENEMY, "AirShip", 0, 60, 0);
-//        placeItem(ENEMY, "Tower", 10, 60, 0);
+        placeItem(ENEMY, "Anti-Aircraft", 20, 80, 90);
+        placeItem(ENEMY, "Anti-Aircraft", -20, 80, 90);
+
+        placeItem(ENEMY, "Tank", -40, 70, -90);
+        placeItem(ENEMY, "Tank", -30, 70, -90);
+        placeItem(ENEMY, "Tank", 40, 70, -90);
+        placeItem(ENEMY, "Tank", 30, 70, -90);
+
+        placeItem(ENEMY, "AirShip", 0, 60, 0);
+        placeItem(ENEMY, "Tower", 10, 60, 0);
     }
 
     private void placeRandom(String name, int count){
@@ -121,21 +116,23 @@ public class World implements Disposable {
         return go;
     }
 
-    private static BoundingBox bbox = new BoundingBox();
-
-    public static GameObject testForCollision(GameObject subject) {
+    public static GameObject testForCollision(GameObject bullet) {
 
         for(int i = 0; i < gameObjects.size; i++ ) {
             GameObject go = gameObjects.get(i);
-            if(go == subject)
+            if(go == bullet)
                 continue;
-            if(go.army == subject.army)
+            if(go.army == bullet.army)  // prevent friendly fire
                 continue;
-            float dist2 = subject.position.dst2(go.position);
-            if(dist2 < go.type.radius * go.type.radius) {
-                tmpPosition.set(subject.position).sub(go.position);
-                go.modelInstance.calculateBoundingBox(bbox);
-                if( bbox.contains(tmpPosition) )
+            // add bounding box centre to object position (especially important for airship)
+            go.type.bbox.getCenter(tmpPosition);
+            tmpPosition.add(go.position);
+            float dist = bullet.position.dst(tmpPosition);
+            //Gdx.app.debug("bullet distance", "dist: "+dist);
+            if(dist < go.type.radius ) {
+                //Gdx.app.debug("bullet is close", "dist: "+dist);
+                tmpPosition.set(bullet.position).sub(go.position);
+                if( go.type.bbox.contains(tmpPosition) )
                     return go;
             }
         }
@@ -209,6 +206,27 @@ public class World implements Disposable {
             }
         }
         return closest;
+    }
+
+    // damage all enemies in blast circle
+    public static void blastEffect(GameObject bomb, float radius) {
+
+        Sounds.playSound(Sounds.EXPLOSION);
+
+        //actual bomb position (centre of bbox)
+        bomb.type.bbox.getCenter(tmpPosition);
+        tmpPosition.add(bomb.position);
+
+        // damage all enemies close to the bomb
+        for(int i = 0; i < gameObjects.size; i++ ) {
+            GameObject go = gameObjects.get(i);
+            if(go.army.isNeutral || go.army == bomb.army || go.type.isProjectile || go.isDying)
+                continue;
+            float dist2 = tmpPosition.dst2(go.position);
+            if(dist2 > radius*radius)
+                continue;
+            go.takeDamage(150);
+        }
     }
 
     public static GameObject closestTower(GameObject subject, float radius) {

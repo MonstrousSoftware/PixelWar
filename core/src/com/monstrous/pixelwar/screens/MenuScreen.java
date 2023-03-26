@@ -56,6 +56,7 @@ public class MenuScreen extends ScreenAdapter {
 
         stage.addActor(screenTable);
         screenTable.setFillParent(true);        // size to match stage size
+        screenTable.setColor(Color.BLUE);
 
         Label labelTitle = new Label(Settings.title, skin, "title");
 

@@ -7,7 +7,7 @@ import com.monstrous.pixelwar.World;
 
 public class Bullet extends Behaviour {
 
-    public static final float ACCELERATION = 0.3f;
+    public static final float ACCELERATION = 0.1f;
 
     public Bullet(GameObject go) {
         super(go);
@@ -23,13 +23,7 @@ public class Bullet extends Behaviour {
             if(collider != null) {
                 go.toRemove = true; // remove bullet
                 Gdx.app.debug("bullet hits", collider.type.name+" hp:"+collider.healthPoints);
-                collider.healthPoints -= 10;
-                Sounds.playSound(Sounds.BULLET_HIT);
-                if( collider.healthPoints <= 0 ) {
-                    collider.isDying = true;
-                    collider.healthPoints = 0;
-                    Sounds.playSound(Sounds.EXPLOSION);
-                }
+                collider.takeDamage(10);
             }
         }
 

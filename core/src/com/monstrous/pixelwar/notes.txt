@@ -19,9 +19,6 @@ HTML version
 
 Caveats: some browsers will refuse to play it if there is audio before the user has clicked anything.
 
-The exit button in the menu has no effect in a browser. Should be disabled for HTML version.
-
-Mobile browsers don't allow for a right click, which breaks the game play.
 
 
 Add this to webapp/WEB_INF/index.html to prevent context menu in HTML version

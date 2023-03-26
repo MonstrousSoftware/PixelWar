@@ -11,13 +11,17 @@ public class AntiAircraft extends Behaviour {
     public static final float TRACKING_RADIUS = 40f;
 
     public static final float FIRE_REPEAT = 0.5f;
-    public static final float MAX_SWING = 45f;  // degrees
+    public static final float RELOAD_TIME = 3.5f;
+    public static final float BURST_SIZE = 7;
+    public static final float MAX_SWING = 15f;  // degrees
 
     public static final float RADIUS = 1.5f;
     public static final float MUZZLE_HEIGHT = 1.5f;
-    public static final float BULLET_SPEED = 4f;
+    public static final float BULLET_SPEED = 5f;
 
     private float timeToFire;
+    private float reloadingTimer;
+    private int burstCount;
     private float turretAngle;
     private int turretDir;
     private GameObject target;
@@ -26,6 +30,8 @@ public class AntiAircraft extends Behaviour {
     public AntiAircraft(GameObject go) {
         super(go);
         timeToFire = FIRE_REPEAT;
+        reloadingTimer = 0;
+        burstCount = 0;
         turretAngle = 0;
         turretDir = 1;
     }
@@ -55,7 +61,8 @@ public class AntiAircraft extends Behaviour {
         go.modelInstance2.transform.setToRotation(Vector3.Y, -(go.targetAngle+turretAngle)).trn(go.position); // update transform with rotation and position
 
         timeToFire -= deltaTime;
-        if(!go.isDying && timeToFire < 0 && target != null) {
+        reloadingTimer -= deltaTime;
+        if(!go.isDying && reloadingTimer <= 0 && timeToFire < 0 && target != null) {
             timeToFire = FIRE_REPEAT;
 
             double angleRads = (go.targetAngle+turretAngle)*Math.PI/180f;
@@ -68,8 +75,12 @@ public class AntiAircraft extends Behaviour {
             GameObject bullet = World.spawnItem(go.army.name, "Bullet", spawnPoint, go.targetAngle+turretAngle, velocity);
             //Gdx.app.log("Spawn missile", ""+spawnPoint);
             Sounds.playSound(Sounds.AA_FIRE);
+
+            burstCount++;
+            if(burstCount > BURST_SIZE){
+                burstCount = 0;
+                reloadingTimer = RELOAD_TIME;
+            }
         }
-
-
     }
 }

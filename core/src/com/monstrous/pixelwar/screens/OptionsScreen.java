@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.monstrous.pixelwar.Main;
+import com.monstrous.pixelwar.Sounds;
 
 public class OptionsScreen implements Screen {
 
@@ -53,6 +54,7 @@ public class OptionsScreen implements Screen {
 
         // root table that fills the whole screen
         Table screenTable = new Table();
+        screenTable.setColor(Color.RED);
         stage.addActor(screenTable);
         screenTable.setFillParent(true);        // size to match stage size
 
@@ -62,7 +64,7 @@ public class OptionsScreen implements Screen {
         final CheckBox fullScreenCheckBox = new CheckBox("FULL SCREEN", skin);
 
         final Slider soundSlider = new Slider(0,1.0f, 0.05f, false, skin);
-        soundSlider.setValue((float) Math.sqrt(game.getSoundVolume()));
+        soundSlider.setValue((float) Math.sqrt(Sounds.getSoundVolume()));
 
         final Slider musicSlider = new Slider(0,1.0f, 0.05f, false, skin);
         musicSlider.setValue( (float) Math.sqrt( game.getMusicVolume()) );
@@ -91,8 +93,8 @@ public class OptionsScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 float vol = soundSlider.getValue();
-                game.setSoundVolume(vol*vol);
-                flipSound.play(game.getSoundVolume());
+                Sounds.setSoundVolume(vol*vol);
+                flipSound.play(Sounds.getSoundVolume());
             }
         });
 

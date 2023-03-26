@@ -11,12 +11,9 @@ import com.monstrous.pixelwar.World;
 
 public class AirShip extends Behaviour {
 
-    public static final float BOMB_RADIUS = 5f;
     public static final float TOWER_RADIUS = 5f;
 
     private boolean hasBomb;
-
-    final Vector3 dropVelocity = new Vector3(0,-2.5f,0);
 
     public AirShip(GameObject go) {
 
@@ -30,21 +27,15 @@ public class AirShip extends Behaviour {
         go.targetAngle = go.angle;  // make bomb follow airship orientation
 
         if(hasBomb) {
-            GameObject target = World.closestEnemy(go, BOMB_RADIUS);
+            GameObject target = World.closestEnemy(go, Bomb.BOMB_RADIUS);
             if (target != null) {
                 // drop the bomb
                 // - hide modelInstance2 and spawn a dropping bomb
                 hasBomb = false;
                 go.modelInstance2 = null;
-                dropVelocity.set(go.velocity);
-                dropVelocity.y = -2.5f;
-                GameObject bomb = World.spawnItem(go.army.name, "Bomb", go.position, go.targetAngle, dropVelocity);
-                Sounds.playSound(Sounds.FALLING_BOMB);
 
-                // cheat a bit, we damage the target before the bomb hits
-                target.healthPoints = 0;
-                target.isDying = true;
-                Sounds.playSound(Sounds.EXPLOSION);
+                GameObject bomb = World.spawnItem(go.army.name, "Bomb", go.position, go.targetAngle, go.velocity);
+                Sounds.playSound(Sounds.FALLING_BOMB);
             }
         }
         else {
@@ -60,11 +51,11 @@ public class AirShip extends Behaviour {
 
         // death animation
         if (go.isDying) {
-            go.modelInstance.transform.setFromEulerAngles(go.angle, 20f, 15f).trn(go.position);
+            go.modelInstance.transform.setFromEulerAngles(go.angle, 20f, 15f).trn(go.position); // tilt angle
             go.isMovingToDestination = false;
-            go.velocity.y = -0.8f;
+            go.velocity.y = -0.8f;  // move down
          }
-        if(go.position.y < -3f)
+        if(go.position.y < -3f) // underground
             go.toRemove = true;
     }
 }

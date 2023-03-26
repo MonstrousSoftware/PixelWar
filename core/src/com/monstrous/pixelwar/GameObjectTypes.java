@@ -20,7 +20,7 @@ public class GameObjectTypes {
 
         types.add(new GameObjectType("Anti-Aircraft", "AntiAircraftBase", "AntiAircraft", false, 100, -1f));
 
-        GameObjectType airShip = new GameObjectType("AirShip", "AirShip", "Bomb", false, 20,-1f);
+        GameObjectType airShip = new GameObjectType("AirShip", "AirShip", "Bomb", false, 80,-1f);
         airShip.followsTerrain = false;
         airShip.isMobile = true;
         airShip.isAirship = true;

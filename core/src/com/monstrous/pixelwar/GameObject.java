@@ -58,6 +58,8 @@ public class GameObject {
             behaviour = new TankBehaviour(this);
         if(type.name.contentEquals("Bullet"))
             behaviour = new Bullet(this);
+        if(type.name.contentEquals("Bomb"))
+            behaviour = new Bomb(this);
         if(type.name.contentEquals("AirShip"))
             behaviour = new AirShip(this);
         if(type.name.contentEquals("Tower"))
@@ -79,6 +81,16 @@ public class GameObject {
         }
         setArmy(army);
         tmpVec = new Vector3();
+    }
+
+    public void takeDamage( int damage ) {
+        healthPoints -= damage;
+        Sounds.playSound(Sounds.BULLET_HIT);
+        if( healthPoints <= 0 ) {
+            isDying = true;
+            healthPoints = 0;
+            Sounds.playSound(Sounds.EXPLOSION);
+        }
     }
 
 

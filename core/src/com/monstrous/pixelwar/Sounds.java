@@ -1,6 +1,7 @@
 package com.monstrous.pixelwar;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
@@ -20,12 +21,13 @@ public class Sounds implements Disposable  {
     public static int FALLING_BOMB = 10;
     public static int BULLET_HIT = 11;
 
-    private static Main game;
+
     private static Array<Sound> sounds;
+    public Preferences preferences;
+    public static float soundVolume;
 
 
-    public Sounds(Main game) {
-        this.game = game;
+    public Sounds() {
         sounds = new Array<>();
         sounds.add( Gdx.audio.newSound(Gdx.files.internal("sounds/voices/commence.wav")) );
         sounds.add( Gdx.audio.newSound(Gdx.files.internal("sounds/voices/victorious.wav")) );
@@ -39,10 +41,22 @@ public class Sounds implements Disposable  {
         sounds.add( Gdx.audio.newSound(Gdx.files.internal("sounds/explosion_01-6225.mp3")) );
         sounds.add( Gdx.audio.newSound(Gdx.files.internal("sounds/falling-bomb-41038.mp3")) );
         sounds.add( Gdx.audio.newSound(Gdx.files.internal("sounds/bullet-hit.mp3")) );
+
+        preferences = Gdx.app.getPreferences(Main.PREFERENCES_NAME);
+        soundVolume = preferences.getFloat("soundVolume", 1.0f);
     }
 
     public static void playSound(int code) {
-        sounds.get(code).play(game.getSoundVolume());
+        sounds.get(code).play(soundVolume);
+    }
+
+
+    public static float getSoundVolume() {
+        return soundVolume;
+    }
+
+    public static void setSoundVolume(float vol) {
+        soundVolume = vol;
     }
 
     @Override
@@ -50,5 +64,8 @@ public class Sounds implements Disposable  {
         for(Sound s : sounds)
             s.dispose();
         sounds.clear();
+        // save sound settings for next time
+        preferences.putFloat("soundVolume", soundVolume);   // save
+        preferences.flush();
     }
 }

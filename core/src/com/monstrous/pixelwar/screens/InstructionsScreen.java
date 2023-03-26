@@ -46,7 +46,7 @@ public class InstructionsScreen implements Screen {
     private void rebuild() {
         String part1 = "Few remembered the beginning of the war. Red allied with Blue as the purple alliance. " +
                 "Together they destroyed Green in a protracted campaign of attrition. \n\n" +
-                "Now the former allies turned on each other and faced each other across a field of 256 by 256 pixels for what would be remembered as the Battle of Perlin Hills. " +
+                "Now the former allies turned on each other and faced each other across a field of 256 by 256 pixels for what would be remembered as the Battle of Perlin Hills.\n\n" +
                 "Red occupied the North and Blue held the South. Whoever would take this last territory would win the war of the pixels.";
 
         String part2 = "Protect your flag at all costs. Try to destroy the enemy flag.\n\n" +
@@ -56,8 +56,9 @@ public class InstructionsScreen implements Screen {
 
         String part3 = "Left click on a unit to select it. Left click on the terrain to direct the unit.\n\n" +
                 "Units will fire automatically if an enemy comes in range.\n\n" +
+                "Switch between units with the type selection buttons.\n\n" +
                 "Use right mouse button to turn the camera. Scroll wheel to zoom.\n\n"+
-                "Press Esc to return from teh game to the menu.";
+                "Press Esc to exit the game and return to menu.";
         texts = new String[3];
         texts[0] = part1;
         texts[1] = part2;
@@ -67,6 +68,7 @@ public class InstructionsScreen implements Screen {
 
         // root table that fills the whole screen
         Table screenTable = new Table();
+        screenTable.setColor(Color.GREEN);
         stage.addActor(screenTable);
         screenTable.setFillParent(true);        // size to match stage size
 

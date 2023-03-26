@@ -77,8 +77,10 @@ public class AI {
                     else
                         targets = enemyTowers;
                     // now select random item of that type
-                    int targetIndex = (int)(Math.random() * targets.size);
-                    unit.setDestination(targets.get(targetIndex).position);
+                    if(targets.size > 0) {
+                        int targetIndex = (int) (Math.random() * targets.size);
+                        unit.setDestination(targets.get(targetIndex).position);
+                    }
                 }
             }
         }

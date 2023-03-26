@@ -32,7 +32,6 @@ public class GameScreen extends ScreenAdapter {
     private ModelBatch shadowBatch;
     private GameObject selectedObject;
     private GUI gui;
-    private Sounds sounds;
     private boolean isGameOver;
 
 
@@ -93,7 +92,7 @@ public class GameScreen extends ScreenAdapter {
 
         selectObject( world.selectRandomUnit() );
 
-        sounds = new Sounds(game);
+        //sounds = new Sounds();
         Sounds.playSound(Sounds.COMMENCE);
         isGameOver = false;
     }
@@ -168,7 +167,6 @@ public class GameScreen extends ScreenAdapter {
         modelBatch.dispose();
         game.stopMusic();
         gui.dispose();
-        sounds.dispose();
     }
 
     private Vector3 tmpPos = new Vector3();

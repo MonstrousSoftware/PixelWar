@@ -32,5 +32,4 @@ public class MouseController extends InputAdapter {
         return ok;
     }
 
-
 }

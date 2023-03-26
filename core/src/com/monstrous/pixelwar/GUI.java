@@ -140,7 +140,7 @@ public class GUI implements Disposable {
         if(selected != null) {
             labelSelectedType.setText(selected.type.name);
 
-            labelHealth.setText(""+(int)(selected.healthPoints* 100f / selected.type.healthPoints)+ "%");
+            labelHealth.setText("Health "+(int)(selected.healthPoints* 100f / selected.type.healthPoints)+ "%");
         }
 
         messageTimer -= deltaTime;

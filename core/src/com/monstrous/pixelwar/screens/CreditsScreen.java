@@ -43,7 +43,7 @@ public class CreditsScreen implements Screen {
 
     private void rebuild() {
         String explanation = "Theme:\n\n" +
-                "LibGDX Game Jam March 2023\n\n" +
+                " - LibGDX Game Jam March 2023\n\n" +
                 "Music:\n\n" +
                 " - Juhani Junkala (OpenGameArt)\n\n"+
                  "Sound effects:\n\n" +
