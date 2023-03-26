@@ -76,7 +76,6 @@ public class GameObject {
         modelInstance2 = null;
         if(type.modelName2 != null) {
             modelInstance2 = new ModelInstance(model, type.modelName2);
-            //modelInstance2.transform.translate(position);
             modelInstance2.transform.rotate(Vector3.Y, targetAngle).trn(position);
         }
         setArmy(army);
@@ -141,7 +140,7 @@ public class GameObject {
             float distance = position.dst2(destination);
             if (distance < 1f) {   // reached destination
                 isMovingToDestination = false;
-                Gdx.app.log("reached destination", "");
+                Gdx.app.debug("reached destination", "");
                 velocity.set(0,0,0);
                 speed = 0;
             }

@@ -48,6 +48,5 @@ public class GameObjectType {
         float hw = dimensions.x/2f;
         float hd = dimensions.z/2f;
         radius = (float) Math.sqrt(hw*hw + hd*hd);      // radius in horizontal plane
-        //Gdx.app.log(name, "radius: "+radius);
     }
 }

@@ -32,4 +32,10 @@ public class MouseController extends InputAdapter {
         return ok;
     }
 
+    @Override
+    public boolean keyTyped(char character) {
+        if(character == '\t')
+            gameScreen.pressedTab();
+        return super.keyTyped(character);
+    }
 }

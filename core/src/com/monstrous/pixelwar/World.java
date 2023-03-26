@@ -77,6 +77,7 @@ public class World implements Disposable {
         placeItem(PLAYER, "Tank", 30, -70, 90);
 
         placeItem(PLAYER, "AirShip", 0, -60, 0);
+        placeItem(PLAYER, "AirShip", 50, -60, 0);
         placeItem(PLAYER, "Tower", 10, -60, 0);
 
 
@@ -90,6 +91,7 @@ public class World implements Disposable {
         placeItem(ENEMY, "Tank", 30, 70, -90);
 
         placeItem(ENEMY, "AirShip", 0, 60, 0);
+        placeItem(ENEMY, "AirShip", -80, 60, 0);
         placeItem(ENEMY, "Tower", 10, 60, 0);
     }
 
@@ -156,29 +158,34 @@ public class World implements Disposable {
         return null;
     }
 
+
+    public GameObject selectNextUnitOfType(GameObjectType type, GameObject currentObject) {
+        // get next object of same type
+        boolean foundCurrent = false;
+        for(int i = 0; i < gameObjects.size; i++ ) {
+            GameObject go = gameObjects.get(i);
+            if(!foundCurrent && go != currentObject)
+                continue;
+            foundCurrent = true;
+            if( go == currentObject)
+                continue;
+            if(go.army != playerFlag.army || go.type != type)
+                continue;
+            return go;
+        }
+        // start from the top if nothing found after current object
+        for(int i = 0; i < gameObjects.size; i++ ) {
+            GameObject go = gameObjects.get(i);
+            if(go.army != playerFlag.army || go.type != type)
+                continue;
+            return go;
+        }
+        return null;
+    }
+
     public GameObject selectNextUnit(GameObjectType type, GameObject currentObject) {
         if(type == currentObject.type) {
-            // get next object of same type
-            boolean foundCurrent = false;
-            for(int i = 0; i < gameObjects.size; i++ ) {
-                GameObject go = gameObjects.get(i);
-                if(!foundCurrent && go != currentObject)
-                    continue;
-                foundCurrent = true;
-                if( go == currentObject)
-                    continue;
-                if(go.army != playerFlag.army || go.type != type)
-                    continue;
-                return go;
-            }
-            // start from the top if nothing found after current object
-            for(int i = 0; i < gameObjects.size; i++ ) {
-                GameObject go = gameObjects.get(i);
-                if(go.army != playerFlag.army || go.type != type)
-                    continue;
-                return go;
-            }
-
+            return selectNextUnitOfType(type, currentObject);
         }
 
         for(int i = 0; i < gameObjects.size; i++ ) {

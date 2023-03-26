@@ -27,7 +27,6 @@ public class GameScreen extends ScreenAdapter {
     private MyCamController camController;
     private Environment environment;
     private MiniMap miniMap;
-    private DirectionalLight lightSource;
     private DirectionalShadowLight shadowLight;
     private ModelBatch shadowBatch;
     private GameObject selectedObject;
@@ -70,8 +69,6 @@ public class GameScreen extends ScreenAdapter {
         float al = Settings.ambientLightLevel;
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, al, al, al, 1f));
         float dl = Settings.directionalLightLevel;
-//        lightSource = new DirectionalLight().set(new Color(dl, dl, dl, 1), lightVector);
-//        environment.add( lightSource );
         environment.set(new ColorAttribute(ColorAttribute.Fog, Settings.skyColour));            // fog
 
         shadowLight = new DirectionalShadowLight(2048, 2048, 256, 256, 1f, 256);
@@ -100,11 +97,6 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         camController.update();
-
-        // keep camera above terrain level (this is a bit crude)
-//        float terrainHeight = world.terrain.getHeight(cam.position.x, cam.position.z);
-//        if(cam.position.y < terrainHeight+5f)
-//            cam.position.y = terrainHeight+5f;
 
         world.update(delta);
         if(world.isFlagUnderAttack()){
@@ -154,6 +146,7 @@ public class GameScreen extends ScreenAdapter {
         cam.update();
 
         miniMap.resize(width, height);
+        gui.resize(width, height);
     }
 
     @Override
@@ -187,7 +180,6 @@ public class GameScreen extends ScreenAdapter {
         else if(selectedObject != null && selectedObject.type.isMobile && !selectedObject.isDying){
             boolean hit = world.pickLocation(cam, screenX, screenY, tmpPos);
             if(hit) {
-                //Gdx.app.log("location", "hit: " + hit + " at " + tmpPos);
                 selectedObject.setDestination(tmpPos);
                 if(selectedObject.type.isAirship)
                     Sounds.playSound(Sounds.ROGER_THAT);
@@ -195,7 +187,7 @@ public class GameScreen extends ScreenAdapter {
                     Sounds.playSound(Sounds.AFFIRMATIVE);
             }
         }
-        return false;  // ?
+        return false;
     }
 
     private void selectObject(GameObject go ) {
@@ -211,8 +203,15 @@ public class GameScreen extends ScreenAdapter {
 
 
     public boolean pressedEscape() {
-        Gdx.app.log("ESC pressed", "");
+        Gdx.app.debug("ESC pressed", "");
         game.setScreen(new MenuScreen(game));               // back to menu
+        return true;
+    }
+
+    public boolean pressedTab() {
+        Gdx.app.debug("TAB pressed", "");
+        GameObject next = world.selectNextUnitOfType(selectedObject.type, selectedObject);
+        selectObject(next);
         return true;
     }
 

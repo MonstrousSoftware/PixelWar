@@ -30,7 +30,6 @@ public class SplashScreen extends ScreenAdapter {
         Gdx.app.debug("SplashScreen", "show()");
         batch = new SpriteBatch();
         texture = new Texture( Gdx.files.internal("logo-static.png"));
-        //texture = new Texture("badlogic.jpg");
         timer = Settings.splashTime;
 
     }
@@ -55,7 +54,7 @@ public class SplashScreen extends ScreenAdapter {
             game.setScreen(new MenuScreen(game));
             return;
         }
-        Gdx.gl.glClearColor(196/255f, 241/255f, 255/255f,  1);
+        Gdx.gl.glClearColor(0f, 0f, 0f,  1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         batch.begin();

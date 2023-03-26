@@ -144,36 +144,4 @@ public class MiniMap implements Disposable {
         modelBatch.dispose();
         mapFrame.dispose();
     }
-
-
-    // get position clicked on in the mini map
-    // returns true if the screen coordinates were in the minimap
-//    public boolean getMapPosition(int screenX, int screenY, Vector3 position) {
-//        screenY = viewHeight - screenY;
-//
-//        // return false if screen position is not on mini map
-//        if(screenX < miniMapRect.x || screenY < miniMapRect.y )
-//            return false;
-//        if(screenX > miniMapRect.x + miniMapRect.width )
-//            return false;
-//        if(screenY > miniMapRect.y + miniMapRect.height )
-//            return false;
-//
-//        // get normalized x,y in [0..1]
-//        float x = (screenX - miniMapRect.x)/miniMapRect.width;
-//        float y = (screenY - miniMapRect.y)/miniMapRect.height;
-//        // map to [-0.5 to +0.5]
-//        x -= 0.5f;
-//        y -= 0.5f;
-//        // scale to world coordinates
-//        x *= Terrain.SCALE_X;
-//        y *= -Terrain.SCALE_Z;
-//
-//        // put in vector (remember that y goes to z)
-//        position.x = x;
-//        position.y = 0;
-//        position.z = y;
-//
-//        return true;
-//    }
 }
