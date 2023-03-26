@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
@@ -69,29 +70,32 @@ public class World implements Disposable {
 
 
 
-        placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
-        placeItem(PLAYER, "Anti-Aircraft", -20, -80, 90);
+//        placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
+//        placeItem(PLAYER, "Anti-Aircraft", -20, -80, 90);
 
         placeItem(PLAYER, "Tank", -40, -70, 90);
-        placeItem(PLAYER, "Tank", -30, -70, 90);
-        placeItem(PLAYER, "Tank", 40, -70, 90);
-        placeItem(PLAYER, "Tank", 30, -70, 90);
+//        placeItem(PLAYER, "Tank", -30, -70, 90);
+//        placeItem(PLAYER, "Tank", 40, -70, 90);
+//        placeItem(PLAYER, "Tank", 30, -70, 90);
+//
+//        placeItem(PLAYER, "AirShip", 0, -60, 0);
+//        placeItem(PLAYER, "Tower", 10, -60, 0);
 
-        placeItem(PLAYER, "AirShip", 0, -60, 0);
-        placeItem(PLAYER, "Tower", 10, -60, 0);
+        placeItem(ENEMY, "Tower", 0, -50, -90);
+        placeItem(ENEMY, "AirShip", -30, -40, -90);
 
 
         enemyFlag = placeItem(ENEMY, "Flag", 0, 100, -90);
-        placeItem(ENEMY, "Anti-Aircraft", 20, 80, 90);
-        placeItem(ENEMY, "Anti-Aircraft", -20, 80, 90);
-
-        placeItem(ENEMY, "Tank", -40, 70, -90);
-        placeItem(ENEMY, "Tank", -30, 70, -90);
-        placeItem(ENEMY, "Tank", 40, 70, -90);
-        placeItem(ENEMY, "Tank", 30, 70, -90);
-
-        placeItem(ENEMY, "AirShip", 0, 60, 0);
-        placeItem(ENEMY, "Tower", 10, 60, 0);
+//        placeItem(ENEMY, "Anti-Aircraft", 20, 80, 90);
+//        placeItem(ENEMY, "Anti-Aircraft", -20, 80, 90);
+//
+//        placeItem(ENEMY, "Tank", -40, 70, -90);
+//        placeItem(ENEMY, "Tank", -30, 70, -90);
+//        placeItem(ENEMY, "Tank", 40, 70, -90);
+//        placeItem(ENEMY, "Tank", 30, 70, -90);
+//
+//        placeItem(ENEMY, "AirShip", 0, 60, 0);
+//        placeItem(ENEMY, "Tower", 10, 60, 0);
     }
 
     private void placeRandom(String name, int count){
@@ -117,8 +121,10 @@ public class World implements Disposable {
         return go;
     }
 
+    private static BoundingBox bbox = new BoundingBox();
 
     public static GameObject testForCollision(GameObject subject) {
+
         for(int i = 0; i < gameObjects.size; i++ ) {
             GameObject go = gameObjects.get(i);
             if(go == subject)
@@ -126,8 +132,12 @@ public class World implements Disposable {
             if(go.army == subject.army)
                 continue;
             float dist2 = subject.position.dst2(go.position);
-            if(dist2 < go.type.radius * go.type.radius)
-                return go;
+            if(dist2 < go.type.radius * go.type.radius) {
+                tmpPosition.set(subject.position).sub(go.position);
+                go.modelInstance.calculateBoundingBox(bbox);
+                if( bbox.contains(tmpPosition) )
+                    return go;
+            }
         }
         return null;
     }
@@ -143,6 +153,40 @@ public class World implements Disposable {
         for(int i = 0; i < gameObjects.size; i++ ) {
             GameObject go = gameObjects.get(i);
             if(go.army != playerFlag.army || go.type.isProjectile)
+                continue;
+            return go;
+        }
+        return null;
+    }
+
+    public GameObject selectNextUnit(GameObjectType type, GameObject currentObject) {
+        if(type == currentObject.type) {
+            // get next object of same type
+            boolean foundCurrent = false;
+            for(int i = 0; i < gameObjects.size; i++ ) {
+                GameObject go = gameObjects.get(i);
+                if(!foundCurrent && go != currentObject)
+                    continue;
+                foundCurrent = true;
+                if( go == currentObject)
+                    continue;
+                if(go.army != playerFlag.army || go.type != type)
+                    continue;
+                return go;
+            }
+            // start from the top if nothing found after current object
+            for(int i = 0; i < gameObjects.size; i++ ) {
+                GameObject go = gameObjects.get(i);
+                if(go.army != playerFlag.army || go.type != type)
+                    continue;
+                return go;
+            }
+
+        }
+
+        for(int i = 0; i < gameObjects.size; i++ ) {
+            GameObject go = gameObjects.get(i);
+            if(go.army != playerFlag.army || go.type != type)
                 continue;
             return go;
         }
@@ -242,7 +286,8 @@ public class World implements Disposable {
 
     public void render(ModelBatch modelBatch, Environment environment, boolean mapView ) {
 
-        modelBatch.render(cache, environment);
+        if(!mapView)
+            modelBatch.render(cache, environment);
 
        // terrain.render(modelBatch, environment);
         for(GameObject go : gameObjects ) {

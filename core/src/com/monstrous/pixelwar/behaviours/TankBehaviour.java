@@ -1,5 +1,6 @@
 package com.monstrous.pixelwar.behaviours;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.monstrous.pixelwar.GameObject;
 import com.monstrous.pixelwar.Sounds;
@@ -44,7 +45,7 @@ public class TankBehaviour extends Behaviour {
         //go.modelInstance2.transform.setToRotation(Vector3.Y, -(go.angle+turretAngle)).trn(go.position); // update transform with rotation and position
 
         timeToFire -= deltaTime;
-        if(timeToFire < 0 && target != null) {
+        if( !go.isDying && timeToFire < 0 && target != null) {
             timeToFire = FIRE_REPEAT;
 
             double angleRads = (go.targetAngle)*Math.PI/180f;
@@ -54,6 +55,7 @@ public class TankBehaviour extends Behaviour {
             spawnPoint.z += RADIUS * Math.sin(angleRads);
             Vector3 velocity = new Vector3(BULLET_SPEED*(float)Math.cos(angleRads), 0, BULLET_SPEED*(float)Math.sin(angleRads));
 
+            Gdx.app.debug("tank fires bullet at", target.type.name );
             GameObject bullet = World.spawnItem(go.army.name, "Bullet", spawnPoint, go.targetAngle, velocity);
             Sounds.playSound(Sounds.TANK_FIRE);
         }

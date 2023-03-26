@@ -16,6 +16,7 @@ public class GameObject {
     public ModelInstance modelInstance2;
     public Vector3 position;
     public Vector3 velocity;
+    public float speed;
     public float angle;     // around up axis (0 degrees is on the +X), models have to face forward on +X axis
     public float destAngle;
     public float targetAngle;
@@ -48,6 +49,7 @@ public class GameObject {
         toRemove = false;
         isDying = false;
         targetAngle = 60f;
+        speed = 0;
 
         behaviour = null;
         if(type.name.contentEquals("Anti-Aircraft"))
@@ -84,6 +86,7 @@ public class GameObject {
         this.destination.set(destination);
         isMovingToDestination = true;
         isRotating = true;
+        speed = type.maxSpeed;
     }
 
     public void update( float deltaTime ) {
@@ -128,6 +131,7 @@ public class GameObject {
                 isMovingToDestination = false;
                 Gdx.app.log("reached destination", "");
                 velocity.set(0,0,0);
+                speed = 0;
             }
             else {
                 // don't move if we are facing away from the destination, just turn until we are facing more the right direction
@@ -138,9 +142,18 @@ public class GameObject {
                     factor = 1f;
                 float maxAngle = 15f * factor;
                 if(Math.abs(angle - destAngle) < maxAngle) {
+                    if(speed < type.maxSpeed)
+                        speed += 1.0f*deltaTime;
                     // move in direction that the unit is facing
                     velocity.set((float) Math.cos(angle * Math.PI / 180f), 0, (float) Math.sin(angle * Math.PI / 180f));
-                    velocity.scl(type.maxSpeed);    // scale for speed and time step
+                    velocity.scl(speed);    // scale for speed and time step
+                }
+                else {  // while turning slow down
+                    if(speed > 0)
+                        speed -= 5.0f*deltaTime;
+                    velocity.set((float) Math.cos(angle * Math.PI / 180f), 0, (float) Math.sin(angle * Math.PI / 180f));
+                    velocity.scl(speed);
+
                 }
             }
         }

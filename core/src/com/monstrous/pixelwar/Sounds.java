@@ -18,6 +18,7 @@ public class Sounds implements Disposable  {
     public static int AA_FIRE = 8;
     public static int EXPLOSION = 9;
     public static int FALLING_BOMB = 10;
+    public static int BULLET_HIT = 11;
 
     private static Main game;
     private static Array<Sound> sounds;
@@ -37,6 +38,7 @@ public class Sounds implements Disposable  {
         sounds.add( Gdx.audio.newSound(Gdx.files.internal("sounds/cannonball-89596.mp3")) );
         sounds.add( Gdx.audio.newSound(Gdx.files.internal("sounds/explosion_01-6225.mp3")) );
         sounds.add( Gdx.audio.newSound(Gdx.files.internal("sounds/falling-bomb-41038.mp3")) );
+        sounds.add( Gdx.audio.newSound(Gdx.files.internal("sounds/bullet-hit.mp3")) );
     }
 
     public static void playSound(int code) {

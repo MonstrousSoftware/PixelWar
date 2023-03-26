@@ -55,7 +55,7 @@ public class AntiAircraft extends Behaviour {
         go.modelInstance2.transform.setToRotation(Vector3.Y, -(go.targetAngle+turretAngle)).trn(go.position); // update transform with rotation and position
 
         timeToFire -= deltaTime;
-        if(timeToFire < 0 && target != null) {
+        if(!go.isDying && timeToFire < 0 && target != null) {
             timeToFire = FIRE_REPEAT;
 
             double angleRads = (go.targetAngle+turretAngle)*Math.PI/180f;

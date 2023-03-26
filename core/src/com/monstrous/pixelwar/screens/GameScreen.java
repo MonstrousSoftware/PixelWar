@@ -33,6 +33,8 @@ public class GameScreen extends ScreenAdapter {
     private GameObject selectedObject;
     private GUI gui;
     private Sounds sounds;
+    private boolean isGameOver;
+
 
     public GameScreen(Main game, boolean newGame) {
         this.game = game;
@@ -57,6 +59,7 @@ public class GameScreen extends ScreenAdapter {
         //camController = new OrthographicCameraController(cam);
 
         InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(gui.stage);
         multiplexer.addProcessor(new MouseController(this));
         multiplexer.addProcessor(camController);
         Gdx.input.setInputProcessor(multiplexer);
@@ -92,6 +95,7 @@ public class GameScreen extends ScreenAdapter {
 
         sounds = new Sounds(game);
         Sounds.playSound(Sounds.COMMENCE);
+        isGameOver = false;
     }
 
     @Override
@@ -107,7 +111,7 @@ public class GameScreen extends ScreenAdapter {
         if(world.isFlagUnderAttack()){
             Sounds.playSound(Sounds.FLAG);
         }
-        if(world.gameOver()) {
+        if(!isGameOver && world.gameOver()) {
             if(world.haveWon()) {
                 gui.setMessage("YOU ARE VICTORIOUS!");
                 Sounds.playSound(Sounds.VICTORIOUS);
@@ -115,6 +119,7 @@ public class GameScreen extends ScreenAdapter {
                 gui.setMessage("YOU WERE DEFEATED!");
                 Sounds.playSound(Sounds.DEFEATED);
             }
+            isGameOver = true;
         }
         if(selectedObject == null || selectedObject.toRemove)
             selectObject( world.selectRandomUnit() );
@@ -198,6 +203,12 @@ public class GameScreen extends ScreenAdapter {
     private void selectObject(GameObject go ) {
         selectedObject = go;
         camController.followGameObject(selectedObject);
+    }
+
+    public void toggleUnit(GameObjectType type) {
+        GameObject next = world.selectNextUnit(type, selectedObject);
+        if(next != null)
+            selectObject(next);
     }
 
 

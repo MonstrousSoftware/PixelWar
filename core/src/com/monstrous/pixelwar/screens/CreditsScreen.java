@@ -45,7 +45,9 @@ public class CreditsScreen implements Screen {
         String explanation = "Theme:\n\n" +
                 "LibGDX Game Jam March 2023\n\n" +
                 "Music:\n\n" +
-                " - Juhani Junkala (OpenGameArt)\n\n";
+                " - Juhani Junkala (OpenGameArt)\n\n"+
+                 "Sound effects:\n\n" +
+                " - Pixabay\n\n";;
 
 
         stage.clear();

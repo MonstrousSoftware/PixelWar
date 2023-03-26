@@ -22,7 +22,7 @@ public class AI {
         enemyAA = new Array<>();
         enemyTanks = new Array<>();
         enemyTowers = new Array<>();
-        updateTimer = UPDATE_INTERVAL;
+        updateTimer = UPDATE_INTERVAL * 4;      // wait a bit at start to give player some time
     }
 
     public void update(float deltaTime) {
@@ -48,10 +48,10 @@ public class AI {
                 enemyTowers.add(go);
             }
             // own units
-            if(go.army == flag.army && go.type.name.contentEquals("Tank")) {
+            if(go.army == flag.army && go.type.name.contentEquals("Tank") && !go.isDying) {
                 units.add(go);
             }
-            if(go.army == flag.army && go.type.name.contentEquals("AirShip")) {
+            if(go.army == flag.army && go.type.name.contentEquals("AirShip") && !go.isDying) {
                 units.add(go);
             }
         }
@@ -60,7 +60,7 @@ public class AI {
 
         int index = 0;
         for(GameObject unit : units) {
-            if(index++ < 2)
+            if(index++ < 1)
                 unit.setDestination(flag.position);     // defend the flag
             else {
                 // find random enemy target to attack

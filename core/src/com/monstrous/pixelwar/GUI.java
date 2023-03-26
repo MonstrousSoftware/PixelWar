@@ -2,10 +2,13 @@ package com.monstrous.pixelwar;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.monstrous.pixelwar.screens.GameScreen;
@@ -18,8 +21,8 @@ public class GUI implements Disposable {
     private Label labelSelectedType;
     private Label labelFPS;
     private Label labelHealth;
-    private Label labelMessage;
-    private float messageTimer;
+    private Label labelMessage; // big message, centre screen
+    private float messageTimer; // counting down while message is displayed
 
     public GUI(GameScreen gameScreen) {
 
@@ -62,13 +65,73 @@ public class GUI implements Disposable {
         stats.add(labelHealth);
         stats.pack();
 
+        TextButton tkButton = new TextButton("TK", skin);
+        TextButton asButton = new TextButton("AS", skin);
+        TextButton aaButton = new TextButton("AA", skin);
+        TextButton twButton = new TextButton("TW", skin);
+        TextButton flButton = new TextButton("FL", skin);
+        Table unitButtons = new Table();
+        unitButtons.add(tkButton);
+        unitButtons.add(asButton);
+        unitButtons.add(aaButton);
+        unitButtons.add(twButton);
+        unitButtons.add(flButton);
+        unitButtons.pack();
 
+        TextButton backButton = new TextButton("<", skin);
+
+        screenTable.add(backButton).top().left();
         screenTable.add(labelFPS).top().left().expandX().row();
-        screenTable.add(labelMessage).top().center().expandY().row();
+        screenTable.add(labelMessage).colspan(2).top().center().expandY().row();
+        screenTable.add(unitButtons).left().bottom();
         screenTable.add(stats).center().bottom();
         screenTable.pack();
 
         messageTimer = 2.0f;
+
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                gameScreen.pressedEscape();
+            }
+        });
+
+        tkButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                gameScreen.toggleUnit(GameObjectTypes.findType("Tank"));
+            }
+        });
+        asButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                gameScreen.toggleUnit(GameObjectTypes.findType("AirShip"));
+            }
+        });
+        aaButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                gameScreen.toggleUnit(GameObjectTypes.findType("Anti-Aircraft"));
+            }
+        });
+        twButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                gameScreen.toggleUnit(GameObjectTypes.findType("Tower"));
+            }
+        });
+        flButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                gameScreen.toggleUnit(GameObjectTypes.findType("Flag"));
+            }
+        });
     }
 
 

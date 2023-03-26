@@ -7,7 +7,7 @@ import com.monstrous.pixelwar.World;
 
 public class Bullet extends Behaviour {
 
-    public static final float ACCELERATION = 1f;
+    public static final float ACCELERATION = 0.3f;
 
     public Bullet(GameObject go) {
         super(go);
@@ -16,14 +16,15 @@ public class Bullet extends Behaviour {
     @Override
     public void update( float deltaTime ) {
         go.velocity.y -= deltaTime* ACCELERATION;
-        if(go.position.y < 0)
+        if(go.position.y < -2f)     // bullets that fall (well) under terrain can be removed
             go.toRemove= true;
         else {
             GameObject collider = World.testForCollision(go);
             if(collider != null) {
                 go.toRemove = true; // remove bullet
-                Gdx.app.log("bullet", "hp:"+collider.healthPoints);
+                Gdx.app.debug("bullet hits", collider.type.name+" hp:"+collider.healthPoints);
                 collider.healthPoints -= 10;
+                Sounds.playSound(Sounds.BULLET_HIT);
                 if( collider.healthPoints <= 0 ) {
                     collider.isDying = true;
                     collider.healthPoints = 0;
