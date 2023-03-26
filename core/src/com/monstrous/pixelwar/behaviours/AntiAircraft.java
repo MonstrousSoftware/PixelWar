@@ -3,6 +3,7 @@ package com.monstrous.pixelwar.behaviours;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.monstrous.pixelwar.GameObject;
+import com.monstrous.pixelwar.Sounds;
 import com.monstrous.pixelwar.World;
 
 public class AntiAircraft extends Behaviour {
@@ -66,6 +67,7 @@ public class AntiAircraft extends Behaviour {
 
             GameObject bullet = World.spawnItem(go.army.name, "Bullet", spawnPoint, go.targetAngle+turretAngle, velocity);
             //Gdx.app.log("Spawn missile", ""+spawnPoint);
+            Sounds.playSound(Sounds.AA_FIRE);
         }
 
 

@@ -28,3 +28,10 @@ Add this to webapp/WEB_INF/index.html to prevent context menu in HTML version
     // prevent right click
     document.getElementById('embed-html').addEventListener('contextmenu', handleMouseDown, false);
 
+
+
+    Sound effects from pixabay
+    Cannonball - Kastenfrost
+    Explosion 1 - tommccann
+    Falling bomb - Daleonfire
+

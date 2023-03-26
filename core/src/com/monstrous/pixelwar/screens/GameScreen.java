@@ -32,7 +32,7 @@ public class GameScreen extends ScreenAdapter {
     private ModelBatch shadowBatch;
     private GameObject selectedObject;
     private GUI gui;
-    private Sound messageSound = null;
+    private Sounds sounds;
 
     public GameScreen(Main game, boolean newGame) {
         this.game = game;
@@ -90,7 +90,8 @@ public class GameScreen extends ScreenAdapter {
 
         selectObject( world.selectRandomUnit() );
 
-        playSound("sounds/commence.wav");
+        sounds = new Sounds(game);
+        Sounds.playSound(Sounds.COMMENCE);
     }
 
     @Override
@@ -103,13 +104,16 @@ public class GameScreen extends ScreenAdapter {
 //            cam.position.y = terrainHeight+5f;
 
         world.update(delta);
+        if(world.isFlagUnderAttack()){
+            Sounds.playSound(Sounds.FLAG);
+        }
         if(world.gameOver()) {
             if(world.haveWon()) {
                 gui.setMessage("YOU ARE VICTORIOUS!");
-                playSound("sounds/victorious.wav");
+                Sounds.playSound(Sounds.VICTORIOUS);
             } else {
                 gui.setMessage("YOU WERE DEFEATED!");
-                playSound("sounds/defeated.wav");
+                Sounds.playSound(Sounds.DEFEATED);
             }
         }
         if(selectedObject == null || selectedObject.toRemove)
@@ -132,13 +136,6 @@ public class GameScreen extends ScreenAdapter {
 
         miniMap.render();
         gui.render(delta);
-    }
-
-    private void playSound(String file) {
-        if(messageSound != null)
-            messageSound.dispose();
-        messageSound = Gdx.audio.newSound(Gdx.files.internal(file));
-        messageSound.play(game.getSoundVolume());
     }
 
     @Override
@@ -166,7 +163,7 @@ public class GameScreen extends ScreenAdapter {
         modelBatch.dispose();
         game.stopMusic();
         gui.dispose();
-        messageSound.dispose();
+        sounds.dispose();
     }
 
     private Vector3 tmpPos = new Vector3();
@@ -190,9 +187,9 @@ public class GameScreen extends ScreenAdapter {
                 //Gdx.app.log("location", "hit: " + hit + " at " + tmpPos);
                 selectedObject.setDestination(tmpPos);
                 if(selectedObject.type.isAirship)
-                    playSound("sounds/roger that.wav");
+                    Sounds.playSound(Sounds.ROGER_THAT);
                 else
-                    playSound("sounds/affirmative.wav");
+                    Sounds.playSound(Sounds.AFFIRMATIVE);
             }
         }
         return false;  // ?

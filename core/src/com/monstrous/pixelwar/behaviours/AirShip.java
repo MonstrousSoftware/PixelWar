@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.monstrous.pixelwar.GameObject;
 import com.monstrous.pixelwar.ModelAssets;
+import com.monstrous.pixelwar.Sounds;
 import com.monstrous.pixelwar.World;
 
 public class AirShip extends Behaviour {
@@ -38,10 +39,12 @@ public class AirShip extends Behaviour {
                 dropVelocity.set(go.velocity);
                 dropVelocity.y = -2.5f;
                 GameObject bomb = World.spawnItem(go.army.name, "Bomb", go.position, go.targetAngle, dropVelocity);
+                Sounds.playSound(Sounds.FALLING_BOMB);
 
                 // cheat a bit, we damage the target before the bomb hits
                 target.healthPoints = 0;
                 target.isDying = true;
+                Sounds.playSound(Sounds.EXPLOSION);
             }
         }
         else {

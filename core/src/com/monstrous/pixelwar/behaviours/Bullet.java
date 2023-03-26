@@ -2,6 +2,7 @@ package com.monstrous.pixelwar.behaviours;
 
 import com.badlogic.gdx.Gdx;
 import com.monstrous.pixelwar.GameObject;
+import com.monstrous.pixelwar.Sounds;
 import com.monstrous.pixelwar.World;
 
 public class Bullet extends Behaviour {
@@ -26,6 +27,7 @@ public class Bullet extends Behaviour {
                 if( collider.healthPoints <= 0 ) {
                     collider.isDying = true;
                     collider.healthPoints = 0;
+                    Sounds.playSound(Sounds.EXPLOSION);
                 }
             }
         }

@@ -25,6 +25,7 @@ public class World implements Disposable {
     private GameObject playerFlag;
     private GameObject enemyFlag;
     private AI ai;
+    private float previousFlagHealth;
 
     public World() {
         Gdx.app.debug("World", "constructor");
@@ -42,6 +43,7 @@ public class World implements Disposable {
 
         buildCache();
         populate();
+        previousFlagHealth = playerFlag.healthPoints;
         ai = new AI(enemyFlag, gameObjects);
     }
 
@@ -214,6 +216,15 @@ public class World implements Disposable {
 
 
         ai.update(deltaTime);
+    }
+
+
+
+    public boolean isFlagUnderAttack() {
+        if(playerFlag.healthPoints == previousFlagHealth )
+            return false;
+        previousFlagHealth = playerFlag.healthPoints;
+        return true;
     }
 
     public boolean gameOver() {

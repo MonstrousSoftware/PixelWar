@@ -2,6 +2,7 @@ package com.monstrous.pixelwar.behaviours;
 
 import com.badlogic.gdx.math.Vector3;
 import com.monstrous.pixelwar.GameObject;
+import com.monstrous.pixelwar.Sounds;
 import com.monstrous.pixelwar.World;
 import com.monstrous.pixelwar.behaviours.Behaviour;
 
@@ -54,6 +55,7 @@ public class TankBehaviour extends Behaviour {
             Vector3 velocity = new Vector3(BULLET_SPEED*(float)Math.cos(angleRads), 0, BULLET_SPEED*(float)Math.sin(angleRads));
 
             GameObject bullet = World.spawnItem(go.army.name, "Bullet", spawnPoint, go.targetAngle, velocity);
+            Sounds.playSound(Sounds.TANK_FIRE);
         }
 
 

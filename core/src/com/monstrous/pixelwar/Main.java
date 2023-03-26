@@ -7,7 +7,7 @@ import com.monstrous.pixelwar.screens.SplashScreen;
 
 public class Main extends Game {
 
-	public static final String VERSION = "version 0.5 (25 March 2023)";
+	public static final String VERSION = "version 0.7 (25 March 2023)";
 	public static final boolean RELEASE_BUILD = true;
 	public static String PREFERENCES_NAME = "pixelwar";
 
