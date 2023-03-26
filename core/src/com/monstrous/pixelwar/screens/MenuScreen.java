@@ -44,6 +44,7 @@ public class MenuScreen extends ScreenAdapter {
 
         // allow to continue music that is already playing if we come from splash screen
         game.startMusic("music/Title Screen.wav");
+        game.music.play();
 
     }
 
