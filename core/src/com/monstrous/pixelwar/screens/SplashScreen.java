@@ -1,5 +1,6 @@
 package com.monstrous.pixelwar.screens;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 
 import com.badlogic.gdx.ScreenAdapter;
@@ -66,7 +67,8 @@ public class SplashScreen extends ScreenAdapter {
 
         TextButton startButton = new TextButton("Click to Start", skin);
 
-        screenTable.add(startButton).width(BUTTON_WIDTH).pad(BUTTON_PAD).bottom().expandY();
+        if(Gdx.app.getType() == Application.ApplicationType.WebGL)
+            screenTable.add(startButton).width(BUTTON_WIDTH).pad(BUTTON_PAD).bottom().expandY();
         screenTable.pack();
 
         startButton.addListener(new ClickListener() {

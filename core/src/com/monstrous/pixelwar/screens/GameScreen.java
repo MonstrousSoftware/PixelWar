@@ -164,21 +164,21 @@ public class GameScreen extends ScreenAdapter {
 
     private Vector3 tmpPos = new Vector3();
 
-    public boolean mouseDown(int screenX, int screenY, int button) {
+    public boolean mouseDown(float screenX, float screenY) {
         //Gdx.app.log("mouse clicked", "");
         cam.update();
 
         if(world.gameOver())
             return false;
 
-        GameObject result = world.pickObject(cam, screenX, screenY);
+        GameObject result = world.pickObject(cam, (int)screenX, (int)screenY);
 
         if(result != null) {
             Gdx.app.log("clicked on", result.type.name);
             selectObject(result);
         }
         else if(selectedObject != null && selectedObject.type.isMobile && !selectedObject.isDying){
-            boolean hit = world.pickLocation(cam, screenX, screenY, tmpPos);
+            boolean hit = world.pickLocation(cam, (int)screenX, (int)screenY, tmpPos);
             if(hit) {
                 selectedObject.setDestination(tmpPos);
                 if(selectedObject.type.isAirship)

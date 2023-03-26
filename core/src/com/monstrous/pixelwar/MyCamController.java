@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class MyCamController extends CameraInputController {
@@ -15,13 +16,15 @@ public class MyCamController extends CameraInputController {
     private final Vector3 tmpV1 = new Vector3();
     private final Vector3 tmpV2 = new Vector3();
 
+
+
     public MyCamController(Camera camera) {
 
         super(camera);
         targetObject = null;
         prevTarget = new Vector3();
-        this.rotateButton = Input.Buttons.RIGHT;
-        this.translateButton = Input.Buttons.FORWARD;
+//        this.rotateButton = Input.Buttons.RIGHT;
+//        this.translateButton = Input.Buttons.FORWARD;
     }
 
     public void followGameObject( GameObject go ) {
