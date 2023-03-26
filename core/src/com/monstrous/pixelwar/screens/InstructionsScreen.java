@@ -57,7 +57,7 @@ public class InstructionsScreen implements Screen {
         String part3 = "Left click on a unit to select it. Left click on the terrain to direct the unit.\n\n" +
                 "Units will fire automatically if an enemy comes in range.\n\n" +
                 "Switch between units with the type selection buttons. Use TAB to switch between units of the same type.\n\n" +
-                "Use right mouse button to turn the camera. Scroll wheel to zoom.\n\n"+
+                "Drag with the left mouse button to turn the camera. Scroll wheel to zoom.\n\n"+
                 "Press ESC to exit the game and return to menu.";
         texts = new String[3];
         texts[0] = part1;

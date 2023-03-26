@@ -98,7 +98,7 @@ public class SplashScreen extends ScreenAdapter {
     public void render( float deltaTime )
     {
         timer -= deltaTime;
-        if(timer < 0) {
+        if(timer < 0 && Gdx.app.getType() != Application.ApplicationType.WebGL) {
             game.setScreen(new MenuScreen(game));
             return;
         }

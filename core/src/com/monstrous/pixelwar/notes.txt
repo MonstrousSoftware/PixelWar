@@ -26,9 +26,20 @@ Add this to webapp/WEB_INF/index.html to prevent context menu in HTML version
     document.getElementById('embed-html').addEventListener('contextmenu', handleMouseDown, false);
 
 
+Runnable JAR:
+------------
+In the terminal type:
+.gradlew desktop:dist
+the jar is in desktop/build/libs
+
 
     Sound effects from pixabay
     Cannonball - Kastenfrost
     Explosion 1 - tommccann
     Falling bomb - Daleonfire
 
+Bug list:
+- commence battle appears after resize
+- AI doesn't know to send an airship back to a tower, if you can trick an airship to drop its bomb it becomes harmless.
+- prevent the camera from going under the terrain
+- smoke effects would be nice
