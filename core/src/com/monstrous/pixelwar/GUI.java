@@ -29,7 +29,12 @@ public class GUI implements Disposable {
         this.gameScreen = gameScreen;
         skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
         stage = new Stage(new ScreenViewport());
-        rebuild();
+
+        // set message outside of resize/rebuild, so that resizing doesn't affect it
+        messageTimer = 0;
+        labelMessage = new Label("", skin, "title");
+
+        // don't rebuild the gui now, do it in resize()
     }
 
     public void resize(int width, int height) {
@@ -45,7 +50,6 @@ public class GUI implements Disposable {
         labelFPS = new Label("FPS: 0", skin);
         labelHealth = new Label("100 %", skin);
         labelHealth.setColor(Color.BLUE);
-        labelMessage = new Label("COMMENCE BATTLE!", skin, "title");
         labelMessage.setColor(Color.RED);
 
 
@@ -80,14 +84,12 @@ public class GUI implements Disposable {
 
         TextButton backButton = new TextButton("<", skin);
 
-        screenTable.add(backButton).top().left();
-        screenTable.add(labelFPS).top().left().expandX().row();
-        screenTable.add(labelMessage).colspan(2).top().center().expandY().row();
+        screenTable.add(backButton).top().left().expandX().row();
+        screenTable.add(labelMessage).colspan(3).top().center().expandY().row();
         screenTable.add(unitButtons).left().bottom();
         screenTable.add(stats).center().bottom();
+        screenTable.add(labelFPS).width(100f).right().bottom().expandX();
         screenTable.pack();
-
-        messageTimer = 2.0f;
 
         backButton.addListener(new ClickListener() {
             @Override

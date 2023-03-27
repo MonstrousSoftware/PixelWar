@@ -89,6 +89,7 @@ public class GameObject {
             isDying = true;
             healthPoints = 0;
             Sounds.playSound(Sounds.EXPLOSION);
+            World.spawnFire(position.x, position.z);
         }
     }
 
@@ -137,10 +138,13 @@ public class GameObject {
 
 
         if(isMovingToDestination) {
-            float distance = position.dst2(destination);
+            // compare position with destination in XZ place, (ignore Y component for the sake of airships)
+            tmpVec.set(destination);
+            destination.y = position.y;
+            float distance = position.dst2(tmpVec);
             if (distance < 1f) {   // reached destination
                 isMovingToDestination = false;
-                Gdx.app.debug("reached destination", "");
+                //Gdx.app.debug("reached destination", "");
                 velocity.set(0,0,0);
                 speed = 0;
             }

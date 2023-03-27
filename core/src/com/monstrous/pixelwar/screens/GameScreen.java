@@ -36,14 +36,13 @@ public class GameScreen extends ScreenAdapter {
 
     public GameScreen(Main game, boolean newGame) {
         this.game = game;
-        this.world = new World();
-
     }
 
     @Override
     public void show() {
 
         gui = new GUI(this);
+
 
         cam = new PerspectiveCamera(50, viewWidth, viewHeight);
         cam.position.set(30f, 10f, 10f);
@@ -52,6 +51,7 @@ public class GameScreen extends ScreenAdapter {
         cam.far = Settings.worldSize * .7f;
         cam.update();
 
+        world = new World(cam);
 
         camController = new MyCamController(cam);
         //camController = new OrthographicCameraController(cam);
@@ -89,9 +89,10 @@ public class GameScreen extends ScreenAdapter {
 
         selectObject( world.selectRandomUnit() );
 
-        //sounds = new Sounds();
+        gui.setMessage("COMMENCE BATTLE!");
         Sounds.playSound(Sounds.COMMENCE);
         isGameOver = false;
+
     }
 
     @Override

@@ -27,8 +27,10 @@ public class World implements Disposable {
     private GameObject enemyFlag;
     private AI ai;
     private float previousFlagHealth;
+    private static ParticleEffects particleEffects;
 
-    public World() {
+
+    public World( Camera cam ) {
         Gdx.app.debug("World", "constructor");
 
         Armies armies = new Armies();
@@ -41,11 +43,16 @@ public class World implements Disposable {
         gameObjects = new Array<>();
         deleteList = new Array<>();
 
+        particleEffects = new ParticleEffects(cam);
 
         buildCache();
         populate();
         previousFlagHealth = playerFlag.healthPoints;
         ai = new AI(enemyFlag, gameObjects);
+
+
+
+
     }
 
     // place all scenery in a model cache
@@ -66,7 +73,7 @@ public class World implements Disposable {
     }
 
     private void populate() {
-        playerFlag = placeItem(PLAYER, "Flag", 100, -100, 90);
+        playerFlag = placeItem(PLAYER, "Flag", 0, -100, 90);
 
         placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
         placeItem(PLAYER, "Anti-Aircraft", -20, -80, 90);
@@ -116,6 +123,16 @@ public class World implements Disposable {
         GameObject go = new GameObject(armyName, name, position, angle, velocity);
         gameObjects.add(go);
         return go;
+    }
+
+    public static void spawnFire(float x, float z) {
+        float y = Terrain.getHeight(x, z);
+        tmpPosition.set(x, y, z);
+        particleEffects.addFire(tmpPosition);
+    }
+
+    public static void spawnExplosion(Vector3 position) {
+        particleEffects.addExplosion(position);
     }
 
     public static GameObject testForCollision(GameObject bullet) {
@@ -234,6 +251,7 @@ public class World implements Disposable {
                 continue;
             go.takeDamage(150);
         }
+        spawnExplosion(tmpPosition);
     }
 
     public static GameObject closestTower(GameObject subject, float radius) {
@@ -285,6 +303,7 @@ public class World implements Disposable {
 
 
         ai.update(deltaTime);
+        particleEffects.update(deltaTime);
     }
 
 
@@ -323,6 +342,7 @@ public class World implements Disposable {
             if(go.modelInstance2 != null)
                 modelBatch.render(go.modelInstance2, environment);
         }
+        particleEffects.render(modelBatch);
     }
 
     @Override

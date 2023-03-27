@@ -39,7 +39,13 @@ the jar is in desktop/build/libs
     Falling bomb - Daleonfire
 
 Bug list:
-- commence battle appears after resize
+
 - AI doesn't know to send an airship back to a tower, if you can trick an airship to drop its bomb it becomes harmless.
 - prevent the camera from going under the terrain
-- smoke effects would be nice
+
+
+version 1.1 release notes
+- added smoke effect and explosion effect
+- fixed airship bug where it would move forever (because the distance to destination did not account for height).
+- moved FPS display to lower right to be less intrusive
+- fixed bug that 'commence battle' text appeared after resize
