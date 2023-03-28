@@ -91,12 +91,15 @@ public class GameScreen extends ScreenAdapter {
 
         gui.setMessage("COMMENCE BATTLE!");
         Sounds.playSound(Sounds.COMMENCE);
+
         isGameOver = false;
 
     }
 
     @Override
     public void render(float delta) {
+        if(World.isShaking())
+            camController.shake();
         camController.update();
 
         world.update(delta);
@@ -202,9 +205,13 @@ public class GameScreen extends ScreenAdapter {
             selectObject(next);
     }
 
+    public void cameraShake() {
+        camController.shake();
+    }
 
     public boolean pressedEscape() {
         Gdx.app.debug("ESC pressed", "");
+
         game.setScreen(new MenuScreen(game));               // back to menu
         return true;
     }

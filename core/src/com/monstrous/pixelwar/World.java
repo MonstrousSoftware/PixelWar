@@ -28,6 +28,7 @@ public class World implements Disposable {
     private AI ai;
     private float previousFlagHealth;
     private static ParticleEffects particleEffects;
+    private static boolean shaking;
 
 
     public World( Camera cam ) {
@@ -51,7 +52,7 @@ public class World implements Disposable {
         ai = new AI(enemyFlag, gameObjects);
 
 
-
+        shaking = false;
 
     }
 
@@ -252,6 +253,15 @@ public class World implements Disposable {
             go.takeDamage(150);
         }
         spawnExplosion(tmpPosition);
+        shaking = true;
+    }
+
+    public static boolean isShaking() {
+        if(shaking) {
+            shaking = false;
+            return true;
+        }
+        return false;
     }
 
     public static GameObject closestTower(GameObject subject, float radius) {

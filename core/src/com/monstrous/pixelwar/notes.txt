@@ -49,3 +49,5 @@ version 1.1 release notes
 - fixed airship bug where it would move forever (because the distance to destination did not account for height).
 - moved FPS display to lower right to be less intrusive
 - fixed bug that 'commence battle' text appeared after resize
+- camera transition when switching units
+- camera shake when bomb is dropped
