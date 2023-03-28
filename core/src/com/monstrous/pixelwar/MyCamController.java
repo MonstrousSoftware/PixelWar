@@ -68,10 +68,9 @@ public class MyCamController extends CameraInputController {
             if (targetObject != null)
                 target.set(targetObject.position);
         }
-        if(shakeTimer > 0) {
-            float dx = 0; //shakeTimer * (float)Math.cos(shakeTimer*8f);
+        if(shakeTimer > 0) {    // shake Y coordinate with a sine wave of diminishing amplitude
             float dy = 0.5f * shakeTimer * (float) Math.sin(shakeTimer * 37f);
-            shakeOffset.set(dx, dy, dx);
+            shakeOffset.set(0, dy, 0);
             shakeTimer -= deltaTime;
             if(shakeTimer <= 0)
                 shakeOffset.set(0,0,0);
@@ -81,6 +80,15 @@ public class MyCamController extends CameraInputController {
         tmpV1.set(target).sub(prevTarget);      // change in target position
         camera.position.add(tmpV1);
         camera.position.add(shakeOffset);
+
+
+        // prevent camera from going under terrain
+        float ht = Terrain.getHeight(camera.position.x, camera.position.z);
+        while(camera.position.y < ht) {
+            Gdx.app.log("camera underground", ""+camera.position.y);
+            tmpV1.set(camera.direction).crs(camera.up).y = 0f;
+            camera.rotateAround(target, tmpV1.nor(), -0.01f * rotateAngle);
+        }
         prevTarget.set(target);                 // remember for next frame
         camera.update();
     }

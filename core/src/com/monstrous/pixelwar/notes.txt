@@ -51,3 +51,4 @@ version 1.1 release notes
 - fixed bug that 'commence battle' text appeared after resize
 - camera transition when switching units
 - camera shake when bomb is dropped
+- prevent camera from going under terrain
