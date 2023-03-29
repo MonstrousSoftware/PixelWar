@@ -32,9 +32,9 @@ public class ParticleEffects implements Disposable {
         particleSystem = new ParticleSystem();
 
         // create a point sprite batch and add it to the particle system
-        PointSpriteParticleBatch  pointSpriteBatch = new PointSpriteParticleBatch();
+        PointSpriteParticleBatch  pointSpriteBatch = new PointSpriteParticleBatch(1000,  new ParticleShader.Config(ParticleShader.ParticleType.Point),
+                                new BlendingAttribute(GL20.GL_SRC_COLOR, GL20.GL_ONE_MINUS_SRC_ALPHA, 0.1f), null );
         pointSpriteBatch.setCamera(cam);
-        //pointSpriteBatch.getBlendingAttribute().sourceFunction =
         particleSystem.add(pointSpriteBatch);
 
         // load particle effect from file

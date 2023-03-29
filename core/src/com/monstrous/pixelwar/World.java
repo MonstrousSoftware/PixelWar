@@ -74,6 +74,8 @@ public class World implements Disposable {
     }
 
     private void populate() {
+        spawnFire(0,0);
+
         playerFlag = placeItem(PLAYER, "Flag", 0, -100, 90);
 
         placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
