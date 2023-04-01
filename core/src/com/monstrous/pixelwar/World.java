@@ -74,7 +74,7 @@ public class World implements Disposable {
     }
 
     private void populate() {
-        spawnFire(0,0);
+        //spawnFire(0,0);
 
         playerFlag = placeItem(PLAYER, "Flag", 0, -100, 90);
 
@@ -142,21 +142,14 @@ public class World implements Disposable {
 
         for(int i = 0; i < gameObjects.size; i++ ) {
             GameObject go = gameObjects.get(i);
-            if(go == bullet)
-                continue;
             if(go.army == bullet.army)  // prevent friendly fire
                 continue;
+            if(go.type.isProjectile)        // don't collide bullets with bullets
+                continue;
             // add bounding box centre to object position (especially important for airship)
-            go.type.bbox.getCenter(tmpPosition);
-            tmpPosition.add(go.position);
-            float dist = bullet.position.dst(tmpPosition);
-            //Gdx.app.debug("bullet distance", "dist: "+dist);
-            if(dist < go.type.radius ) {
-                //Gdx.app.debug("bullet is close", "dist: "+dist);
-                tmpPosition.set(bullet.position).sub(go.position);
-                if( go.type.bbox.contains(tmpPosition) )
-                    return go;
-            }
+            tmpPosition.set(bullet.position).sub(go.position);
+            if( go.type.bbox.contains(tmpPosition) )
+                return go;
         }
         return null;
     }
@@ -343,9 +336,8 @@ public class World implements Disposable {
     public void render(ModelBatch modelBatch, Environment environment, boolean mapView ) {
 
         if(!mapView)
-            modelBatch.render(cache, environment);
+            modelBatch.render(cache, environment);  // terrain and scenery
 
-       // terrain.render(modelBatch, environment);
         for(GameObject go : gameObjects ) {
             if(mapView && go.type.isScenery)   // hide scenery in map view
                 continue;

@@ -17,32 +17,37 @@ public class TankBehaviour extends Behaviour {
     public static final float BULLET_SPEED = 8f;
 
     private float timeToFire;
+    private float retargetTime;
     private GameObject target;
     private Vector3 tmpVec = new Vector3();
 
     public TankBehaviour(GameObject go) {
         super(go);
         timeToFire = FIRE_REPEAT;
+        retargetTime = 1f;
     }
 
     @Override
     public void update( float deltaTime ) {
 
         // death animation
-        if(go.isDying)
-            go.velocity.set(0,-0.2f,0);
-        if(go.position.y < -5f)
+        if (go.isDying)
+            go.velocity.set(0, -0.2f, 0);
+        if (go.position.y < -5f)
             go.toRemove = true;
 
-        target = World.closestEnemy(go, TRACKING_RADIUS);
-        if(target != null) {
-            // recalculate the destination angle from current position
-            tmpVec.set(target.position).sub(go.position).nor();    // unit vector towards destination
-            double phi = Math.atan2(tmpVec.z, tmpVec.x);     // angle in horizontal XZ plane (radians)
-            go.targetAngle = (float)(180f * phi/Math.PI);
-        }
+        retargetTime -= deltaTime;          // retarget every so often to avoid expensive call to closestEnemy()
+        if (retargetTime < 0) {
+            retargetTime = 1f;
 
-        //go.modelInstance2.transform.setToRotation(Vector3.Y, -(go.angle+turretAngle)).trn(go.position); // update transform with rotation and position
+            target = World.closestEnemy(go, TRACKING_RADIUS);
+            if (target != null) {
+                // recalculate the destination angle from current position
+                tmpVec.set(target.position).sub(go.position).nor();    // unit vector towards destination
+                double phi = Math.atan2(tmpVec.z, tmpVec.x);     // angle in horizontal XZ plane (radians)
+                go.targetAngle = (float) (180f * phi / Math.PI);
+            }
+        }
 
         timeToFire -= deltaTime;
         if( !go.isDying && timeToFire < 0 && target != null) {
@@ -59,7 +64,5 @@ public class TankBehaviour extends Behaviour {
             GameObject bullet = World.spawnItem(go.army.name, "Bullet", spawnPoint, go.targetAngle, velocity);
             Sounds.playSound(Sounds.TANK_FIRE);
         }
-
-
     }
 }

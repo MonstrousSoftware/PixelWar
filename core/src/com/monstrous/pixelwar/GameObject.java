@@ -18,8 +18,10 @@ public class GameObject {
     public Vector3 velocity;
     public float speed;
     public float angle;     // around up axis (0 degrees is on the +X), models have to face forward on +X axis
+    private float prevAngle;
     public float destAngle;
     public float targetAngle;
+    private float prevTargetAngle;
     public Vector3 destination;
     public boolean isMovingToDestination;
     public boolean isRotating;
@@ -49,6 +51,8 @@ public class GameObject {
         toRemove = false;
         isDying = false;
         targetAngle = 60f;
+        prevAngle = -999f;
+        prevTargetAngle = -999f;
         speed = 0;
 
         behaviour = null;
@@ -172,16 +176,23 @@ public class GameObject {
                 }
             }
         }
+        float speed2 = velocity.len2();
+        if(speed2 > 0.01f) {                            // if the speed is zero we can skip the next steps
+            tmpVec.set(velocity).scl(deltaTime);
+            position.add(tmpVec);
 
-        tmpVec.set(velocity).scl(deltaTime);
-        position.add(tmpVec);
+            if (type.followsTerrain && !isDying)
+                position.y = Terrain.getHeight(position.x, position.z);   // follow terrain height
+        }
 
-        if(type.followsTerrain && !isDying)
-            position.y = Terrain.getHeight(position.x, position.z);   // follow terrain height
-
-        modelInstance.transform.setToRotation(Vector3.Y, -angle).trn(position); // update transform with rotation and position
-        if (modelInstance2 != null)
-            modelInstance2.transform.setToRotation(Vector3.Y, -targetAngle).trn(position);
+        if(speed2 > 0.01f || Math.abs(angle-prevAngle) > 0.01f|| Math.abs(targetAngle-prevTargetAngle) > 0.01f ) {
+            modelInstance.transform.setToRotation(Vector3.Y, -angle).trn(position); // update transform with rotation and position
+            prevAngle = angle;
+            if (modelInstance2 != null) {
+                modelInstance2.transform.setToRotation(Vector3.Y, -targetAngle).trn(position);
+                prevTargetAngle = targetAngle;
+            }
+        }
 
         if(behaviour != null)
             behaviour.update(deltaTime);

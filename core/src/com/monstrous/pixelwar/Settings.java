@@ -4,7 +4,7 @@ package com.monstrous.pixelwar;
 import com.badlogic.gdx.graphics.Color;
 
 public class Settings {
-    static public String    title = "PIXEL WAR";
+    static public String    title = "WAR OF THE PIXELS";
     static public float     splashTime = 2.0f;    // seconds
     static public float     ambientLightLevel = 0.4f;
     static public float     directionalLightLevel = 0.6f;
