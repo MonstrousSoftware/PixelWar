@@ -18,6 +18,7 @@ public class Armies {
         enemyArmy = new Army("Red", Color.RED);
         neutral = new Army("Neutral", Color.WHITE); // for game objects that don't belong to either side, e.g. a tree
         neutral.isNeutral = true;
+        enemyArmy.isEnemy = true;
 
         map.put(playerArmy.name,  playerArmy );
         map.put(enemyArmy.name, enemyArmy);

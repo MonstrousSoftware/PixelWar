@@ -9,6 +9,7 @@ public class Army {
     public Color color;
     public Material material;
     public boolean isNeutral;
+    public boolean isEnemy;
 
     public Army(String name, Color color) {
         this.name = name;

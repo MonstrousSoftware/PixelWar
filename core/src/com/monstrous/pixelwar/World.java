@@ -18,7 +18,7 @@ public class World implements Disposable {
     public static Terrain terrain;
     private ModelCache cache;
     private static ModelAssets modelAssets;
-    private static Array<GameObject> gameObjects;
+    public static Array<GameObject> gameObjects;
     private static Array<GameObject> deleteList;
     private static Vector3 tmpPosition = new Vector3();
     private static Vector3 tmpVelocity = new Vector3();
@@ -107,8 +107,8 @@ public class World implements Disposable {
 
     private void placeRandom(String name, int count){
         for(int n = 0; n < count; n++) {
-            float xx = (float) (Math.random()-0.5f)*Settings.worldSize;
-            float zz = (float) (Math.random()-0.5f)*Settings.worldSize;
+            float xx = (float) (Math.random()-0.5f)*(Settings.worldSize-5f);    // don't plant trees to close to the edge
+            float zz = (float) (Math.random()-0.5f)*(Settings.worldSize-5f);
             float r = (float) (Math.random()*360f);
             placeItem("Neutral", name, xx, zz, r);
         }
@@ -333,14 +333,11 @@ public class World implements Disposable {
     }
 
 
-    public void render(ModelBatch modelBatch, Environment environment, boolean mapView ) {
+    public void render(ModelBatch modelBatch, Environment environment) {
 
-        if(!mapView)
-            modelBatch.render(cache, environment);  // terrain and scenery
+        modelBatch.render(cache, environment);  // terrain and scenery
 
         for(GameObject go : gameObjects ) {
-            if(mapView && go.type.isScenery)   // hide scenery in map view
-                continue;
 
             modelBatch.render(go.modelInstance, environment);
             if(go.modelInstance2 != null)

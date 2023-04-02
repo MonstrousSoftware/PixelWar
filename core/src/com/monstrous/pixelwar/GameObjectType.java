@@ -1,6 +1,7 @@
 package com.monstrous.pixelwar;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
@@ -22,8 +23,10 @@ public class GameObjectType {
     public BoundingBox bbox;
     public float radius;
     public float maxSpeed;
+    public Texture iconTexture = null;
+    public Texture enemyIconTexture = null;
 
-    public GameObjectType(String name, String modelName, String modelName2, boolean isScenery, float healthPoints, float timeToLive) {
+    public GameObjectType(String name, String modelName, String modelName2, String textureName, boolean isScenery, float healthPoints, float timeToLive) {
         this.name = name;
         this.modelName = modelName;
         this.modelName2 = modelName2;
@@ -38,7 +41,12 @@ public class GameObjectType {
         this.maxSpeed = 5f;
 
         Model model = ModelAssets.getModel("Assets");
-        ModelInstance modelInstance =  new ModelInstance(model, modelName);
+        ModelInstance modelInstance = new ModelInstance(model, modelName);
+
+        if (textureName != null) {
+             iconTexture = new Texture(Gdx.files.internal("icons/" + textureName));
+             enemyIconTexture = new Texture(Gdx.files.internal("icons/red-" + textureName));
+        }
 
         // calculate dimensions, e.g. for object picking
         bbox = new BoundingBox();

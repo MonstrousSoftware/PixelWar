@@ -1,6 +1,5 @@
 package com.monstrous.pixelwar;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -59,7 +58,7 @@ public class GameObject {
         if(type.name.contentEquals("Anti-Aircraft"))
             behaviour = new AntiAircraft(this);
         if(type.name.contentEquals("Tank"))
-            behaviour = new TankBehaviour(this);
+            behaviour = new Tank(this);
         if(type.name.contentEquals("Bullet"))
             behaviour = new Bullet(this);
         if(type.name.contentEquals("Bomb"))

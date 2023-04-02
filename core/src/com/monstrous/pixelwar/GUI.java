@@ -2,13 +2,13 @@ package com.monstrous.pixelwar;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.monstrous.pixelwar.screens.GameScreen;
@@ -69,11 +69,14 @@ public class GUI implements Disposable {
         stats.add(labelHealth);
         stats.pack();
 
-        TextButton tkButton = new TextButton("TK", skin);
-        TextButton asButton = new TextButton("AS", skin);
-        TextButton aaButton = new TextButton("AA", skin);
-        TextButton twButton = new TextButton("TW", skin);
-        TextButton flButton = new TextButton("FL", skin);
+
+
+        ImageButton tkButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/tank.png")))));
+        ImageButton asButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/airship.png")))));
+        ImageButton aaButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/anti-aircraft.png")))));
+        ImageButton twButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/tower.png")))));
+        ImageButton flButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/flag.png")))));
+
         Table unitButtons = new Table();
         unitButtons.add(tkButton);
         unitButtons.add(asButton);
@@ -82,7 +85,9 @@ public class GUI implements Disposable {
         unitButtons.add(flButton);
         unitButtons.pack();
 
-        TextButton backButton = new TextButton("<", skin);
+        ImageButton backButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/exit.png")))));
+
+        //TextButton backButton = new TextButton("<", skin);
 
         screenTable.add(backButton).top().left().expandX().row();
         screenTable.add(labelMessage).colspan(3).top().center().expandY().row();

@@ -52,7 +52,7 @@ public class InstructionsScreen implements Screen {
         String part2 = "Protect your flag at all costs. Try to destroy the enemy flag.\n\n" +
                 "Use tanks to destroy enemy structure and units.\n\n"+
                 "Airships can drop a bomb over an enemy target. Return to a reloading tower to pick up a new bomb. Watch out for anti-aircraft guns\n\n " +
-                "";
+                "\n\n\n\n";
 
         String part3 = "Left click on a unit to select it. Left click on the terrain to direct the unit.\n\n" +
                 "Units will fire automatically if an enemy comes in range.\n\n" +
@@ -77,12 +77,12 @@ public class InstructionsScreen implements Screen {
         final Label labelText = new Label(texts[pageIndex], skin);
         labelText.setWrap(true);
 
-        Table menuTable = new Table();
+        final Table menuTable = new Table();
 
 
         TextButton backButton = new TextButton("DONE", skin);
-        TextButton prevButton = new TextButton("PREVIOUS", skin);
-        TextButton nextButton = new TextButton("NEXT", skin);
+        final TextButton prevButton = new TextButton("PREVIOUS", skin);
+        final TextButton nextButton = new TextButton("NEXT", skin);
 
         Table buttons = new Table();
         buttons.add(backButton).width(BUTTON_WIDTH).pad(BUTTON_PAD);
@@ -90,8 +90,8 @@ public class InstructionsScreen implements Screen {
         buttons.add(nextButton).width(BUTTON_WIDTH).pad(BUTTON_PAD);
         buttons.pack();
 
-        menuTable.add(labelText).width(TEXT_WIDTH).center().row();
-        menuTable.add(buttons);
+        menuTable.add(labelText).width(TEXT_WIDTH).center().expandY().row();
+        menuTable.add(buttons).bottom();
         menuTable.pack();
 
 
@@ -104,6 +104,7 @@ public class InstructionsScreen implements Screen {
         screenTable.add(menuTable);
 
         screenTable.pack();
+        prevButton.setDisabled(true);   // disable Prev button on first page
 
         backButton.addListener(new ClickListener() {
             @Override
@@ -119,6 +120,8 @@ public class InstructionsScreen implements Screen {
                 if(pageIndex > 0)
                     pageIndex--;
                 labelText.setText(texts[pageIndex]);
+                prevButton.setDisabled(pageIndex == 0);         // disable Prev and Next button as needed
+                nextButton.setDisabled(false);
             }
         });
         nextButton.addListener(new ClickListener() {
@@ -128,9 +131,13 @@ public class InstructionsScreen implements Screen {
                 if(pageIndex < 2)
                     pageIndex++;
                 labelText.setText(texts[pageIndex]);
+                menuTable.pack();
+                prevButton.setDisabled(false);
+                nextButton.setDisabled(pageIndex == 2);
             }
         });
     }
+
 
 
     @Override

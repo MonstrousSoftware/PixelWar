@@ -4,15 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Disposable;
 
 public class MiniMap implements Disposable {
@@ -46,8 +44,6 @@ public class MiniMap implements Disposable {
 
         // ortho cam used for mini map
         float orthoCamHeight = 100f;
-        // todo how to keep square minimap when terrain is not square. E.g. black bars....
-        //  scale the ortho cam so the largest terrain dimension fits on`
         float max = worldWidth;
         if(worldDepth > max)
             max = worldDepth;
@@ -57,14 +53,14 @@ public class MiniMap implements Disposable {
         orthoCam.up.set(0,0,1);
         orthoCam.near = 1;
         // use far clipping plane to clip terrain below water level
-        orthoCam.far = 500; //orthoCamHeight-waterLevel;
+        orthoCam.far = 500;
         orthoCam.update();
 
         screenCorners = new Vector3[4];
         for(int i = 0; i < 4; i++)
             screenCorners[i] = new Vector3();
 
-        heightMap = new Texture(Gdx.files.internal("noiseTexture.png"));
+        heightMap = new Texture(Gdx.files.internal("map.png"));
     }
 
     public void resize(int viewWidth, int viewHeight) {
@@ -94,18 +90,25 @@ public class MiniMap implements Disposable {
         //setScreenCorners(cam);
 
         fboMiniMap.begin();
-            Gdx.gl.glClearColor(.2f, .5f, .8f, 1);		// water colour
+            Gdx.gl.glClearColor(0,0,0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
             batch.begin();
             batch.draw(heightMap,0,0, viewWidth, viewHeight);
+
+            for(GameObject go : World.gameObjects ) {
+
+                float x = -(go.position.x / Settings.worldSize) * viewWidth + viewWidth / 2;
+                float y = (go.position.z / Settings.worldSize) * viewHeight + viewHeight / 2;
+                Texture symbol = go.type.iconTexture;
+                if(go.army.isEnemy)
+                    symbol = go.type.enemyIconTexture;
+
+                if(symbol != null)
+                    batch.draw(symbol, x, y);
+            }
+
             batch.end();
-            modelBatch.begin(orthoCam);
-            world.render(modelBatch, environment, true);
-            modelBatch.end();
-
-
-            // render fog of war over the minimap with default blending
 
             // show view frustum as a trapezium shape overlay on the mini map
             Vector3 planePoints[] = cam.frustum.planePoints;
@@ -118,7 +121,7 @@ public class MiniMap implements Disposable {
                 orthoCam.project(screenCorners[i]);
 
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-            shapeRenderer.setColor(Color.GREEN);
+            shapeRenderer.setColor(Color.YELLOW);
             for (int i = 0; i < 3; i++)
                 shapeRenderer.line(screenCorners[i].x, screenCorners[i].y, screenCorners[i+1].x, screenCorners[i+1].y);
             shapeRenderer.line(screenCorners[3].x, screenCorners[3].y, screenCorners[0].x, screenCorners[0].y);
@@ -129,8 +132,8 @@ public class MiniMap implements Disposable {
 
     public void render() {
         batch.begin();
-		Sprite s = new Sprite(fboMiniMap.getColorBufferTexture());
-		s.flip(true, false); // coordinate system in buffer differs from screen
+		TextureRegion s = new TextureRegion(fboMiniMap.getColorBufferTexture());
+		s.flip(false, true); // coordinate system in buffer differs from screen
 
 		batch.draw(mapFrame, mapFrameRect.x,  mapFrameRect.y,  mapFrameRect.width,  mapFrameRect.height);
 		batch.draw(s, miniMapRect.x,  miniMapRect.y,  miniMapRect.width,  miniMapRect.height);

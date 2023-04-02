@@ -93,6 +93,15 @@ public class MyCamController extends CameraInputController {
         camera.update();
     }
 
+    @Override
+    public boolean zoom (float amount) {
+        if (!alwaysScroll && activateKey != 0 && !activatePressed) return false;
+        float dst = tmpV1.set(camera.position).sub(target).len();
+        camera.translate(tmpV1.set(camera.direction).scl(Math.signum(amount)*dst*0.1f));
+        if (scrollTarget) target.add(tmpV1);
+        if (autoUpdate) camera.update();
+        return true;
+    }
 
 
 }

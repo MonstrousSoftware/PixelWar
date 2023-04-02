@@ -56,23 +56,6 @@ public class Terrain implements Disposable {
         modelInstance =  new ModelInstance(model);
     }
 
-    // hmmm.... static...
-//    public static float getHeight(float x, float y) {
-//        if(x < -SCALE/2 || x > SCALE/2 || y < -SCALE/2 || y > SCALE/2 )
-//            return 0;
-//        int ix = (int)(MAP_SIZE * ((x/SCALE)+0.5f));
-//        int iy = (int)(MAP_SIZE * ((y/SCALE)+0.5f));
-//
-//        float step = SCALE/MAP_SIZE;
-//
-//        float h0 = heightMap[iy][ix];
-//        float h1 = heightMap[iy][ix+1];
-//        float frac = x - (x/SCALE)
-//
-//        return heightMap[iy][ix];
-//    }
-
-
     @Override
     public void dispose() {
         model.dispose();
@@ -113,6 +96,9 @@ public class Terrain implements Disposable {
                 float posx = ((float) x / (float) N - 0.5f);        // x in [-0.5f .. 0.5f]
 
                 posz = heightMap[y][x];
+                // have a slope down on the edges
+                if(x == 0 || x == N-1 || y == 0 || y == N-1)
+                    posz = -10f;
                 pos.set(posx*scale, posz, posy*scale);			// swapping z,y to orient horizontally
 
 
