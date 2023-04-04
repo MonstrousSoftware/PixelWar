@@ -14,16 +14,16 @@ public class Bullet extends Behaviour {
     }
 
     @Override
-    public void update( float deltaTime ) {
+    public void update( World world, float deltaTime ) {
         go.velocity.y -= deltaTime* ACCELERATION;
         if(go.position.y < -2f)     // bullets that fall (well) under terrain can be removed
             go.toRemove= true;
         else {
-            GameObject collider = World.testForCollision(go);
+            GameObject collider = world.testForCollision(go);
             if(collider != null) {
                 go.toRemove = true; // remove bullet
                 Gdx.app.debug("bullet hits", collider.type.name+" hp:"+collider.healthPoints);
-                collider.takeDamage(10);
+                collider.takeDamage(world, 10);
             }
         }
 

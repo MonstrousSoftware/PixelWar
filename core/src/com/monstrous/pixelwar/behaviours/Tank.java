@@ -10,8 +10,8 @@ public class Tank extends Behaviour {
     public static final float TRACKING_RADIUS = 30f;
     public static final float FIRE_REPEAT = 1.2f;
 
-    public static final float RADIUS = 1.8f;
-    public static final float MUZZLE_HEIGHT = 1.3f;
+    public static final float RADIUS = 3.12f;
+    public static final float MUZZLE_HEIGHT = 2.18f;
     public static final float BULLET_SPEED = 8f;
 
     private float timeToFire;
@@ -28,7 +28,7 @@ public class Tank extends Behaviour {
     }
 
     @Override
-    public void update( float deltaTime ) {
+    public void update( World world, float deltaTime ) {
 
         // death animation
         if (go.isDying)
@@ -40,10 +40,12 @@ public class Tank extends Behaviour {
         if (retargetTime < 0) {
             retargetTime = 1f;
 
-            target = World.closestEnemy(go, TRACKING_RADIUS);
+            target = world.closestEnemy(go, TRACKING_RADIUS);
             if (target != null) {
                 // recalculate the destination angle from current position
-                fireVector.set(target.position).sub(go.position).nor();    // unit vector towards destination
+                fireVector.set(target.position).sub(go.position);    // unit vector towards destination
+                fireVector.sub(0,MUZZLE_HEIGHT,0);  // compensate for muzzle height
+                fireVector.nor();
                 double phi = Math.atan2(fireVector.z, fireVector.x);     // angle in horizontal XZ plane (radians) used for turret rotation
                 go.targetAngle = (float) (180f * phi / Math.PI);
             }
@@ -53,12 +55,12 @@ public class Tank extends Behaviour {
         if( !go.isDying && timeToFire < 0 && target != null) {
             timeToFire = FIRE_REPEAT;
 
-            // spawn point: where bullet originates, more or less at the end of the barrel
+            // spawn point: where bullet originates: at the end of the barrel
             spawnPoint.set(fireVector).scl(RADIUS).add(go.position);
             spawnPoint.y = go.position.y + MUZZLE_HEIGHT;
             bulletVelocity.set(fireVector).scl(BULLET_SPEED);
 
-            World.spawnItem(go.army.name, "Bullet", spawnPoint, go.targetAngle, bulletVelocity);
+            world.spawnItem(go.army.name, "Bullet", spawnPoint, go.targetAngle, bulletVelocity);
             Sounds.playSound(Sounds.TANK_FIRE);
         }
     }

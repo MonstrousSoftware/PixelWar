@@ -1,6 +1,7 @@
 package com.monstrous.pixelwar.behaviours;
 
 import com.monstrous.pixelwar.GameObject;
+import com.monstrous.pixelwar.World;
 
 public class Flag extends Behaviour {
 
@@ -9,7 +10,7 @@ public class Flag extends Behaviour {
     }
 
     @Override
-    public void update( float deltaTime ) {
+    public void update(World world,  float deltaTime ) {
 
         // death animation
         if(go.isDying) {

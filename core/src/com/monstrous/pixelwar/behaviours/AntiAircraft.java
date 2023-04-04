@@ -37,7 +37,7 @@ public class AntiAircraft extends Behaviour {
     }
 
     @Override
-    public void update( float deltaTime ) {
+    public void update( World world, float deltaTime ) {
         // death animation
         if(go.isDying) {
             go.velocity.set(0, -0.2f, 0);
@@ -46,7 +46,7 @@ public class AntiAircraft extends Behaviour {
             go.toRemove = true;
 
 
-        target = World.closestEnemyAirship(go, TRACKING_RADIUS);
+        target = world.closestEnemyAirship(go, TRACKING_RADIUS);
         if(target != null) {
             // recalculate the destination angle from current position
             tmpVec.set(target.position).sub(go.position).nor();    // unit vector towards destination
@@ -72,7 +72,7 @@ public class AntiAircraft extends Behaviour {
             spawnPoint.z += RADIUS * Math.sin(angleRads);
             Vector3 velocity = new Vector3(BULLET_SPEED*(float)Math.cos(angleRads), BULLET_SPEED/2, BULLET_SPEED*(float)Math.sin(angleRads));
 
-            GameObject bullet = World.spawnItem(go.army.name, "Bullet", spawnPoint, go.targetAngle+turretAngle, velocity);
+            GameObject bullet = world.spawnItem(go.army.name, "Bullet", spawnPoint, go.targetAngle+turretAngle, velocity);
             //Gdx.app.log("Spawn missile", ""+spawnPoint);
             Sounds.playSound(Sounds.AA_FIRE);
 

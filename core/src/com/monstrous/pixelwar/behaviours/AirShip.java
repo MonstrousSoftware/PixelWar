@@ -22,24 +22,24 @@ public class AirShip extends Behaviour {
     }
 
     @Override
-    public void update( float deltaTime ) {
+    public void update( World world, float deltaTime ) {
 
         go.targetAngle = go.angle;  // make bomb follow airship orientation
 
         if(hasBomb) {
-            GameObject target = World.closestEnemy(go, Bomb.BOMB_RADIUS);
+            GameObject target = world.closestEnemy(go, Bomb.BOMB_RADIUS);
             if (target != null) {
                 // drop the bomb
                 // - hide modelInstance2 and spawn a dropping bomb
                 hasBomb = false;
                 go.modelInstance2 = null;
 
-                GameObject bomb = World.spawnItem(go.army.name, "Bomb", go.position, go.targetAngle, go.velocity);
+                GameObject bomb = world.spawnItem(go.army.name, "Bomb", go.position, go.targetAngle, go.velocity);
                 Sounds.playSound(Sounds.FALLING_BOMB);
             }
         }
         else {
-            GameObject tower = World.closestTower(go, TOWER_RADIUS);    // are we close to a tower?
+            GameObject tower = world.closestTower(go, TOWER_RADIUS);    // are we close to a tower?
             if(tower != null) {
                 // reload a bomb
                 Model model = ModelAssets.getModel("Assets");

@@ -99,7 +99,7 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        if(World.isShaking())
+        if(world.isShaking())
             camController.shake();
         camController.update();
 

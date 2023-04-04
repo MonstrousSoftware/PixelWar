@@ -30,6 +30,7 @@ public class GameObject {
     public boolean toRemove;
     private Behaviour behaviour;
     public float healthPoints;
+    public Vector3 terrainNormal;
 
     public GameObject(String armyName, String typeName, Vector3 position, float angle, Vector3 velocity) {
 
@@ -43,6 +44,7 @@ public class GameObject {
 
         this.position = new Vector3(position);
         this.velocity = new Vector3(velocity);
+        this.terrainNormal = new Vector3();
         this.angle = angle;
         destination = new Vector3();
         isMovingToDestination = false;
@@ -70,8 +72,11 @@ public class GameObject {
         if(type.name.contentEquals("Flag"))
             behaviour = new Flag(this);
 
+        Terrain.getNormal(position.x, position.z, this.terrainNormal);
+
         Model model = ModelAssets.getModel("Assets");
         modelInstance =  new ModelInstance(model, type.modelName);
+        //modelInstance.transform.rotateTowardDirection(Vector3.X, terrainNormal).trn(position);
         modelInstance.transform.rotate(Vector3.Y, angle).trn(position);
 
         timeToLive = type.timeToLive;
@@ -85,14 +90,14 @@ public class GameObject {
         tmpVec = new Vector3();
     }
 
-    public void takeDamage( int damage ) {
+    public void takeDamage( World world, int damage ) {
         healthPoints -= damage;
         Sounds.playSound(Sounds.BULLET_HIT);
         if( healthPoints <= 0 ) {
             isDying = true;
             healthPoints = 0;
             Sounds.playSound(Sounds.EXPLOSION);
-            World.spawnFire(position.x, position.z);
+            world.spawnFire(position.x, position.z);
         }
     }
 
@@ -104,7 +109,7 @@ public class GameObject {
         speed = type.maxSpeed;
     }
 
-    public void update( float deltaTime ) {
+    public void update( World world, float deltaTime ) {
         if(timeToLive > 0f){
             timeToLive -= deltaTime;
             if(timeToLive <= 0f)
@@ -180,12 +185,18 @@ public class GameObject {
             tmpVec.set(velocity).scl(deltaTime);
             position.add(tmpVec);
 
-            if (type.followsTerrain && !isDying)
+            if (type.followsTerrain && !isDying) {
                 position.y = Terrain.getHeight(position.x, position.z);   // follow terrain height
+                Terrain.getNormal(position.x, position.z, this.terrainNormal);
+                modelInstance.transform.rotateTowardDirection(Vector3.X, terrainNormal);
+            }
         }
 
         if(speed2 > 0.01f || Math.abs(angle-prevAngle) > 0.01f|| Math.abs(targetAngle-prevTargetAngle) > 0.01f ) {
-            modelInstance.transform.setToRotation(Vector3.Y, -angle).trn(position); // update transform with rotation and position
+            // TMP!!!
+            modelInstance.transform.setToRotation(terrainNormal, Vector3.Y).trn(position);
+            //modelInstance.transform.setToRotation(Vector3.Y, terrainNormal).rotate(terrainNormal, -angle).trn(position);
+            //modelInstance.transform.setToRotation(Vector3.Y, -angle).trn(position); // update transform with rotation and position
             prevAngle = angle;
             if (modelInstance2 != null) {
                 modelInstance2.transform.setToRotation(Vector3.Y, -targetAngle).trn(position);
@@ -194,7 +205,7 @@ public class GameObject {
         }
 
         if(behaviour != null)
-            behaviour.update(deltaTime);
+            behaviour.update(world, deltaTime);
     }
 
     public void setArmy( Army army ) {

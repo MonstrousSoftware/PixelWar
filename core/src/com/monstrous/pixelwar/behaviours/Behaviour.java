@@ -1,6 +1,7 @@
 package com.monstrous.pixelwar.behaviours;
 
 import com.monstrous.pixelwar.GameObject;
+import com.monstrous.pixelwar.World;
 
 public class Behaviour {
     protected GameObject go = null;
@@ -9,7 +10,7 @@ public class Behaviour {
         this.go = go;
     }
 
-    public void update(float deltaTime ) {
+    public void update(World world, float deltaTime ) {
 
     }
 }

@@ -26,6 +26,7 @@ public class Terrain implements Disposable {
     private static float verts[];  // for collision detection, 3 floats per vertex
     private static short indices[];    // 3 indices per triangle
     private static int numIndices;
+    private static Vector3 normalVectors[] = new Vector3[MAP_SIZE*MAP_SIZE];
 
     public Terrain() {
 
@@ -130,6 +131,7 @@ public class Terrain implements Disposable {
             normal.set(normals[i]);
             normal.nor();
 
+            normalVectors[i] = new Vector3(normal);
 
             int x = i % (N+1);	// e.g. in [0 .. 3] if N == 3
             int y = i / (N+1);
@@ -200,10 +202,22 @@ public class Terrain implements Disposable {
     private static Vector3 hitPoint = new Vector3();
 
     public static float getHeight(float x, float y) {
-        downRay.set(x, 20f, y, 0, -1, 0);
+        downRay.set(x, AMPLITUDE*2f, y, 0, -1, 0);
         boolean hit = Intersector.intersectRayTriangles(downRay, verts, indices, 3, hitPoint);
+        if(!hit)
+            return 0;
         return hitPoint.y;
+    }
 
+    public static void getNormal(float x, float y, Vector3 outNormal) {
+
+        // get normal vector from the closest grid point
+        int mx = (int) (MAP_SIZE * 0.5f*(1f + x / Settings.worldSize));
+        int mz = (int) (MAP_SIZE * 0.5f*(1f + y / Settings.worldSize));
+        if(mx < 0 ||x >= MAP_SIZE || mz < 0 || mz >= MAP_SIZE)
+            outNormal.set(0,1,0);
+        else
+            outNormal.set( normalVectors[mz*MAP_SIZE+mx]);
     }
 
 }

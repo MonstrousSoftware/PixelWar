@@ -16,14 +16,14 @@ public class Bomb extends Behaviour {
     }
 
     @Override
-    public void update( float deltaTime ) {
+    public void update( World world, float deltaTime ) {
         go.velocity.y -= deltaTime* ACCELERATION;
 
         float ht = Terrain.getHeight(go.position.x, go.position.z);
         if(go.position.y + go.type.bbox.getCenterY() < ht) // hit the ground
         {
             go.toRemove= true;  // removee the bomb
-            World.blastEffect(go, BOMB_RADIUS);
+            world.blastEffect(go, BOMB_RADIUS);
         }
     }
 }

@@ -2,7 +2,9 @@ package com.monstrous.pixelwar;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
@@ -12,23 +14,24 @@ import com.badlogic.gdx.utils.Disposable;
 
 public class World implements Disposable {
 
-    public static String PLAYER = "Blue";
-    public static String ENEMY = "Red";
+    public final static String PLAYER = "Blue";
+    public final static String ENEMY = "Red";
 
-    public static Terrain terrain;
+    public  Terrain terrain;
     private ModelCache cache;
-    private static ModelAssets modelAssets;
-    public static Array<GameObject> gameObjects;
-    private static Array<GameObject> deleteList;
-    private static Vector3 tmpPosition = new Vector3();
-    private static Vector3 tmpVelocity = new Vector3();
-    private static Army playerArmy;
+    private ModelAssets modelAssets;
+    public  Array<GameObject> gameObjects;
+    private  Array<GameObject> deleteList;
+    private  Vector3 tmpPosition = new Vector3();
+    private  Vector3 tmpVelocity = new Vector3();
+    private  Army playerArmy;
     private GameObject playerFlag;
     private GameObject enemyFlag;
     private AI ai;
     private float previousFlagHealth;
-    private static ParticleEffects particleEffects;
-    private static boolean shaking;
+    private  ParticleEffects particleEffects;
+    private  boolean shaking;
+    private ShapeRenderer shapeRenderer;
 
 
     public World( Camera cam ) {
@@ -45,6 +48,7 @@ public class World implements Disposable {
         deleteList = new Array<>();
 
         particleEffects = new ParticleEffects(cam);
+        shapeRenderer = new ShapeRenderer();
 
         buildCache();
         populate();
@@ -78,31 +82,31 @@ public class World implements Disposable {
 
         playerFlag = placeItem(PLAYER, "Flag", 0, -100, 90);
 
-        placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
-        placeItem(PLAYER, "Anti-Aircraft", -20, -80, 90);
+//        placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
+//        placeItem(PLAYER, "Anti-Aircraft", -20, -80, 90);
 
         placeItem(PLAYER, "Tank", -40, -70, 90);
-        placeItem(PLAYER, "Tank", -30, -70, 90);
-        placeItem(PLAYER, "Tank", 40, -70, 90);
-        placeItem(PLAYER, "Tank", 30, -70, 90);
-
-        placeItem(PLAYER, "AirShip", 0, -60, 0);
-        placeItem(PLAYER, "AirShip", 50, -60, 0);
-        placeItem(PLAYER, "Tower", 10, -60, 0);
+//        placeItem(PLAYER, "Tank", -30, -70, 90);
+//        placeItem(PLAYER, "Tank", 40, -70, 90);
+//        placeItem(PLAYER, "Tank", 30, -70, 90);
+//
+//        placeItem(PLAYER, "AirShip", 0, -60, 0);
+//        placeItem(PLAYER, "AirShip", 50, -60, 0);
+//        placeItem(PLAYER, "Tower", 10, -60, 0);
 
 
         enemyFlag = placeItem(ENEMY, "Flag", 0, 100, -90);
-        placeItem(ENEMY, "Anti-Aircraft", 20, 80, 90);
-        placeItem(ENEMY, "Anti-Aircraft", -20, 80, 90);
-
-        placeItem(ENEMY, "Tank", -40, 70, -90);
-        placeItem(ENEMY, "Tank", -30, 70, -90);
-        placeItem(ENEMY, "Tank", 40, 70, -90);
-        placeItem(ENEMY, "Tank", 30, 70, -90);
-
-        placeItem(ENEMY, "AirShip", 0, 60, 0);
-        placeItem(ENEMY, "AirShip", -80, 60, 0);
-        placeItem(ENEMY, "Tower", 10, 60, 0);
+//        placeItem(ENEMY, "Anti-Aircraft", 20, 80, 90);
+//        placeItem(ENEMY, "Anti-Aircraft", -20, 80, 90);
+//
+//        placeItem(ENEMY, "Tank", -40, 70, -90);
+//        placeItem(ENEMY, "Tank", -30, 70, -90);
+//        placeItem(ENEMY, "Tank", 40, 70, -90);
+//        placeItem(ENEMY, "Tank", 30, 70, -90);
+//
+//        placeItem(ENEMY, "AirShip", 0, 60, 0);
+//        placeItem(ENEMY, "AirShip", -80, 60, 0);
+//        placeItem(ENEMY, "Tower", 10, 60, 0);
     }
 
     private void placeRandom(String name, int count){
@@ -114,7 +118,7 @@ public class World implements Disposable {
         }
     }
 
-    public static GameObject placeItem(String armyName, String name, float x, float z, float angle){
+    public  GameObject placeItem(String armyName, String name, float x, float z, float angle){
 
         float y = terrain.getHeight(x, z);
         tmpPosition.set(x, y, z);
@@ -122,23 +126,23 @@ public class World implements Disposable {
         return spawnItem(armyName, name, tmpPosition, angle, tmpVelocity);
     }
 
-    public static GameObject spawnItem(String armyName, String name, Vector3 position, float angle, Vector3 velocity){
+    public  GameObject spawnItem(String armyName, String name, Vector3 position, float angle, Vector3 velocity){
         GameObject go = new GameObject(armyName, name, position, angle, velocity);
         gameObjects.add(go);
         return go;
     }
 
-    public static void spawnFire(float x, float z) {
+    public  void spawnFire(float x, float z) {
         float y = Terrain.getHeight(x, z);
         tmpPosition.set(x, y, z);
         particleEffects.addFire(tmpPosition);
     }
 
-    public static void spawnExplosion(Vector3 position) {
+    public  void spawnExplosion(Vector3 position) {
         particleEffects.addExplosion(position);
     }
 
-    public static GameObject testForCollision(GameObject bullet) {
+    public  GameObject testForCollision(GameObject bullet) {
 
         for(int i = 0; i < gameObjects.size; i++ ) {
             GameObject go = gameObjects.get(i);
@@ -210,7 +214,7 @@ public class World implements Disposable {
         return null;
     }
 
-    public static GameObject closestEnemy(GameObject subject, float radius) {
+    public GameObject closestEnemy(GameObject subject, float radius) {
         GameObject closest = null;
         float minDist = Float.MAX_VALUE;
         for(int i = 0; i < gameObjects.size; i++ ) {
@@ -229,7 +233,7 @@ public class World implements Disposable {
     }
 
     // damage all enemies in blast circle
-    public static void blastEffect(GameObject bomb, float radius) {
+    public void blastEffect(GameObject bomb, float radius) {
 
         Sounds.playSound(Sounds.EXPLOSION);
 
@@ -245,13 +249,13 @@ public class World implements Disposable {
             float dist2 = tmpPosition.dst2(go.position);
             if(dist2 > radius*radius)
                 continue;
-            go.takeDamage(150);
+            go.takeDamage(this, 150);
         }
         spawnExplosion(tmpPosition);
         shaking = true;
     }
 
-    public static boolean isShaking() {
+    public boolean isShaking() {
         if(shaking) {
             shaking = false;
             return true;
@@ -259,7 +263,7 @@ public class World implements Disposable {
         return false;
     }
 
-    public static GameObject closestTower(GameObject subject, float radius) {
+    public GameObject closestTower(GameObject subject, float radius) {
         GameObject closest = null;
         float minDist = Float.MAX_VALUE;
         for(int i = 0; i < gameObjects.size; i++ ) {
@@ -277,7 +281,7 @@ public class World implements Disposable {
         return closest;
     }
 
-    public static GameObject closestEnemyAirship(GameObject subject, float radius) {
+    public GameObject closestEnemyAirship(GameObject subject, float radius) {
         GameObject closest = null;
         float minDist = Float.MAX_VALUE;
         for(int i = 0; i < gameObjects.size; i++ ) {
@@ -300,7 +304,7 @@ public class World implements Disposable {
     public void update( float deltaTime ){
         deleteList.clear();
         for(GameObject go : gameObjects ) {
-            go.update(deltaTime);
+            go.update(this, deltaTime);
             if(go.toRemove)
                 deleteList.add(go);
         }
@@ -333,6 +337,9 @@ public class World implements Disposable {
     }
 
 
+    private Vector3 start = new Vector3();
+    private Vector3 end = new Vector3();
+
     public void render(ModelBatch modelBatch, Environment environment) {
 
         modelBatch.render(cache, environment);  // terrain and scenery
@@ -344,6 +351,20 @@ public class World implements Disposable {
                 modelBatch.render(go.modelInstance2, environment);
         }
         particleEffects.render(modelBatch);
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.YELLOW);
+        for(GameObject go : gameObjects ) {
+            if(!go.type.followsTerrain)
+                continue;
+            start.set(go.position);
+            end.set(go.terrainNormal).scl(10f).add(go.position);
+            start.mul(modelBatch.getCamera().combined);
+            end.mul(modelBatch.getCamera().combined);
+            shapeRenderer.line(start.y*Gdx.graphics.getWidth(), (1f-start.y)*Gdx.graphics.getHeight(), end.x*Gdx.graphics.getWidth(), (1f-end.y)*Gdx.graphics.getHeight());
+        }
+        shapeRenderer.end();
+
     }
 
     @Override

@@ -96,7 +96,7 @@ public class MiniMap implements Disposable {
             batch.begin();
             batch.draw(heightMap,0,0, viewWidth, viewHeight);
 
-            for(GameObject go : World.gameObjects ) {
+            for(GameObject go : world.gameObjects ) {
 
                 float x = -(go.position.x / Settings.worldSize) * viewWidth + viewWidth / 2;
                 float y = (go.position.z / Settings.worldSize) * viewHeight + viewHeight / 2;
