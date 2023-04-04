@@ -6,10 +6,10 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 public class Armies {
 
-    static private ObjectMap<String, Army> map = null;
-    static private Army playerArmy;
-    static private Army enemyArmy;
-    static private Army neutral;
+    private ObjectMap<String, Army> map = null;
+    private Army playerArmy;
+    private Army enemyArmy;
+    private Army neutral;
 
     public Armies() {
         map = new ObjectMap<>();
@@ -23,10 +23,9 @@ public class Armies {
         map.put(playerArmy.name,  playerArmy );
         map.put(enemyArmy.name, enemyArmy);
         map.put(neutral.name, neutral);
-
     }
 
-    public static Army findArmy(String name) {
+    public Army findArmy(String name) {
         Army army = map.get(name);
         if(army == null)
             Gdx.app.error("Unknown army name", name);
@@ -34,7 +33,7 @@ public class Armies {
         return army;
     }
 
-    public static Army getPlayerArmy() {
+    public Army getPlayerArmy() {
         return playerArmy;
     }
 

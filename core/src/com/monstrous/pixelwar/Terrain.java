@@ -26,7 +26,7 @@ public class Terrain implements Disposable {
     private float verts[];  // for collision detection, 3 floats per vertex
     private short indices[];    // 3 indices per triangle
     private int numIndices;
-    private Vector3 normalVectors[] = new Vector3[MAP_SIZE*MAP_SIZE];
+    private Vector3 normalVectors[][] = new Vector3[MAP_SIZE][MAP_SIZE];
 
     public Terrain() {
 
@@ -112,7 +112,8 @@ public class Terrain implements Disposable {
                 // add to index list to make a row of triangles using vertices at y and y-1
                 short v0 = (short) ((y - 1) * (N + 1));    // vertex number at top left of this row
                 for (short t = 0; t < N; t++) {
-                    addRect(meshBuilder, vertices, normals, v0, (short) (v0 + N + 1), (short) (v0 + N + 2), (short) (v0 + 1) );
+                    //addRect(meshBuilder, vertices, normals, v0, (short) (v0 + N + 1), (short) (v0 + N + 2), (short) (v0 + 1) );
+                    addRect(meshBuilder, vertices, normals, (short) (v0 + N + 1), (short) (v0 + N + 2), (short) (v0 + 1), v0 );
                     v0++;                // next column
                 }
             }
@@ -128,13 +129,16 @@ public class Terrain implements Disposable {
 
         Vector3 normal = new Vector3();
         for (int i = 0; i < numVerts; i++) {
-            normal.set(normals[i]);
-            normal.nor();
+            normal.set(normals[i]);     // sum of normals
+            normal.nor();               // take average
 
-            normalVectors[i] = new Vector3(normal);
+
 
             int x = i % (N+1);	// e.g. in [0 .. 3] if N == 3
             int y = i / (N+1);
+
+            normalVectors[x][y] = new Vector3(normal);
+
             float reps=16;
             float u = (float)(x*reps)/(float)(N+1);
             float v = (float)(y*reps)/(float)(N+1);
@@ -157,6 +161,11 @@ public class Terrain implements Disposable {
         meshBuilder.rect(v0, v1, v2, v3);
         calcNormal(vertices, normals, v0, v1, v2, v3);
         // 6 indices to make 2 triangles, follows order of meshBuilder.rect()
+        //
+        //     v3 --v2
+        //      | /  |
+        //     v0 --v1
+        // triangle v0,v1,v2 and v2, v3, v0
         indices[numIndices++] = v0;
         indices[numIndices++] = v1;
         indices[numIndices++] = v2;
@@ -168,24 +177,19 @@ public class Terrain implements Disposable {
     /*
      * Calculate the normal
      */
+    private Vector3 u = new Vector3();
+    private Vector3 v = new Vector3();
+    private Vector3 n = new Vector3();
+
     private void calcNormal(final Vector3[] vertices, Vector3[] normals, short v0, short v1, short v2, short v3) {
 
         Vector3 p0 = vertices[v0];
         Vector3 p1 = vertices[v1];
         Vector3 p2 = vertices[v2];
 
-        Vector3 u = new Vector3();
-        u.set(p2);
-        u.sub(p0);
-
-        Vector3 v = new Vector3();
-        v.set(p1);
-        v.sub(p0);
-
-        Vector3 n = new Vector3();
-        n.set(v);
-        n.crs(u);
-        n.nor();
+        v = new Vector3(p2).sub(p1);
+        u = new Vector3(p0).sub(p1);
+        n = new Vector3(v).crs(u).nor();
 
         normals[v0].add(n);
         normals[v1].add(n);
@@ -217,7 +221,7 @@ public class Terrain implements Disposable {
         if(mx < 0 ||x >= MAP_SIZE || mz < 0 || mz >= MAP_SIZE)
             outNormal.set(0,1,0);
         else
-            outNormal.set( normalVectors[mz*MAP_SIZE+mx]);
+            outNormal.set( normalVectors[mx][mz]);
     }
 
 }

@@ -2,6 +2,7 @@ package com.monstrous.pixelwar;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
+import com.monstrous.pixelwar.behaviours.*;
 
 // acts as 'static' class. Instantiated on World creation. All members are static.
 
@@ -54,5 +55,26 @@ public class GameObjectTypes {
         }
         Gdx.app.error("findType: not found", typeName);
         return null;
+    }
+
+    // may return null
+    public static Behaviour getTypeBehaviour(GameObject go ) {
+        // yuck...
+        Behaviour behaviour = null;
+        if(go.type.name.contentEquals("Anti-Aircraft"))
+             behaviour = new AntiAircraft(go);
+        if(go.type.name.contentEquals("Tank"))
+            behaviour = new Tank(go);
+        if(go.type.name.contentEquals("Bullet"))
+            behaviour = new Bullet(go);
+        if(go.type.name.contentEquals("Bomb"))
+            behaviour = new Bomb(go);
+        if(go.type.name.contentEquals("AirShip"))
+            behaviour = new AirShip(go);
+        if(go.type.name.contentEquals("Tower"))
+            behaviour = new Tower(go);
+        if(go.type.name.contentEquals("Flag"))
+            behaviour = new Flag(go);
+        return behaviour;
     }
 }

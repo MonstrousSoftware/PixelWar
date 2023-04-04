@@ -3,7 +3,9 @@ package com.monstrous.pixelwar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector3;
@@ -31,27 +33,32 @@ public class World implements Disposable {
     private float previousFlagHealth;
     private  ParticleEffects particleEffects;
     private  boolean shaking;
+    private Armies armies;
+    private ModelInstance xyzModelInstance;
     private ShapeRenderer shapeRenderer;
 
 
     public World( Camera cam ) {
         Gdx.app.debug("World", "constructor");
 
-        Armies armies = new Armies();
-        playerArmy = Armies.getPlayerArmy();
+        armies = new Armies();
+        playerArmy = armies.getPlayerArmy();
         modelAssets = new ModelAssets();
         GameObjectTypes types = new GameObjectTypes();  // instantiate 'static' class
 
         terrain = new Terrain();
 
+        shapeRenderer = new ShapeRenderer();
+
         gameObjects = new Array<>();
         deleteList = new Array<>();
 
         particleEffects = new ParticleEffects(cam);
-        shapeRenderer = new ShapeRenderer();
 
         buildCache();
         populate();
+        xyzModelInstance = makeArrows();
+
         previousFlagHealth = playerFlag.healthPoints;
         ai = new AI(enemyFlag, gameObjects);
 
@@ -77,36 +84,42 @@ public class World implements Disposable {
         gameObjects.clear();
     }
 
+    private ModelInstance makeArrows() {
+        ModelBuilder modelBuilder = new ModelBuilder();
+        Model model = modelBuilder.createXYZCoordinates(20f, new Material(), VertexAttributes.Usage.Position | VertexAttributes.Usage.ColorPacked);
+        return new ModelInstance(model, new Vector3(0,10,0));
+    }
+
     private void populate() {
         //spawnFire(0,0);
 
-        playerFlag = placeItem(PLAYER, "Flag", 0, -100, 90);
+        playerFlag = placeItem(PLAYER, "Flag", 0, -100, 0);
 
-//        placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
-//        placeItem(PLAYER, "Anti-Aircraft", -20, -80, 90);
+        placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
+        placeItem(PLAYER, "Anti-Aircraft", -20, -80, 90);
 
-        placeItem(PLAYER, "Tank", -40, -70, 90);
-//        placeItem(PLAYER, "Tank", -30, -70, 90);
-//        placeItem(PLAYER, "Tank", 40, -70, 90);
-//        placeItem(PLAYER, "Tank", 30, -70, 90);
-//
-//        placeItem(PLAYER, "AirShip", 0, -60, 0);
-//        placeItem(PLAYER, "AirShip", 50, -60, 0);
-//        placeItem(PLAYER, "Tower", 10, -60, 0);
+        placeItem(PLAYER, "Tank", -40, -70, 90); // 90
+        placeItem(PLAYER, "Tank", -30, -70, 90);
+        placeItem(PLAYER, "Tank", 40, -70, 90);
+        placeItem(PLAYER, "Tank", 30, -70, 90);
+
+        placeItem(PLAYER, "AirShip", 0, -60, 0);
+        placeItem(PLAYER, "AirShip", 50, -60, 0);
+        placeItem(PLAYER, "Tower", 10, -60, 0);
 
 
         enemyFlag = placeItem(ENEMY, "Flag", 0, 100, -90);
-//        placeItem(ENEMY, "Anti-Aircraft", 20, 80, 90);
-//        placeItem(ENEMY, "Anti-Aircraft", -20, 80, 90);
-//
-//        placeItem(ENEMY, "Tank", -40, 70, -90);
-//        placeItem(ENEMY, "Tank", -30, 70, -90);
-//        placeItem(ENEMY, "Tank", 40, 70, -90);
-//        placeItem(ENEMY, "Tank", 30, 70, -90);
-//
-//        placeItem(ENEMY, "AirShip", 0, 60, 0);
-//        placeItem(ENEMY, "AirShip", -80, 60, 0);
-//        placeItem(ENEMY, "Tower", 10, 60, 0);
+        placeItem(ENEMY, "Anti-Aircraft", 20, 80, 90);
+        placeItem(ENEMY, "Anti-Aircraft", -20, 80, 90);
+
+        placeItem(ENEMY, "Tank", -40, 70, -90);
+        placeItem(ENEMY, "Tank", -30, 70, -90);
+        placeItem(ENEMY, "Tank", 40, 70, -90);
+        placeItem(ENEMY, "Tank", 30, 70, -90);
+
+        placeItem(ENEMY, "AirShip", 0, 60, 0);
+        placeItem(ENEMY, "AirShip", -80, 60, 0);
+        placeItem(ENEMY, "Tower", 10, 60, 0);
     }
 
     private void placeRandom(String name, int count){
@@ -120,14 +133,15 @@ public class World implements Disposable {
 
     public  GameObject placeItem(String armyName, String name, float x, float z, float angle){
 
+        Army army = armies.findArmy(armyName);
         float y = terrain.getHeight(x, z);
         tmpPosition.set(x, y, z);
         tmpVelocity.set(0,0,0);
-        return spawnItem(armyName, name, tmpPosition, angle, tmpVelocity);
+        return spawnItem(army, name, tmpPosition, angle, tmpVelocity);
     }
 
-    public  GameObject spawnItem(String armyName, String name, Vector3 position, float angle, Vector3 velocity){
-        GameObject go = new GameObject(armyName, name, position, angle, velocity);
+    public  GameObject spawnItem(Army army, String name, Vector3 position, float angle, Vector3 velocity){
+        GameObject go = new GameObject(army, name, position, angle, velocity);
         gameObjects.add(go);
         return go;
     }
@@ -352,20 +366,37 @@ public class World implements Disposable {
         }
         particleEffects.render(modelBatch);
 
+        //modelBatch.render(xyzModelInstance, environment);
+    }
+
+
+    public void renderNormals(Camera cam) {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.YELLOW);
+        shapeRenderer.setColor(Color.BLUE);
+        shapeRenderer.setProjectionMatrix(cam.combined);
+
+        for(float x = - 100; x < 100; x += 25f) {
+            for( float z = -100; z < 100; z += 25f ) {
+                float y = terrain.getHeight(x, z);
+                start.set(x, y, z);
+                terrain.getNormal(x, z, end);
+                end.scl(5).add(start);
+                shapeRenderer.line(start.x, start.y, start.z, end.x, end.y, end.z);
+            }
+        }
+
+        shapeRenderer.setColor(Color.RED);
         for(GameObject go : gameObjects ) {
             if(!go.type.followsTerrain)
                 continue;
+
             start.set(go.position);
             end.set(go.terrainNormal).scl(10f).add(go.position);
-            start.mul(modelBatch.getCamera().combined);
-            end.mul(modelBatch.getCamera().combined);
-            shapeRenderer.line(start.y*Gdx.graphics.getWidth(), (1f-start.y)*Gdx.graphics.getHeight(), end.x*Gdx.graphics.getWidth(), (1f-end.y)*Gdx.graphics.getHeight());
+
+            shapeRenderer.line(start.x, start.y, start.z, end.x, end.y, end.z);
         }
         shapeRenderer.end();
-
-    }
+}
 
     @Override
     public void dispose() {

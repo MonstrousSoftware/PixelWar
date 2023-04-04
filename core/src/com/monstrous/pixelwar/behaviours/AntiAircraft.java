@@ -72,7 +72,7 @@ public class AntiAircraft extends Behaviour {
             spawnPoint.z += RADIUS * Math.sin(angleRads);
             Vector3 velocity = new Vector3(BULLET_SPEED*(float)Math.cos(angleRads), BULLET_SPEED/2, BULLET_SPEED*(float)Math.sin(angleRads));
 
-            GameObject bullet = world.spawnItem(go.army.name, "Bullet", spawnPoint, go.targetAngle+turretAngle, velocity);
+            GameObject bullet = world.spawnItem(go.army, "Bullet", spawnPoint, go.targetAngle+turretAngle, velocity);
             //Gdx.app.log("Spawn missile", ""+spawnPoint);
             Sounds.playSound(Sounds.AA_FIRE);
 

@@ -34,7 +34,7 @@ public class AirShip extends Behaviour {
                 hasBomb = false;
                 go.modelInstance2 = null;
 
-                GameObject bomb = world.spawnItem(go.army.name, "Bomb", go.position, go.targetAngle, go.velocity);
+                GameObject bomb = world.spawnItem(go.army, "Bomb", go.position, go.targetAngle, go.velocity);
                 Sounds.playSound(Sounds.FALLING_BOMB);
             }
         }

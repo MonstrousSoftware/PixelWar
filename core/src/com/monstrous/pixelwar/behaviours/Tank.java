@@ -60,7 +60,7 @@ public class Tank extends Behaviour {
             spawnPoint.y = go.position.y + MUZZLE_HEIGHT;
             bulletVelocity.set(fireVector).scl(BULLET_SPEED);
 
-            world.spawnItem(go.army.name, "Bullet", spawnPoint, go.targetAngle, bulletVelocity);
+            world.spawnItem(go.army, "Bullet", spawnPoint, go.targetAngle, bulletVelocity);
             Sounds.playSound(Sounds.TANK_FIRE);
         }
     }

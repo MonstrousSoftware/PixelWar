@@ -135,6 +135,8 @@ public class GameScreen extends ScreenAdapter {
         world.render(modelBatch, environment);
         modelBatch.end();
 
+        //world.renderNormals(cam);
+
         miniMap.render();
         gui.render(delta);
     }
