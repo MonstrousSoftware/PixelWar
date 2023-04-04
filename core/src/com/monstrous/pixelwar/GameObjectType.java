@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 
 public class GameObjectType {
     public String name;
+    public int typeId;
     public String modelName;
     public String modelName2;
     public Boolean isScenery;  // show this type in mini map? false for scenery
@@ -26,8 +27,9 @@ public class GameObjectType {
     public Texture iconTexture = null;
     public Texture enemyIconTexture = null;
 
-    public GameObjectType(String name, String modelName, String modelName2, String textureName, boolean isScenery, float healthPoints, float timeToLive) {
+    public GameObjectType(String name, int id, String modelName, String modelName2, String textureName, boolean isScenery, float healthPoints, float timeToLive) {
         this.name = name;
+        this.typeId = id;
         this.modelName = modelName;
         this.modelName2 = modelName2;
         this.isScenery = isScenery;

@@ -104,7 +104,7 @@ public class InstructionsScreen implements Screen {
         screenTable.add(menuTable);
 
         screenTable.pack();
-        prevButton.setDisabled(true);   // disable Prev button on first page
+        prevButton.setVisible(false);   // disable Prev button on first page
 
         backButton.addListener(new ClickListener() {
             @Override
@@ -120,8 +120,8 @@ public class InstructionsScreen implements Screen {
                 if(pageIndex > 0)
                     pageIndex--;
                 labelText.setText(texts[pageIndex]);
-                prevButton.setDisabled(pageIndex == 0);         // disable Prev and Next button as needed
-                nextButton.setDisabled(false);
+                prevButton.setVisible(pageIndex > 0);   // hide Prev and Next button as needed
+                nextButton.setVisible(true);
             }
         });
         nextButton.addListener(new ClickListener() {
@@ -132,8 +132,8 @@ public class InstructionsScreen implements Screen {
                     pageIndex++;
                 labelText.setText(texts[pageIndex]);
                 menuTable.pack();
-                prevButton.setDisabled(false);
-                nextButton.setDisabled(pageIndex == 2);
+                prevButton.setVisible(true);
+                nextButton.setVisible(pageIndex < 2);
             }
         });
     }

@@ -36,6 +36,7 @@ public class World implements Disposable {
     private Armies armies;
     private ModelInstance xyzModelInstance;
     private ShapeRenderer shapeRenderer;
+    private int[] typeCounts;
 
 
     public World( Camera cam ) {
@@ -46,6 +47,7 @@ public class World implements Disposable {
         modelAssets = new ModelAssets();
         GameObjectTypes types = new GameObjectTypes();  // instantiate 'static' class
 
+        Gdx.app.debug("World", "make terrain");
         terrain = new Terrain();
 
         shapeRenderer = new ShapeRenderer();
@@ -64,6 +66,7 @@ public class World implements Disposable {
 
 
         shaking = false;
+        typeCounts = new int[5];    // 5 types
 
     }
 
@@ -316,11 +319,16 @@ public class World implements Disposable {
 
 
     public void update( float deltaTime ){
+        for(int i = 0; i < 5; i++)
+            typeCounts[i] = 0;
         deleteList.clear();
         for(GameObject go : gameObjects ) {
             go.update(this, deltaTime);
             if(go.toRemove)
                 deleteList.add(go);
+            else if(go.army == playerArmy && go.type.typeId >= 0 && go.type.healthPoints > 0) {
+                typeCounts[go.type.typeId]++;
+            }
         }
         gameObjects.removeAll(deleteList, true);
 
@@ -329,6 +337,9 @@ public class World implements Disposable {
         particleEffects.update(deltaTime);
     }
 
+    public int getTypeCount(int typeId ) {
+        return typeCounts[typeId];
+    }
 
 
     public boolean isFlagUnderAttack() {

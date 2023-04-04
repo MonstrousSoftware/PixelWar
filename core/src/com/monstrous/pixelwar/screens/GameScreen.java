@@ -41,6 +41,12 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
+        Gdx.app.log("GameScreen", "show");
+
+        Gdx.app.log("GameScreen", "switch music");
+        game.stopMusic();
+        if(Settings.musicEnabled)
+            game.startMusic("music/Level 1.wav");
 
         gui = new GUI(this);
 
@@ -52,7 +58,9 @@ public class GameScreen extends ScreenAdapter {
         cam.far = Settings.worldSize * .7f;
         cam.update();
 
+        Gdx.app.log("GameScreen", "loading world");
         world = new World(cam);
+        Gdx.app.log("GameScreen", "world loaded");
 
         camController = new MyCamController(cam, world);
         //camController = new OrthographicCameraController(cam);
@@ -84,9 +92,7 @@ public class GameScreen extends ScreenAdapter {
 
         miniMap = new MiniMap(Settings.worldSize, Settings.worldSize, -500);
 
-        game.stopMusic();
-        if(Settings.musicEnabled)
-            game.startMusic("music/Level 1.wav");
+
 
         selectObject( world.selectRandomUnit() );
 

@@ -23,6 +23,7 @@ public class GUI implements Disposable {
     private Label labelHealth;
     private Label labelMessage; // big message, centre screen
     private float messageTimer; // counting down while message is displayed
+    private Label nTK, nAS, nAA, nTW, nFL;
 
     public GUI(GameScreen gameScreen) {
 
@@ -71,11 +72,18 @@ public class GUI implements Disposable {
 
 
 
-        ImageButton tkButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/tank.png")))));
-        ImageButton asButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/airship.png")))));
-        ImageButton aaButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/anti-aircraft.png")))));
-        ImageButton twButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/tower.png")))));
-        ImageButton flButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/flag.png")))));
+        ImageButton tkButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/b_tank.png")))));
+        ImageButton asButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/b_airship.png")))));
+        ImageButton aaButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/b_anti-aircraft.png")))));
+        ImageButton twButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/b_tower.png")))));
+        ImageButton flButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/b_flag.png")))));
+
+        nTK = new Label("4", skin, "small", Color.BLACK);
+        nAS = new Label("2", skin, "small", Color.BLACK);
+        nAA = new Label("3", skin, "small", Color.BLACK);
+        nTW = new Label("1", skin, "small", Color.BLACK);
+        nFL = new Label("1", skin, "small", Color.BLACK);
+
 
         Table unitButtons = new Table();
         unitButtons.add(tkButton);
@@ -83,6 +91,12 @@ public class GUI implements Disposable {
         unitButtons.add(aaButton);
         unitButtons.add(twButton);
         unitButtons.add(flButton);
+        unitButtons.row();
+        unitButtons.add(nTK);
+        unitButtons.add(nAS);
+        unitButtons.add(nAA);
+        unitButtons.add(nTW);
+        unitButtons.add(nFL);
         unitButtons.pack();
 
         ImageButton backButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/exit.png")))));
@@ -156,6 +170,13 @@ public class GUI implements Disposable {
 
         int fps = (int)(1.0f/deltaTime);
         labelFPS.setText("FPS: "+ fps);
+
+        nTK.setText(gameScreen.world.getTypeCount(0));
+        nAS.setText(gameScreen.world.getTypeCount(1));
+        nAA.setText(gameScreen.world.getTypeCount(2));
+        nTW.setText(gameScreen.world.getTypeCount(3));
+        nFL.setText(gameScreen.world.getTypeCount(4));
+
     }
 
     public void render( float deltaTime ) {
