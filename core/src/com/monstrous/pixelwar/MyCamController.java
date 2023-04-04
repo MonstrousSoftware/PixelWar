@@ -15,11 +15,13 @@ public class MyCamController extends CameraInputController {
     private final Vector3 tmpV1 = new Vector3();
     private final Vector3 shakeOffset;
     private float shakeTimer;
+    private World world;
 
 
-    public MyCamController(Camera camera) {
+    public MyCamController(Camera camera, World world) {
 
         super(camera);
+        this.world = world;
         targetObject = null;
         prevTarget = new Vector3();
         transitionMode = false;
@@ -83,7 +85,7 @@ public class MyCamController extends CameraInputController {
 
 
         // prevent camera from going under terrain
-        float ht = Terrain.getHeight(camera.position.x, camera.position.z);
+        float ht = world.terrain.getHeight(camera.position.x, camera.position.z);
         while(camera.position.y < ht) {
             Gdx.app.log("camera underground", ""+camera.position.y);
             tmpV1.set(camera.direction).crs(camera.up).y = 0f;

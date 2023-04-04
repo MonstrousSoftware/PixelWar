@@ -54,7 +54,7 @@ public class GameScreen extends ScreenAdapter {
 
         world = new World(cam);
 
-        camController = new MyCamController(cam);
+        camController = new MyCamController(cam, world);
         //camController = new OrthographicCameraController(cam);
 
         InputMultiplexer multiplexer = new InputMultiplexer();

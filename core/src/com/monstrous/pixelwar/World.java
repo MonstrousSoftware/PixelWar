@@ -133,7 +133,7 @@ public class World implements Disposable {
     }
 
     public  void spawnFire(float x, float z) {
-        float y = Terrain.getHeight(x, z);
+        float y = terrain.getHeight(x, z);
         tmpPosition.set(x, y, z);
         particleEffects.addFire(tmpPosition);
     }

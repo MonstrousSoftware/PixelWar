@@ -72,7 +72,7 @@ public class GameObject {
         if(type.name.contentEquals("Flag"))
             behaviour = new Flag(this);
 
-        Terrain.getNormal(position.x, position.z, this.terrainNormal);
+        //world.terrain.getNormal(position.x, position.z, this.terrainNormal);
 
         Model model = ModelAssets.getModel("Assets");
         modelInstance =  new ModelInstance(model, type.modelName);
@@ -186,8 +186,8 @@ public class GameObject {
             position.add(tmpVec);
 
             if (type.followsTerrain && !isDying) {
-                position.y = Terrain.getHeight(position.x, position.z);   // follow terrain height
-                Terrain.getNormal(position.x, position.z, this.terrainNormal);
+                position.y = world.terrain.getHeight(position.x, position.z);   // follow terrain height
+                world.terrain.getNormal(position.x, position.z, this.terrainNormal);
                 modelInstance.transform.rotateTowardDirection(Vector3.X, terrainNormal);
             }
         }

@@ -19,7 +19,7 @@ public class Bomb extends Behaviour {
     public void update( World world, float deltaTime ) {
         go.velocity.y -= deltaTime* ACCELERATION;
 
-        float ht = Terrain.getHeight(go.position.x, go.position.z);
+        float ht = world.terrain.getHeight(go.position.x, go.position.z);
         if(go.position.y + go.type.bbox.getCenterY() < ht) // hit the ground
         {
             go.toRemove= true;  // removee the bomb

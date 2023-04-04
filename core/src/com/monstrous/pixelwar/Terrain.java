@@ -22,11 +22,11 @@ public class Terrain implements Disposable {
 
     private Model model;
     public ModelInstance modelInstance;
-    private  static float heightMap[][];
-    private static float verts[];  // for collision detection, 3 floats per vertex
-    private static short indices[];    // 3 indices per triangle
-    private static int numIndices;
-    private static Vector3 normalVectors[] = new Vector3[MAP_SIZE*MAP_SIZE];
+    private float heightMap[][];
+    private float verts[];  // for collision detection, 3 floats per vertex
+    private short indices[];    // 3 indices per triangle
+    private int numIndices;
+    private Vector3 normalVectors[] = new Vector3[MAP_SIZE*MAP_SIZE];
 
     public Terrain() {
 
@@ -201,7 +201,7 @@ public class Terrain implements Disposable {
     private static Ray downRay = new Ray();
     private static Vector3 hitPoint = new Vector3();
 
-    public static float getHeight(float x, float y) {
+    public float getHeight(float x, float y) {
         downRay.set(x, AMPLITUDE*2f, y, 0, -1, 0);
         boolean hit = Intersector.intersectRayTriangles(downRay, verts, indices, 3, hitPoint);
         if(!hit)
@@ -209,7 +209,7 @@ public class Terrain implements Disposable {
         return hitPoint.y;
     }
 
-    public static void getNormal(float x, float y, Vector3 outNormal) {
+    public void getNormal(float x, float y, Vector3 outNormal) {
 
         // get normal vector from the closest grid point
         int mx = (int) (MAP_SIZE * 0.5f*(1f + x / Settings.worldSize));
