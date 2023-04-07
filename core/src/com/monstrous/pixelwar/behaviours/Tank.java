@@ -31,10 +31,11 @@ public class Tank extends Behaviour {
     public void update( World world, float deltaTime ) {
 
         // death animation
-        if (go.isDying)
+        if (go.isDying) {
             go.velocity.set(0, -0.2f, 0);
-        if (go.position.y < -5f)
-            go.toRemove = true;
+            if (go.position.y < -5f)
+                go.toRemove = true;
+        }
 
         retargetTime -= deltaTime;          // retarget only every so often to avoid expensive call to closestEnemy()
         if (retargetTime < 0) {

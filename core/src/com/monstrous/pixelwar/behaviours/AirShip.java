@@ -54,8 +54,9 @@ public class AirShip extends Behaviour {
             go.modelInstance.transform.setFromEulerAngles(go.angle, 20f, 15f).trn(go.position); // tilt angle
             go.isMovingToDestination = false;
             go.velocity.y = -0.8f;  // move down
+            if(go.position.y < -3f) // underground
+                go.toRemove = true;
          }
-        if(go.position.y < -3f) // underground
-            go.toRemove = true;
+
     }
 }

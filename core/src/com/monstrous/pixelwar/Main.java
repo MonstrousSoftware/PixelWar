@@ -7,9 +7,9 @@ import com.monstrous.pixelwar.screens.SplashScreen;
 
 public class Main extends Game {
 
-	public static final boolean RELEASE_BUILD = true;
+	public static final boolean RELEASE_BUILD = false;
 
-	public static final String VERSION = "version 1.3 (April 4, 2023)";
+	public static final String VERSION = "version 1.4 (April 5, 2023)";
 	public static String PREFERENCES_NAME = "pixelwar";
 
 	public Music music;
@@ -23,6 +23,10 @@ public class Main extends Game {
 			Gdx.app.setLogLevel(Application.LOG_ERROR);
 		else
 			Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
+		Gdx.app.log("Main", "create");
+		Gdx.app.log("Gdx version", com.badlogic.gdx.Version.VERSION);
+		Gdx.app.log("OpenGL version", Gdx.gl.glGetString(Gdx.gl.GL_VERSION));
 
 		preferences = Gdx.app.getPreferences(PREFERENCES_NAME);
 		musicVolume = preferences.getFloat("musicVolume", 0.8f);

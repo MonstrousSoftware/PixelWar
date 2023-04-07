@@ -20,7 +20,7 @@ public class World implements Disposable {
     public final static String ENEMY = "Red";
 
     public  Terrain terrain;
-    private ModelCache cache;
+
     private ModelAssets modelAssets;
     public  Array<GameObject> gameObjects;
     private  Array<GameObject> deleteList;
@@ -37,6 +37,7 @@ public class World implements Disposable {
     private ModelInstance xyzModelInstance;
     private ShapeRenderer shapeRenderer;
     private int[] typeCounts;
+    private Scenery scenery;
 
 
     public World( Camera cam ) {
@@ -57,7 +58,8 @@ public class World implements Disposable {
 
         particleEffects = new ParticleEffects(cam);
 
-        buildCache();
+        scenery = new Scenery(this);
+
         populate();
         xyzModelInstance = makeArrows();
 
@@ -70,22 +72,7 @@ public class World implements Disposable {
 
     }
 
-    // place all scenery in a model cache
-    private void buildCache() {
-        cache = new ModelCache();
-        placeRandom("Tree1", 300);
-        placeRandom("Stone1", 200);
-        placeRandom("Stone2", 200);
-        placeRandom("Stone3", 200);
 
-        cache.begin();
-        cache.add(terrain.modelInstance);
-        for(GameObject go : gameObjects ) {
-            cache.add(go.modelInstance);
-        }
-        cache.end();
-        gameObjects.clear();
-    }
 
     private ModelInstance makeArrows() {
         ModelBuilder modelBuilder = new ModelBuilder();
@@ -94,9 +81,8 @@ public class World implements Disposable {
     }
 
     private void populate() {
-        //spawnFire(0,0);
-
         playerFlag = placeItem(PLAYER, "Flag", 0, -100, 0);
+
 
         placeItem(PLAYER, "Anti-Aircraft", 20, -80, 90);
         placeItem(PLAYER, "Anti-Aircraft", -20, -80, 90);
@@ -125,14 +111,7 @@ public class World implements Disposable {
         placeItem(ENEMY, "Tower", 10, 60, 0);
     }
 
-    private void placeRandom(String name, int count){
-        for(int n = 0; n < count; n++) {
-            float xx = (float) (Math.random()-0.5f)*(Settings.worldSize-5f);    // don't plant trees to close to the edge
-            float zz = (float) (Math.random()-0.5f)*(Settings.worldSize-5f);
-            float r = (float) (Math.random()*360f);
-            placeItem("Neutral", name, xx, zz, r);
-        }
-    }
+
 
     public  GameObject placeItem(String armyName, String name, float x, float z, float angle){
 
@@ -258,10 +237,10 @@ public class World implements Disposable {
         bomb.type.bbox.getCenter(tmpPosition);
         tmpPosition.add(bomb.position);
 
-        // damage all enemies close to the bomb
+        // damage all enemies close to the bomb (not airships though)
         for(int i = 0; i < gameObjects.size; i++ ) {
             GameObject go = gameObjects.get(i);
-            if(go.army.isNeutral || go.army == bomb.army || go.type.isProjectile || go.isDying)
+            if(go.army.isNeutral || go.army == bomb.army || go.type.isProjectile || go.isDying || go.type.isAirship)
                 continue;
             float dist2 = tmpPosition.dst2(go.position);
             if(dist2 > radius*radius)
@@ -326,7 +305,7 @@ public class World implements Disposable {
             go.update(this, deltaTime);
             if(go.toRemove)
                 deleteList.add(go);
-            else if(go.army == playerArmy && go.type.typeId >= 0 && go.type.healthPoints > 0) {
+            else if(go.army == playerArmy && go.type.typeId >= 0 && !go.isDying ) {
                 typeCounts[go.type.typeId]++;
             }
         }
@@ -367,7 +346,8 @@ public class World implements Disposable {
 
     public void render(ModelBatch modelBatch, Environment environment) {
 
-        modelBatch.render(cache, environment);  // terrain and scenery
+        modelBatch.render(terrain.modelInstance, environment);
+        scenery.render(modelBatch, environment);
 
         for(GameObject go : gameObjects ) {
 
@@ -386,15 +366,30 @@ public class World implements Disposable {
         shapeRenderer.setColor(Color.BLUE);
         shapeRenderer.setProjectionMatrix(cam.combined);
 
-        for(float x = - 100; x < 100; x += 25f) {
-            for( float z = -100; z < 100; z += 25f ) {
+        for(float x = - 20; x < 20; x += 3f) {
+            for( float z = -20; z < 20; z += 3f ) {
                 float y = terrain.getHeight(x, z);
                 start.set(x, y, z);
                 terrain.getNormal(x, z, end);
-                end.scl(5).add(start);
+                end.scl(3).add(start);
                 shapeRenderer.line(start.x, start.y, start.z, end.x, end.y, end.z);
+                shapeRenderer.line(start.x, start.y, start.z, end.x, start.y, start.z);
+                shapeRenderer.line(start.x, start.y, start.z, start.x, start.y, end.z);
             }
         }
+
+        //for(float x = - 100; x < 100; x += 25f) {
+        float x = -10f;
+        for( float z = -50; z < 50; z += 1f ) {
+            float y = terrain.getHeight(x, z);
+            start.set(x, y, z);
+            terrain.getNormal(x, z, end);
+            end.scl(5).add(start);
+            shapeRenderer.line(start.x, start.y, start.z, end.x, end.y, end.z);
+            shapeRenderer.line(start.x, start.y, start.z, end.x, start.y, start.z);
+            shapeRenderer.line(start.x, start.y, start.z, start.x, start.y, end.z);
+            }
+        //}
 
         shapeRenderer.setColor(Color.RED);
         for(GameObject go : gameObjects ) {
@@ -414,7 +409,8 @@ public class World implements Disposable {
         Gdx.app.debug("World", "dispose");
         modelAssets.dispose();
         terrain.dispose();
-        cache.dispose();
+        //cache.dispose();
+        scenery.dispose();
     }
 
     private Vector3 tmpPos = new Vector3();
@@ -457,8 +453,11 @@ public class World implements Disposable {
         // find where screen ray hits the terrain
         boolean hit = terrain.intersect(ray, location);
         Gdx.app.log("terrain", "pos: "+location+" hit: "+hit);
-        if(hit)
+        if(hit) {
+            float ht = terrain.getHeight(location.x, location.z);
+            Gdx.app.log("terrain height", "ht: "+ht);
             placeItem("Neutral", "Arrow", location.x, location.z, 0);
+        }
         return hit;
     }
 

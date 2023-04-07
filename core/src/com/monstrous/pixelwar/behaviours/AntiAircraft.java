@@ -10,7 +10,7 @@ public class AntiAircraft extends Behaviour {
 
     public static final float TRACKING_RADIUS = 40f;
 
-    public static final float FIRE_REPEAT = 0.5f;
+    public static final float FIRE_REPEAT = 0.3f;
     public static final float RELOAD_TIME = 3.5f;
     public static final float BURST_SIZE = 7;
     public static final float MAX_SWING = 15f;  // degrees
@@ -41,10 +41,9 @@ public class AntiAircraft extends Behaviour {
         // death animation
         if(go.isDying) {
             go.velocity.set(0, -0.2f, 0);
+            if(go.position.y < -5f)
+                go.toRemove = true;
         }
-        if(go.position.y < -5f)
-            go.toRemove = true;
-
 
         target = world.closestEnemyAirship(go, TRACKING_RADIUS);
         if(target != null) {
@@ -73,7 +72,6 @@ public class AntiAircraft extends Behaviour {
             Vector3 velocity = new Vector3(BULLET_SPEED*(float)Math.cos(angleRads), BULLET_SPEED/2, BULLET_SPEED*(float)Math.sin(angleRads));
 
             GameObject bullet = world.spawnItem(go.army, "Bullet", spawnPoint, go.targetAngle+turretAngle, velocity);
-            //Gdx.app.log("Spawn missile", ""+spawnPoint);
             Sounds.playSound(Sounds.AA_FIRE);
 
             burstCount++;

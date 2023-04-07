@@ -29,7 +29,7 @@ public class GameObjectTypes {
 
         types.add(new GameObjectType("Anti-Aircraft", 2,"AntiAircraftBase", "AntiAircraft", "anti-aircraft.png",false, 100, -1f));
 
-        types.add(new GameObjectType("Tower", 3,"Tower", null, "tower.png",false, 200, -1f));
+        types.add(new GameObjectType("Tower", 3,"Tower", null, "tower.png",false, 300, -1f));
 
 
         types.add(new GameObjectType("Flag", 4, "Flag", null, "flag.png",false, 80, -1f));

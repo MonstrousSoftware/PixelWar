@@ -54,7 +54,7 @@ public class GameScreen extends ScreenAdapter {
         cam = new PerspectiveCamera(50, viewWidth, viewHeight);
         cam.position.set(30f, 10f, 10f);
         cam.lookAt(0, 0, 0);
-        cam.near = 0.1f;
+        cam.near = 2f;
         cam.far = Settings.worldSize * .7f;
         cam.update();
 
@@ -90,7 +90,7 @@ public class GameScreen extends ScreenAdapter {
 
         modelBatch = new ModelBatch();
 
-        miniMap = new MiniMap(Settings.worldSize, Settings.worldSize, -500);
+        //miniMap = new MiniMap(Settings.worldSize, Settings.worldSize, -500);
 
 
 
@@ -125,7 +125,7 @@ public class GameScreen extends ScreenAdapter {
         }
         if(selectedObject == null || selectedObject.toRemove)
             selectObject( world.selectRandomUnit() );
-        miniMap.update(cam, world, environment);
+        //miniMap.update(cam, world, environment);
 
 
         // prepare shadow buffer
@@ -143,7 +143,7 @@ public class GameScreen extends ScreenAdapter {
 
         //world.renderNormals(cam);
 
-        miniMap.render();
+        //miniMap.render();
         gui.render(delta);
     }
 
@@ -158,7 +158,7 @@ public class GameScreen extends ScreenAdapter {
         cam.viewportHeight = height;
         cam.update();
 
-        miniMap.resize(width, height);
+        //miniMap.resize(width, height);
         gui.resize(width, height);
     }
 

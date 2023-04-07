@@ -62,7 +62,7 @@ public class MenuScreen extends ScreenAdapter {
         Label labelTitle = new Label(Settings.title, skin, "title");
 
         Table menuTable = new Table();
-        TextButton newCampaignButton = new TextButton("NEW CAMPAIGN", skin);
+        TextButton newCampaignButton = new TextButton("START", skin);
         TextButton resumeButton = new TextButton("RESUME", skin);               // disable at first play?
         TextButton instructionsButton = new TextButton("INSTRUCTIONS", skin);
         TextButton optionsButton = new TextButton("OPTIONS", skin);

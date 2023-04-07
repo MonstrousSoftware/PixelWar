@@ -86,7 +86,7 @@ public class MyCamController extends CameraInputController {
 
         // prevent camera from going under terrain
         float ht = world.terrain.getHeight(camera.position.x, camera.position.z);
-        while(camera.position.y < ht) {
+        while(camera.position.y < ht+5f) {
             Gdx.app.log("camera underground", ""+camera.position.y);
             tmpV1.set(camera.direction).crs(camera.up).y = 0f;
             camera.rotateAround(target, tmpV1.nor(), -0.01f * rotateAngle);
@@ -99,6 +99,13 @@ public class MyCamController extends CameraInputController {
     public boolean zoom (float amount) {
         if (!alwaysScroll && activateKey != 0 && !activatePressed) return false;
         float dst = tmpV1.set(camera.position).sub(target).len();
+        if(dst < 10 && amount > 0)  // max zoom in
+            return true;
+        if(dst > 150 && amount < 0) // max zoom out
+            return true;
+
+        Gdx.app.debug("zoom", "dst: "+ dst);
+
         camera.translate(tmpV1.set(camera.direction).scl(Math.signum(amount)*dst*0.1f));
         if (scrollTarget) target.add(tmpV1);
         if (autoUpdate) camera.update();

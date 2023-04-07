@@ -120,6 +120,7 @@ public class SplashScreen extends ScreenAdapter {
         this.width = width;
         this.height = height;
         stage.getViewport().update(width, height, true);
+        batch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
     }
 
 }

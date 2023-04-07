@@ -17,9 +17,9 @@ public class MiniMap implements Disposable {
     private int border;       // in pixels
 
     private OrthographicCamera orthoCam;
-    private ModelBatch modelBatch;
-    private ShapeRenderer shapeRenderer;
+    //private ShapeRenderer shapeRenderer;
     private SpriteBatch batch;
+    private SpriteBatch fboBatch;
     private FrameBuffer fboMiniMap;
     private Texture mapFrame;
     private Rectangle miniMapRect;
@@ -37,9 +37,10 @@ public class MiniMap implements Disposable {
         mapFrame = new Texture(Gdx.files.internal("frame220.png"));
         miniMapRect = new Rectangle();
         mapFrameRect = new Rectangle();
-        modelBatch = new ModelBatch();
         batch = new SpriteBatch();
-        shapeRenderer = new ShapeRenderer();
+        fboBatch = new SpriteBatch();
+        fboBatch.getProjectionMatrix().setToOrtho2D(0, 0, mapSize, mapSize);
+        //shapeRenderer = new ShapeRenderer();
 
         // ortho cam used for mini map
         float orthoCamHeight = 100f;
@@ -104,27 +105,27 @@ public class MiniMap implements Disposable {
                     symbol = go.type.enemyIconTexture;
 
                 if(symbol != null)
-                    batch.draw(symbol, x, y);
+                    batch.draw(symbol, x, y, viewWidth/8, viewHeight/8);
             }
 
             batch.end();
 
             // show view frustum as a trapezium shape overlay on the mini map
-            Vector3 planePoints[] = cam.frustum.planePoints;
-            screenCorners[0].set(planePoints[0]);
-            screenCorners[1].set(planePoints[1]);
-            screenCorners[2].set(planePoints[4]);
-            screenCorners[3].set(planePoints[5]);
-
-            for(int i = 0 ; i < 4; i++)
-                orthoCam.project(screenCorners[i]);
-
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-            shapeRenderer.setColor(Color.YELLOW);
-            for (int i = 0; i < 3; i++)
-                shapeRenderer.line(screenCorners[i].x, screenCorners[i].y, screenCorners[i+1].x, screenCorners[i+1].y);
-            shapeRenderer.line(screenCorners[3].x, screenCorners[3].y, screenCorners[0].x, screenCorners[0].y);
-            shapeRenderer.end();
+//            Vector3 planePoints[] = cam.frustum.planePoints;
+//            screenCorners[0].set(planePoints[0]);
+//            screenCorners[1].set(planePoints[1]);
+//            screenCorners[2].set(planePoints[4]);
+//            screenCorners[3].set(planePoints[5]);
+//
+//            for(int i = 0 ; i < 4; i++)
+//                orthoCam.project(screenCorners[i]);
+//
+//            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//            shapeRenderer.setColor(Color.YELLOW);
+//            for (int i = 0; i < 3; i++)
+//                shapeRenderer.line(screenCorners[i].x, screenCorners[i].y, screenCorners[i+1].x, screenCorners[i+1].y);
+//            shapeRenderer.line(screenCorners[3].x, screenCorners[3].y, screenCorners[0].x, screenCorners[0].y);
+//            shapeRenderer.end();
 
         fboMiniMap.end();
     }
@@ -143,7 +144,6 @@ public class MiniMap implements Disposable {
     @Override
     public void dispose() {
         batch.dispose();
-        modelBatch.dispose();
         mapFrame.dispose();
     }
 }

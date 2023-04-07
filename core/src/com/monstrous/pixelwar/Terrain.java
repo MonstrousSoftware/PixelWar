@@ -3,44 +3,50 @@ package com.monstrous.pixelwar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.*;
-import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.GeometryUtils;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Disposable;
 
 public class Terrain implements Disposable {
 
-    public static final int MAP_SIZE = 128;     // grid size
+    public static final int MAP_SIZE = 129;     // grid size
     public static final float SCALE  = Settings.worldSize;       // terrain size
     public static final float AMPLITUDE  = 20f;
 
     private Model model;
     public ModelInstance modelInstance;
     private float heightMap[][];
-    private float verts[];  // for collision detection, 3 floats per vertex
+    private float vertPositions[];  // for collision detection, 3 floats per vertex
     private short indices[];    // 3 indices per triangle
     private int numIndices;
     private Vector3 normalVectors[][] = new Vector3[MAP_SIZE][MAP_SIZE];
+    private Vector3 position; // position of terrain in world coordinates
 
     public Terrain() {
 
-        Texture noiseTexture = new Texture(Gdx.files.internal("noiseTexture.png"));
+        Texture noiseTexture = new Texture(Gdx.files.internal("noiseTexture.png")); // assumed to be MAP_SIZE x MAP_SIZE
         if (!noiseTexture.getTextureData().isPrepared()) {
             noiseTexture.getTextureData().prepare();
         }
         Pixmap pixmap = noiseTexture.getTextureData().consumePixmap();
         Color sample = new Color();
 
+        int tw = pixmap.getWidth();
+        int th = pixmap.getHeight();
         heightMap = new float[MAP_SIZE][MAP_SIZE];
         for (int x = 0; x < MAP_SIZE; x++) {
             for (int y = 0; y < MAP_SIZE; y++) {
-                int rgba = pixmap.getPixel(y,x);
+                int tx = (x * tw)/MAP_SIZE;
+                int ty = (y * th)/MAP_SIZE;
+                int rgba = pixmap.getPixel(ty,tx);
                 sample.set(rgba);
                 heightMap[y][x] = AMPLITUDE*(sample.r -0.5f );
             }
@@ -51,10 +57,11 @@ public class Terrain implements Disposable {
         terrainTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         terrainTexture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.Nearest);
 
-        //Material material =  new Material(ColorAttribute.createDiffuse(Color.BROWN));
+        position = new Vector3(-Settings.worldSize/2, 0, -Settings.worldSize/2);    // place the terrain so the centre is at the origin
+
         Material material =  new Material(TextureAttribute.createDiffuse(terrainTexture));
         model = makeGridModel(heightMap, SCALE, MAP_SIZE-1, GL20.GL_TRIANGLES, material);
-        modelInstance =  new ModelInstance(model);
+        modelInstance =  new ModelInstance(model, position);
     }
 
     @Override
@@ -62,9 +69,6 @@ public class Terrain implements Disposable {
         model.dispose();
     }
 
-    public void render(ModelBatch modelBatch, Environment environment ) {
-        modelBatch.render(modelInstance, environment);
-    }
 
     // make a Model consisting of a square grid
     public Model makeGridModel(float[][] heightMap, float scale, int divisions, int primitive, Material material) {
@@ -79,11 +83,11 @@ public class Terrain implements Disposable {
         MeshBuilder meshBuilder = (MeshBuilder) modelBuilder.part("face", primitive, attr, material);
         final int numVerts = (N + 1) * (N + 1);
         final int numTris = 2 * N * N;
-        Vector3 vertices[] = new Vector3[numVerts];
+        Vector3 positions[] = new Vector3[numVerts];
         Vector3 normals[] = new Vector3[numVerts];
 
-        verts = new float[3*numVerts];
-        indices = new short[3*numTris];
+        vertPositions = new float[3 * numVerts];      // todo redundant?
+        indices = new short[3 * numTris];
 
         meshBuilder.ensureVertices(numVerts);
         meshBuilder.ensureTriangleIndices(numTris);
@@ -92,30 +96,26 @@ public class Terrain implements Disposable {
         float posz;
 
         for (int y = 0; y <= N; y++) {
-            float posy = ((float) y / (float) N) - 0.5f;        // y in [-0.5f .. 0.5f]
+            float posy = ((float) y / (float) N);        // y in [0.0 ..1.0]
             for (int x = 0; x <= N; x++) {
-                float posx = ((float) x / (float) N - 0.5f);        // x in [-0.5f .. 0.5f]
+                float posx = ((float) x / (float) N);        // x in [0.0 .. 1.0]
 
                 posz = heightMap[y][x];
                 // have a slope down on the edges
                 if(x == 0 || x == N-1 || y == 0 || y == N-1)
                     posz = -10f;
-                pos.set(posx*scale, posz, posy*scale);			// swapping z,y to orient horizontally
+                pos.set(posx * scale, posz, posy * scale);            // swapping z,y to orient horizontally
 
-
-                vertices[y * (N + 1) + x] = new Vector3(pos);
-                normals[y * (N + 1) + x] = new Vector3(0,0,0);
-
-
+                positions[y * (N + 1) + x] = new Vector3(pos);
+                normals[y * (N + 1) + x] = new Vector3(0, 0, 0);
             }
-            if (y >= 1) {
-                // add to index list to make a row of triangles using vertices at y and y-1
-                short v0 = (short) ((y - 1) * (N + 1));    // vertex number at top left of this row
-                for (short t = 0; t < N; t++) {
-                    //addRect(meshBuilder, vertices, normals, v0, (short) (v0 + N + 1), (short) (v0 + N + 2), (short) (v0 + 1) );
-                    addRect(meshBuilder, vertices, normals, (short) (v0 + N + 1), (short) (v0 + N + 2), (short) (v0 + 1), v0 );
-                    v0++;                // next column
-                }
+        }
+
+        numIndices = 0;
+        for (int y = 1; y <= N; y++) {
+            short v0 = (short) ((y - 1) * (N + 1));    // vertex number at top left of this row
+            for (int x = 0; x <= N-1; x++, v0++) {
+                addRect(meshBuilder, positions, normals, (short) (v0 + N + 1), (short) (v0 + N + 2), (short) (v0 + 1), v0);
             }
         }
 
@@ -129,7 +129,7 @@ public class Terrain implements Disposable {
 
         Vector3 normal = new Vector3();
         for (int i = 0; i < numVerts; i++) {
-            normal.set(normals[i]);     // sum of normals
+            normal.set(normals[i]);     // sum of normals to get smoothed normals
             normal.nor();               // take average
 
 
@@ -137,20 +137,20 @@ public class Terrain implements Disposable {
             int x = i % (N+1);	// e.g. in [0 .. 3] if N == 3
             int y = i / (N+1);
 
-            normalVectors[x][y] = new Vector3(normal);
+            normalVectors[y][x] = new Vector3(normal);
 
             float reps=16;
             float u = (float)(x*reps)/(float)(N+1);
             float v = (float)(y*reps)/(float)(N+1);
-            vert.position.set(vertices[i]);
+            vert.position.set(positions[i]);
             vert.normal.set(normal);
             vert.uv.x = u;					// texture needs to have repeat wrapping enables to handle u,v > 1
             vert.uv.y = v;
             meshBuilder.vertex(vert);
 
-            verts[numFloats++] = vert.position.x;
-            verts[numFloats++] = vert.position.y;
-            verts[numFloats++] = vert.position.z;
+            vertPositions[numFloats++] = vert.position.x;
+            vertPositions[numFloats++] = vert.position.y;
+            vertPositions[numFloats++] = vert.position.z;
         }
 
         Model model = modelBuilder.end();
@@ -159,7 +159,8 @@ public class Terrain implements Disposable {
 
     private void addRect(MeshBuilder meshBuilder, final Vector3[] vertices, Vector3[] normals, short v0, short v1, short v2, short v3) {
         meshBuilder.rect(v0, v1, v2, v3);
-        calcNormal(vertices, normals, v0, v1, v2, v3);
+        calcNormal(vertices, normals, v0, v1, v2);
+        calcNormal(vertices, normals, v2, v3, v0);
         // 6 indices to make 2 triangles, follows order of meshBuilder.rect()
         //
         //     v3 --v2
@@ -181,7 +182,7 @@ public class Terrain implements Disposable {
     private Vector3 v = new Vector3();
     private Vector3 n = new Vector3();
 
-    private void calcNormal(final Vector3[] vertices, Vector3[] normals, short v0, short v1, short v2, short v3) {
+    private void calcNormal(final Vector3[] vertices, Vector3[] normals, short v0, short v1, short v2) {
 
         Vector3 p0 = vertices[v0];
         Vector3 p1 = vertices[v1];
@@ -194,34 +195,59 @@ public class Terrain implements Disposable {
         normals[v0].add(n);
         normals[v1].add(n);
         normals[v2].add(n);
-        normals[v3].add(n);
     }
 
     public boolean intersect(Ray ray, Vector3 intersection ) {
-        boolean hit = Intersector.intersectRayTriangles(ray, verts, indices, 3, intersection);
+        ray.origin.sub(position);  // make ray relative to terrain space
+        boolean hit = Intersector.intersectRayTriangles(ray, vertPositions, indices, 3, intersection);
+        intersection.add(position); // convert local terrain coordinate to world coordinate
         return hit;
     }
 
-    private static Ray downRay = new Ray();
-    private static Vector3 hitPoint = new Vector3();
 
-    public float getHeight(float x, float y) {
-        downRay.set(x, AMPLITUDE*2f, y, 0, -1, 0);
-        boolean hit = Intersector.intersectRayTriangles(downRay, verts, indices, 3, hitPoint);
-        if(!hit)
+    private Vector2 baryCoord = new Vector2();
+
+    public float getHeight(float x, float z) {
+        // position relative to terrain origin
+        float relx = x - position.x;
+        float relz = z - position.z;
+
+        // position in grid (rounded down)
+        int mx = (int)Math.floor(relx * (MAP_SIZE-1) / Settings.worldSize);
+        int mz = (int)Math.floor(relz * (MAP_SIZE-1) / Settings.worldSize);
+
+        if(mx < 0 ||mx >= MAP_SIZE || mz < 0 || mz >= MAP_SIZE)
             return 0;
-        return hitPoint.y;
+        float cellSize = Settings.worldSize / (MAP_SIZE-1);
+        float xCoord = (relx % cellSize)/cellSize;
+        float zCoord = (relz % cellSize)/cellSize;
+        float ht;
+        if( xCoord < 1f - zCoord) {   // top triangle
+            baryCoord.set(xCoord, zCoord);
+            ht = GeometryUtils.fromBarycoord(baryCoord, heightMap[mz][mx], heightMap[mz][mx+1], heightMap[mz+1][mx]);
+        }
+        else { // bottom triangle
+            baryCoord.set(1f-xCoord, 1f-zCoord);
+            ht =  GeometryUtils.fromBarycoord(baryCoord, heightMap[mz+1][mx+1], heightMap[mz+1][mx], heightMap[mz][mx+1]);
+        }
+        return ht;
     }
 
-    public void getNormal(float x, float y, Vector3 outNormal) {
+    public void getNormal(float x, float z, Vector3 outNormal) {
+        // position relative to terrain origin
+        float relx = x - position.x;
+        float relz = z - position.z;
 
-        // get normal vector from the closest grid point
-        int mx = (int) (MAP_SIZE * 0.5f*(1f + x / Settings.worldSize));
-        int mz = (int) (MAP_SIZE * 0.5f*(1f + y / Settings.worldSize));
-        if(mx < 0 ||x >= MAP_SIZE || mz < 0 || mz >= MAP_SIZE)
+        // position in grid (rounded down)
+        int mx = (int)Math.floor(relx * (MAP_SIZE-1) / Settings.worldSize);
+        int mz = (int)Math.floor(relz * (MAP_SIZE-1) / Settings.worldSize);
+
+        if(mx < 0 ||mx >= MAP_SIZE || mz < 0 || mz >= MAP_SIZE) {
             outNormal.set(0,1,0);
-        else
-            outNormal.set( normalVectors[mx][mz]);
+            return;
+        }
+        // note: we're using one normal per quad, not per triangle to reduce jitter of the tank
+        outNormal.set(normalVectors[mz][mx]);           // use smoothed vertex normal
     }
 
 }

@@ -8,6 +8,7 @@ import com.monstrous.pixelwar.Main;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+		config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL30, 3, 3);
 		config.setForegroundFPS(60);
 		config.setTitle("PixelWar");
 		config.setWindowedMode(1200, 600);

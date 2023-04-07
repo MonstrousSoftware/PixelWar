@@ -16,8 +16,9 @@ public class Tower extends Behaviour {
         if(go.isDying) {
             go.modelInstance.transform.setFromEulerAngles(go.angle, 15f, 0).trn(go.position);
             go.velocity.set(0, -0.8f, 0);
+            if(go.position.y < -8f)
+                go.toRemove = true;
         }
-        if(go.position.y < -8f)
-            go.toRemove = true;
+
     }
 }

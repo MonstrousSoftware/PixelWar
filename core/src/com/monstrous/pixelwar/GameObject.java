@@ -88,6 +88,8 @@ public class GameObject {
 
 
     public void setDestination( Vector3 destination ){
+        if(isDying)
+            return;
         this.destination.set(destination);
         isMovingToDestination = true;
         isRotating = true;
@@ -137,7 +139,7 @@ public class GameObject {
           }
 
 
-        if(isMovingToDestination) {
+        if(isMovingToDestination && !isDying) {
             // compare position with destination in XZ place, (ignore Y component for the sake of airships)
             tmpVec.set(destination);
             destination.y = position.y;

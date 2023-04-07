@@ -16,8 +16,9 @@ public class Flag extends Behaviour {
         if(go.isDying) {
             go.modelInstance.transform.setFromEulerAngles(go.angle, 45f, 0).trn(go.position);
             go.velocity.set(0, -0.2f, 0);
+            if(go.position.y < -2f)
+                go.toRemove = true;
         }
-        if(go.position.y < -2f)
-            go.toRemove = true;
+
     }
 }

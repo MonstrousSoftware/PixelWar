@@ -7,7 +7,7 @@ import com.monstrous.pixelwar.World;
 
 public class Bomb extends Behaviour {
 
-    public static final float ACCELERATION = 1.5f;
+    public static final float ACCELERATION = 2.5f;
     public static final float BOMB_RADIUS = 5f;
 
     public Bomb(GameObject go) {
@@ -22,7 +22,7 @@ public class Bomb extends Behaviour {
         float ht = world.terrain.getHeight(go.position.x, go.position.z);
         if(go.position.y + go.type.bbox.getCenterY() < ht) // hit the ground
         {
-            go.toRemove= true;  // removee the bomb
+            go.toRemove= true;  // remove the bomb
             world.blastEffect(go, BOMB_RADIUS);
         }
     }
