@@ -7,9 +7,9 @@ import com.monstrous.pixelwar.screens.SplashScreen;
 
 public class Main extends Game {
 
-	public static final boolean RELEASE_BUILD = false;
+	public static final boolean RELEASE_BUILD = true;
 
-	public static final String VERSION = "version 1.4 (April 5, 2023)";
+	public final String VERSION = "version 1.4 (April 5, 2023)";
 	public static String PREFERENCES_NAME = "pixelwar";
 
 	public Music music;
@@ -20,7 +20,7 @@ public class Main extends Game {
 	@Override
 	public void create () {
 		if(RELEASE_BUILD)
-			Gdx.app.setLogLevel(Application.LOG_ERROR);
+			Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		else
 			Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
@@ -41,7 +41,8 @@ public class Main extends Game {
 		if(RELEASE_BUILD)
 			setScreen( new SplashScreen(this) );
 		else
-			setScreen( new GameScreen(this, false) );
+			setScreen( new GameScreen(this) );
+
 	}
 
 

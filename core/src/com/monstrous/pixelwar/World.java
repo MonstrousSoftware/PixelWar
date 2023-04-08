@@ -48,17 +48,16 @@ public class World implements Disposable {
         modelAssets = new ModelAssets();
         GameObjectTypes types = new GameObjectTypes();  // instantiate 'static' class
 
-        Gdx.app.debug("World", "make terrain");
-        terrain = new Terrain();
-
         shapeRenderer = new ShapeRenderer();
 
         gameObjects = new Array<>();
         deleteList = new Array<>();
 
-        particleEffects = new ParticleEffects(cam);
-
+        Gdx.app.debug("World", "make terrain");
+        terrain = new Terrain();
         scenery = new Scenery(this);
+
+        particleEffects = new ParticleEffects(cam);
 
         populate();
         xyzModelInstance = makeArrows();
@@ -329,15 +328,12 @@ public class World implements Disposable {
     }
 
     public boolean gameOver() {
-        if(playerFlag.isDying || enemyFlag.isDying)
-            return true;
-        return false;
+        return (playerFlag.isDying || enemyFlag.isDying);
+
     }
 
     public boolean haveWon() {
-        if( enemyFlag.isDying)
-            return true;
-        return false;
+        return ( enemyFlag.isDying);
     }
 
 
@@ -409,7 +405,6 @@ public class World implements Disposable {
         Gdx.app.debug("World", "dispose");
         modelAssets.dispose();
         terrain.dispose();
-        //cache.dispose();
         scenery.dispose();
     }
 

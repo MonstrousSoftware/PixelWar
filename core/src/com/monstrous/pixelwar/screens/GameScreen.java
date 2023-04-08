@@ -21,21 +21,21 @@ import com.monstrous.pixelwar.screens.MenuScreen;
 public class GameScreen extends ScreenAdapter {
 
     private Main game;
-    private PerspectiveCamera cam;
+    private PerspectiveCamera cam = null;
     private int viewHeight, viewWidth;
     private ModelBatch modelBatch;
     public World world;
     private MyCamController camController;
     private Environment environment;
-    private MiniMap miniMap;
+    private MiniMap miniMap = null;
     private DirectionalShadowLight shadowLight;
     private ModelBatch shadowBatch;
     private GameObject selectedObject;
-    private GUI gui;
+    private GUI gui = null;
     private boolean isGameOver;
 
 
-    public GameScreen(Main game, boolean newGame) {
+    public GameScreen(Main game) {
         this.game = game;
     }
 
@@ -48,9 +48,6 @@ public class GameScreen extends ScreenAdapter {
         if(Settings.musicEnabled)
             game.startMusic("music/Level 1.wav");
 
-        gui = new GUI(this);
-
-
         cam = new PerspectiveCamera(50, viewWidth, viewHeight);
         cam.position.set(30f, 10f, 10f);
         cam.lookAt(0, 0, 0);
@@ -62,8 +59,12 @@ public class GameScreen extends ScreenAdapter {
         world = new World(cam);
         Gdx.app.log("GameScreen", "world loaded");
 
+
         camController = new MyCamController(cam, world);
-        //camController = new OrthographicCameraController(cam);
+
+        selectObject( world.selectRandomUnit() );
+
+        gui = new GUI(this);
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(gui.stage);
@@ -87,24 +88,18 @@ public class GameScreen extends ScreenAdapter {
         environment.shadowMap = shadowLight;
         shadowBatch = new ModelBatch(new DepthShaderProvider());
 
-
         modelBatch = new ModelBatch();
-
-        //miniMap = new MiniMap(Settings.worldSize, Settings.worldSize, -500);
-
-
-
-        selectObject( world.selectRandomUnit() );
+        miniMap = new MiniMap(Settings.worldSize, Settings.worldSize, -500);
 
         gui.setMessage("COMMENCE BATTLE!");
         Sounds.playSound(Sounds.COMMENCE);
 
         isGameOver = false;
-
     }
 
     @Override
     public void render(float delta) {
+
         if(world.isShaking())
             camController.shake();
         camController.update();
@@ -125,7 +120,7 @@ public class GameScreen extends ScreenAdapter {
         }
         if(selectedObject == null || selectedObject.toRemove)
             selectObject( world.selectRandomUnit() );
-        //miniMap.update(cam, world, environment);
+        miniMap.update(cam, world, environment);
 
 
         // prepare shadow buffer
@@ -143,7 +138,7 @@ public class GameScreen extends ScreenAdapter {
 
         //world.renderNormals(cam);
 
-        //miniMap.render();
+        miniMap.render();
         gui.render(delta);
     }
 
@@ -154,25 +149,29 @@ public class GameScreen extends ScreenAdapter {
         // adjust aspect ratio after a windows resize
         viewWidth = width;
         viewHeight = height;
+
         cam.viewportWidth = width;
         cam.viewportHeight = height;
         cam.update();
 
-        //miniMap.resize(width, height);
+        miniMap.resize(width, height);
         gui.resize(width, height);
     }
 
     @Override
     public void hide() {
+        Gdx.app.log("GameScreen", "hide");
         dispose();
     }
 
     @Override
     public void dispose() {
+        Gdx.app.log("GameScreen", "dispose");
         world.dispose();
         modelBatch.dispose();
         game.stopMusic();
         gui.dispose();
+        miniMap.dispose();
     }
 
     private Vector3 tmpPos = new Vector3();
