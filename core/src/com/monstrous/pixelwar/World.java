@@ -125,7 +125,7 @@ public class World implements Disposable {
 
     public  GameObject spawnItem(Army army, String typeName, Vector3 position, float angle, Vector3 velocity){
         GameObjectType type = types.findType(typeName);
-        GameObject go = new GameObject(army, type, position, angle, velocity);
+        GameObject go = new GameObject(terrain, army, type, position, angle, velocity);
         go.behaviour = types.getTypeBehaviour(go);
         gameObjects.add(go);
         return go;

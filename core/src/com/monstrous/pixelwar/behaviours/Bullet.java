@@ -22,7 +22,7 @@ public class Bullet extends Behaviour {
             GameObject collider = world.testForCollision(go);
             if(collider != null) {
                 go.toRemove = true; // remove bullet
-                Gdx.app.debug("bullet hits", collider.type.name+" hp:"+collider.healthPoints);
+                //Gdx.app.debug("bullet hits", collider.type.name+" hp:"+collider.healthPoints);
                 collider.takeDamage(world, 10);
             }
         }

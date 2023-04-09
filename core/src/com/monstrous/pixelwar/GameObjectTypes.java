@@ -16,15 +16,19 @@ public class GameObjectTypes {
         types = new Array<>();
         GameObjectType tank = new GameObjectType("Tank", 0,"TankBody", "TankTurret", "tank.png", false, 100, -1f);
         tank.isMobile = true;
-        tank.maxSpeed = 5f;
+        tank.maxSpeed = 10f;
         tank.isTank = true;
+        tank.turnFactor = 12f;
+        tank.rotationSpeed = 60f;
         types.add(tank);
 
         GameObjectType airShip = new GameObjectType("AirShip", 1, "AirShip", "Bomb", "airship.png",false, 80,-1f);
         airShip.followsTerrain = false;
         airShip.isMobile = true;
         airShip.isAirship = true;
-        airShip.maxSpeed = 3f;
+        airShip.maxSpeed = 4f;
+        airShip.turnFactor = 2f;
+        airShip.rotationSpeed = 20f;
         types.add(airShip);
 
         types.add(new GameObjectType("Anti-Aircraft", 2,"AntiAircraftBase", "AntiAircraft", "anti-aircraft.png",false, 100, -1f));

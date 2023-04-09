@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class AI {
 
+    private static float INITIAL_UPDATE = 220f;
     private static float UPDATE_INTERVAL = 5f;
 
     private GameObject flag;
@@ -25,7 +26,7 @@ public class AI {
         enemyAA = new Array<>();
         enemyTanks = new Array<>();
         enemyTowers = new Array<>();
-        updateTimer = UPDATE_INTERVAL * 4;      // wait a bit at start to give player some time
+        updateTimer = INITIAL_UPDATE;       // wait a bit at start to give player some time
     }
 
     public void update(float deltaTime) {

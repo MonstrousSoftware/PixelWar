@@ -9,15 +9,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.monstrous.pixelwar.behaviours.*;
 
 public class GameObject {
-    public static float ROTATION_SPEED = 30f;
-
     public Army army;
     public GameObjectType type;
     public ModelInstance modelInstance;
     public ModelInstance modelInstance2;
     public Vector3 position;
     public Vector3 velocity;
-    public float speed;
+    public float acceleration;  // -1, 0 , 1
     public float angle;     // around up axis (0 degrees is on the +X), models have to face forward on +X axis
     private float prevAngle;
     public float destAngle;
@@ -34,42 +32,46 @@ public class GameObject {
     public float healthPoints;
     public Vector3 terrainNormal;
 
-    public GameObject(Army army, GameObjectType type, Vector3 position, float angle, Vector3 velocity) {
-
+    public GameObject(Terrain terrain, Army army, GameObjectType type, Vector3 position, float angle, Vector3 velocity) {
         this.army = army;
-
         this.type = type;
         this.behaviour = null;
 
-        if(type == null)
+        if(type == null) {
+            Gdx.app.error("null type in GameObject constructor","");
             return;
-        healthPoints = type.healthPoints;
-
+        }
         this.position = new Vector3(position);
         this.velocity = new Vector3(velocity);
-        this.terrainNormal = new Vector3(0,0,0);    // invalid value to force initialisation in update()
         this.angle = angle;
+
+        healthPoints = type.healthPoints;
+        timeToLive = type.timeToLive;
+
         destination = new Vector3();
         isMovingToDestination = false;
+        acceleration = 0;
         isRotating = false;
         toRemove = false;
         isDying = false;
         targetAngle = 6f;
         prevAngle = -999f;
         prevTargetAngle = -999f;
-        speed = 0;
 
-        Model model = ModelAssets.getModel("Assets");
-        modelInstance =  new ModelInstance(model, type.modelName);
-        modelInstance.transform.rotate(Vector3.Y, angle).trn(position);
-
-        timeToLive = type.timeToLive;
-
+        Model modelAssets = ModelAssets.getModel("Assets");
+        modelInstance =  new ModelInstance(modelAssets, type.modelName);
         modelInstance2 = null;
         if(type.modelName2 != null) {
-            modelInstance2 = new ModelInstance(model, type.modelName2);
-            modelInstance2.transform.rotate(Vector3.Y, targetAngle).trn(position);
+            // some game object types have 2 model instances,e.g. a tank has a turret, airship has a bomb
+            modelInstance2 = new ModelInstance(modelAssets, type.modelName2);
         }
+
+        terrainNormal = new Vector3();
+        terrain.getNormal(position.x, position.z, terrainNormal);               // normal vector of the terrain at game object position
+        setTransform(modelInstance, position, terrainNormal, angle);
+        if(modelInstance2 != null)
+            setTransform(modelInstance2, position, terrainNormal, targetAngle);
+
         setArmy(army);
         tmpVec = new Vector3();
     }
@@ -92,15 +94,18 @@ public class GameObject {
         this.destination.set(destination);
         isMovingToDestination = true;
         isRotating = true;
-        speed = type.maxSpeed;
+        acceleration = 1f;
     }
 
     // go towards destination but stay at some distance from it
     // (e.g. in order not to have a tank stand on top of a flag)
     public void setDestination( Vector3 destination, float distance ){
+        // calculate a position at 'distance' from 'destination' in the direction of the current position
+        //
         tmpVec.set(position).sub(destination).nor().scl(distance);
-        destination.add(tmpVec);
-        setDestination(destination);
+        tmpVec.add(destination);
+        setDestination(tmpVec);
+
     }
 
     public void update( World world, float deltaTime ) {
@@ -110,12 +115,7 @@ public class GameObject {
                 toRemove = true;    // mark for removal
         }
 
-        if(terrainNormal.len2() < .1f) {    // not initialized yet, have to do this in update() because we need world.
-            world.terrain.getNormal(position.x, position.z, terrainNormal);
-            setTransform(modelInstance, position, terrainNormal, angle);
-            if(modelInstance2 != null)
-                setTransform(modelInstance2, position, terrainNormal, targetAngle);
-        }
+
         if(isRotating) {
             // recalculate the destination angle from current position
             tmpVec.set(destination).sub(position).nor();    // unit vector towards destination
@@ -130,14 +130,14 @@ public class GameObject {
 
             // rotate towards the destination angle
             if(destAngle > angle) {
-                angle += ROTATION_SPEED*deltaTime;
+                angle += type.rotationSpeed*deltaTime;
                 if(angle > destAngle) {     // don't overshoot
                     angle = destAngle;
                     isRotating = false;
                 }
             }
             if(destAngle < angle) {
-                angle -= ROTATION_SPEED*deltaTime;
+                angle -= type.rotationSpeed*deltaTime;
                 if(angle < destAngle) {
                     angle = destAngle;
                     isRotating = false;
@@ -147,40 +147,44 @@ public class GameObject {
 
 
         if(isMovingToDestination && !isDying) {
-            // compare position with destination in XZ place, (ignore Y component for the sake of airships)
+
+            // compare position with destination in XZ plane, (ignore Y component for the sake of airships)
             tmpVec.set(destination);
-            destination.y = position.y;
-            float distance = position.dst2(tmpVec);
-            if (distance < 5f) {   // close to destination, slow down
-                velocity.scl(.9f);    // scale for speed and time step
+            tmpVec.y = position.y;
+            float distance = position.dst(tmpVec);
+
+            // don't move if we are facing away from the destination, just turn until we are facing more the right direction
+            // smaller angle if distance is small to avoid that we end up going round in circles around the destination
+            float factor = distance/type.turnFactor;
+            float maxAngle = 45f * factor;
+            if(Math.abs(angle - destAngle) < maxAngle) {
+                    acceleration = 4f;
+            }
+            else {  // while turning, slow down
+                    acceleration = -4f;
             }
             if (distance < 1f) {   // reached destination
                 isMovingToDestination = false;
                 velocity.set(0,0,0);
-                speed = 0;
+                acceleration = 0f;
             }
-            else {
-                // don't move if we are facing away from the destination, just turn until we are facing more the right direction
-                // smaller angle if distance is small
-                float factor = distance/120f;
-                if(factor > 1f)
-                    factor = 1f;
-                float maxAngle = 15f * factor;
-                if(Math.abs(angle - destAngle) < maxAngle) {
-                    if(speed < type.maxSpeed)
-                        speed += 1.0f*deltaTime;
-                    // move in direction that the unit is facing
-                    velocity.set((float) Math.cos(angle * Math.PI / 180f), 0, (float) Math.sin(angle * Math.PI / 180f));            // hmmm... too much trig
-                    velocity.scl(speed);    // scale for speed and time step
-                }
-                else {  // while turning slow down
-                    if(speed > 0)
-                        speed -= 5.0f*deltaTime;
-                    velocity.set((float) Math.cos(angle * Math.PI / 180f), 0, (float) Math.sin(angle * Math.PI / 180f));
-                    velocity.scl(speed);
+            else if (distance < 5f) {   // close to destination, slow down
+                acceleration = -8f;
+            }
 
-                }
-            }
+            float speed = velocity.len();
+            if(speed < type.maxSpeed && acceleration > 0)
+                speed += acceleration*deltaTime;
+            if(speed > 0 && acceleration < 0)
+                speed += acceleration*deltaTime;
+            if(speed < 0)
+                speed = 0;
+
+            //Gdx.app.debug("moving", "distance "+distance+" speed:"+speed);
+            // move in direction that the unit is facing
+            velocity.set((float) Math.cos(angle * Math.PI / 180f), 0, (float) Math.sin(angle * Math.PI / 180f));    // hmmm... too much trig
+            velocity.scl(speed);// scale for speed and time step
+
         }
         float speed2 = velocity.len2();
         if(speed2 > 0.01f) {                            // if the speed is zero we can skip the next steps

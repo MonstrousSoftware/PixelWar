@@ -29,6 +29,8 @@ public class GameObjectType {
     public BoundingBox bbox;
     public float radius;
     public float maxSpeed;
+    public float rotationSpeed;
+    public float turnFactor;
     public Texture iconTexture = null;
     public Texture enemyIconTexture = null;
 
@@ -51,6 +53,9 @@ public class GameObjectType {
         this.isBomb = false;
         this.isTower = false;
         this.maxSpeed = 5f;
+        this.rotationSpeed = 60f;
+
+        this.turnFactor = 12;
 
         Model model = ModelAssets.getModel("Assets");
         ModelInstance modelInstance = new ModelInstance(model, modelName);
