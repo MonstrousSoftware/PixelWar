@@ -46,6 +46,7 @@ public class AirShip extends Behaviour {
                 go.modelInstance2 = new ModelInstance(model, go.type.modelName2);
                 go.modelInstance2.transform.rotate(Vector3.Y, go.angle).trn(go.position);
                 hasBomb = true;
+                go.setArmy(go.army);        // ensure bomb has the same colour as the airship
             }
         }
 

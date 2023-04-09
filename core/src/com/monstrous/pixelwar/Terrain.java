@@ -102,7 +102,7 @@ public class Terrain implements Disposable {
 
                 posz = heightMap[y][x];
                 // have a slope down on the edges
-                if(x == 0 || x == N-1 || y == 0 || y == N-1)
+                if(x == 0 || x == N || y == 0 || y == N)
                     posz = -10f;
                 pos.set(posx * scale, posz, posy * scale);            // swapping z,y to orient horizontally
 
@@ -216,7 +216,7 @@ public class Terrain implements Disposable {
         int mx = (int)Math.floor(relx * (MAP_SIZE-1) / Settings.worldSize);
         int mz = (int)Math.floor(relz * (MAP_SIZE-1) / Settings.worldSize);
 
-        if(mx < 0 ||mx >= MAP_SIZE || mz < 0 || mz >= MAP_SIZE)
+        if(mx < 0 ||mx >= (MAP_SIZE-1) || mz < 0 || mz >= (MAP_SIZE-1))
             return 0;
         float cellSize = Settings.worldSize / (MAP_SIZE-1);
         float xCoord = (relx % cellSize)/cellSize;
@@ -242,7 +242,7 @@ public class Terrain implements Disposable {
         int mx = (int)Math.floor(relx * (MAP_SIZE-1) / Settings.worldSize);
         int mz = (int)Math.floor(relz * (MAP_SIZE-1) / Settings.worldSize);
 
-        if(mx < 0 ||mx >= MAP_SIZE || mz < 0 || mz >= MAP_SIZE) {
+        if(mx < 0 ||mx >= (MAP_SIZE-1) || mz < 0 || mz >= (MAP_SIZE-1)) {
             outNormal.set(0,1,0);
             return;
         }

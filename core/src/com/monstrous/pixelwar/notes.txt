@@ -64,3 +64,9 @@ version 1.3 release notes
 - proportional zoom
 - improved tank model in Blender
 - worked on letting the tank slope with the terrain. Works, although it is not perfect (issue with incorrect terrain normals)
+
+version 1.4 release notes
+- tank follows terrain slope
+- terrain height determined using baricentric coordinates on terrain mesh
+- airships return to tower to reload
+-

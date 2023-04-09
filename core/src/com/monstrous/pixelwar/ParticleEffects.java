@@ -81,7 +81,7 @@ public class ParticleEffects implements Disposable {
         deleteList.clear();
         for(ParticleEffect effect : activeEffects) {
             if(effect.isComplete()) {
-                Gdx.app.debug("particle effect completed", "");
+                //Gdx.app.debug("particle effect completed", "");
                 particleSystem.remove(effect);
                 effect.dispose();
                 deleteList.add(effect);

@@ -96,6 +96,14 @@ public class GameObject {
         speed = type.maxSpeed;
     }
 
+    // go towards destination but stay at some distance from it
+    // (e.g. in order not to have a tank stand on top of a flag)
+    public void setDestination( Vector3 destination, float distance ){
+        tmpVec.set(position).sub(destination).nor().scl(distance);
+        destination.add(tmpVec);
+        setDestination(destination);
+    }
+
     public void update( World world, float deltaTime ) {
         if(timeToLive > 0f){
             timeToLive -= deltaTime;

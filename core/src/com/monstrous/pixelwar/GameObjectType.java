@@ -16,7 +16,12 @@ public class GameObjectType {
     public boolean isMobile;
     public boolean isProjectile;
     public boolean isAirship;
+    public boolean isTank;
     public boolean isTower;
+    public boolean isFlag;
+    public boolean isAA;
+    public boolean isBullet;
+    public boolean isBomb;
     public boolean followsTerrain;
     public float timeToLive;
     public float healthPoints;
@@ -39,6 +44,11 @@ public class GameObjectType {
         this.isMobile = false;
         this.isProjectile = false;
         this.isAirship = false;
+        this.isTank = false;
+        this.isFlag = false;
+        this.isAA = false;
+        this.isBullet = false;
+        this.isBomb = false;
         this.isTower = false;
         this.maxSpeed = 5f;
 

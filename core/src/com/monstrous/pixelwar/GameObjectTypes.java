@@ -17,8 +17,8 @@ public class GameObjectTypes {
         GameObjectType tank = new GameObjectType("Tank", 0,"TankBody", "TankTurret", "tank.png", false, 100, -1f);
         tank.isMobile = true;
         tank.maxSpeed = 5f;
+        tank.isTank = true;
         types.add(tank);
-
 
         GameObjectType airShip = new GameObjectType("AirShip", 1, "AirShip", "Bomb", "airship.png",false, 80,-1f);
         airShip.followsTerrain = false;
@@ -28,12 +28,8 @@ public class GameObjectTypes {
         types.add(airShip);
 
         types.add(new GameObjectType("Anti-Aircraft", 2,"AntiAircraftBase", "AntiAircraft", "anti-aircraft.png",false, 100, -1f));
-
         types.add(new GameObjectType("Tower", 3,"Tower", null, "tower.png",false, 300, -1f));
-
-
         types.add(new GameObjectType("Flag", 4, "Flag", null, "flag.png",false, 80, -1f));
-
         types.add(new GameObjectType("Arrow", -1, "Arrow", null, null, false, 100, 2f));
         types.add(new GameObjectType("Bullet", -1, "Bullet", null, null, false, 100, 10f));
         types.add(new GameObjectType("Bomb", -1, "Bomb", null, null, false, 100, 5f));
@@ -45,11 +41,15 @@ public class GameObjectTypes {
 
         findType("Bullet").followsTerrain = false;
         findType("Bullet").isProjectile = true;
+        findType("Bullet").isBullet = true;
         findType("Missile").followsTerrain = false;
         findType("Missile").isProjectile = true;
         findType("Bomb").followsTerrain = false;
         findType("Bomb").isProjectile = true;
+        findType("Bomb").isBomb = true;
         findType("Tower").isTower = true;
+        findType("Flag").isFlag = true;
+        findType("Anti-Aircraft").isAA = true;
 ;    }
 
     public static GameObjectType findType(String typeName) {
@@ -63,21 +63,21 @@ public class GameObjectTypes {
 
     // may return null
     public static Behaviour getTypeBehaviour(GameObject go ) {
-        // yuck...
+
         Behaviour behaviour = null;
-        if(go.type.name.contentEquals("Anti-Aircraft"))
+        if(go.type.isAA)
              behaviour = new AntiAircraft(go);
-        if(go.type.name.contentEquals("Tank"))
+        if(go.type.isTank)
             behaviour = new Tank(go);
-        if(go.type.name.contentEquals("Bullet"))
+        if(go.type.isBullet)
             behaviour = new Bullet(go);
-        if(go.type.name.contentEquals("Bomb"))
+        if(go.type.isBomb)
             behaviour = new Bomb(go);
-        if(go.type.name.contentEquals("AirShip"))
+        if(go.type.isAirship)
             behaviour = new AirShip(go);
-        if(go.type.name.contentEquals("Tower"))
+        if(go.type.isTower)
             behaviour = new Tower(go);
-        if(go.type.name.contentEquals("Flag"))
+        if(go.type.isFlag)
             behaviour = new Flag(go);
         return behaviour;
     }
