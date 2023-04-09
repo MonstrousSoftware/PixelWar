@@ -8,7 +8,7 @@ import com.monstrous.pixelwar.behaviours.*;
 
 public class GameObjectTypes {
 
-    public static Array<GameObjectType> types;
+    public Array<GameObjectType> types;
 
 
     // instantiate in World constructor
@@ -50,9 +50,9 @@ public class GameObjectTypes {
         findType("Tower").isTower = true;
         findType("Flag").isFlag = true;
         findType("Anti-Aircraft").isAA = true;
-;    }
+    }
 
-    public static GameObjectType findType(String typeName) {
+    public GameObjectType findType(String typeName) {
         for(GameObjectType type : types ){
             if(type.name.contentEquals(typeName))
                 return type;
@@ -62,7 +62,7 @@ public class GameObjectTypes {
     }
 
     // may return null
-    public static Behaviour getTypeBehaviour(GameObject go ) {
+    public Behaviour getTypeBehaviour(GameObject go ) {
 
         Behaviour behaviour = null;
         if(go.type.isAA)

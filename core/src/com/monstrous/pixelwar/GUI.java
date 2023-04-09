@@ -122,35 +122,35 @@ public class GUI implements Disposable {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                gameScreen.toggleUnit(GameObjectTypes.findType("Tank"));
+                gameScreen.toggleUnit("Tank");
             }
         });
         asButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                gameScreen.toggleUnit(GameObjectTypes.findType("AirShip"));
+                gameScreen.toggleUnit("AirShip");
             }
         });
         aaButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                gameScreen.toggleUnit(GameObjectTypes.findType("Anti-Aircraft"));
+                gameScreen.toggleUnit("Anti-Aircraft");
             }
         });
         twButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                gameScreen.toggleUnit(GameObjectTypes.findType("Tower"));
+                gameScreen.toggleUnit("Tower");
             }
         });
         flButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                gameScreen.toggleUnit(GameObjectTypes.findType("Flag"));
+                gameScreen.toggleUnit("Flag");
             }
         });
     }

@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.monstrous.pixelwar.behaviours.Behaviour;
 
 public class World implements Disposable {
 
@@ -27,6 +28,7 @@ public class World implements Disposable {
     private  Vector3 tmpPosition = new Vector3();
     private  Vector3 tmpVelocity = new Vector3();
     private  Army playerArmy;
+    private GameObjectTypes types;
     private GameObject playerFlag;
     private GameObject enemyFlag;
     private AI ai;
@@ -46,7 +48,7 @@ public class World implements Disposable {
         armies = new Armies();
         playerArmy = armies.getPlayerArmy();
         modelAssets = new ModelAssets();
-        GameObjectTypes types = new GameObjectTypes();  // instantiate 'static' class
+        types = new GameObjectTypes();
 
         shapeRenderer = new ShapeRenderer();
 
@@ -121,8 +123,10 @@ public class World implements Disposable {
         return spawnItem(army, name, tmpPosition, angle, tmpVelocity);
     }
 
-    public  GameObject spawnItem(Army army, String name, Vector3 position, float angle, Vector3 velocity){
-        GameObject go = new GameObject(army, name, position, angle, velocity);
+    public  GameObject spawnItem(Army army, String typeName, Vector3 position, float angle, Vector3 velocity){
+        GameObjectType type = types.findType(typeName);
+        GameObject go = new GameObject(army, type, position, angle, velocity);
+        go.behaviour = types.getTypeBehaviour(go);
         gameObjects.add(go);
         return go;
     }
@@ -195,7 +199,8 @@ public class World implements Disposable {
         return null;
     }
 
-    public GameObject selectNextUnit(GameObjectType type, GameObject currentObject) {
+    public GameObject selectNextUnit(String typeName, GameObject currentObject) {
+        GameObjectType type = types.findType(typeName);
         if(type == currentObject.type) {
             return selectNextUnitOfType(type, currentObject);
         }

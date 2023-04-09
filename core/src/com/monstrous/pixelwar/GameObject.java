@@ -30,15 +30,17 @@ public class GameObject {
     private float timeToLive;
     public boolean isDying;
     public boolean toRemove;
-    private Behaviour behaviour;
+    public Behaviour behaviour;
     public float healthPoints;
     public Vector3 terrainNormal;
 
-    public GameObject(Army army, String typeName, Vector3 position, float angle, Vector3 velocity) {
+    public GameObject(Army army, GameObjectType type, Vector3 position, float angle, Vector3 velocity) {
 
         this.army = army;
 
-        this.type = GameObjectTypes.findType(typeName);
+        this.type = type;
+        this.behaviour = null;
+
         if(type == null)
             return;
         healthPoints = type.healthPoints;
@@ -56,9 +58,6 @@ public class GameObject {
         prevAngle = -999f;
         prevTargetAngle = -999f;
         speed = 0;
-
-
-        behaviour = GameObjectTypes.getTypeBehaviour(this);
 
         Model model = ModelAssets.getModel("Assets");
         modelInstance =  new ModelInstance(model, type.modelName);

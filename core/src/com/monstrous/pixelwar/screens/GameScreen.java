@@ -207,8 +207,8 @@ public class GameScreen extends ScreenAdapter {
         camController.followGameObject(selectedObject);
     }
 
-    public void toggleUnit(GameObjectType type) {
-        GameObject next = world.selectNextUnit(type, selectedObject);
+    public void toggleUnit(String typeName) {
+        GameObject next = world.selectNextUnit(typeName, selectedObject);
         if(next != null)
             selectObject(next);
     }
