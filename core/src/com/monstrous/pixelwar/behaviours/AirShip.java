@@ -11,7 +11,7 @@ import com.monstrous.pixelwar.World;
 
 public class AirShip extends Behaviour {
 
-    public static final float TOWER_RADIUS = 5f;
+    public static final float TOWER_RADIUS = 10f;
 
     private boolean hasBomb;
 

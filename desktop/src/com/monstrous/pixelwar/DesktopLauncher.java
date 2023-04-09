@@ -10,8 +10,9 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		//config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL30, 3, 3);
 		config.setForegroundFPS(60);
-		config.setTitle("PixelWar");
+		config.setTitle(Settings.title);
 		config.setWindowedMode(1200, 600);
+		config.setWindowIcon("icons/tank.png");
 		new Lwjgl3Application(new Main(), config);
 	}
 }

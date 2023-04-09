@@ -219,7 +219,7 @@ public class World implements Disposable {
         float minDist = Float.MAX_VALUE;
         for(int i = 0; i < gameObjects.size; i++ ) {
             GameObject go = gameObjects.get(i);
-            if(go.army.isNeutral || go.army == subject.army || go.type.isProjectile || go.isDying)
+            if(go.army.isNeutral || go.army == subject.army || go.type.isProjectile || go.type.isAirship || go.isDying)
                 continue;
             float dist2 = subject.position.dst2(go.position);
             if(dist2 > radius*radius)

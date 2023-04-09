@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.monstrous.pixelwar.behaviours.*;
@@ -105,7 +106,6 @@ public class GameObject {
         tmpVec.set(position).sub(destination).nor().scl(distance);
         tmpVec.add(destination);
         setDestination(tmpVec);
-
     }
 
     public void update( World world, float deltaTime ) {
@@ -118,7 +118,7 @@ public class GameObject {
 
         if(isRotating) {
             // recalculate the destination angle from current position
-            tmpVec.set(destination).sub(position).nor();    // unit vector towards destination
+            tmpVec.set(destination).sub(position);
             double phi = Math.atan2(tmpVec.z, tmpVec.x);     // angle in horizontal XZ plane (radians)
             destAngle = (float)(180f * phi/Math.PI);
 
@@ -180,7 +180,6 @@ public class GameObject {
             if(speed < 0)
                 speed = 0;
 
-            //Gdx.app.debug("moving", "distance "+distance+" speed:"+speed);
             // move in direction that the unit is facing
             velocity.set((float) Math.cos(angle * Math.PI / 180f), 0, (float) Math.sin(angle * Math.PI / 180f));    // hmmm... too much trig
             velocity.scl(speed);// scale for speed and time step
@@ -197,15 +196,14 @@ public class GameObject {
             }
         }
 
-        if(speed2 > 0.01f || Math.abs(angle-prevAngle) > 0.01f|| Math.abs(targetAngle-prevTargetAngle) > 0.01f ) {
+        if(speed2 > 0.01f || Math.abs(angle-prevAngle) > 0.01f ) {
             setTransform(modelInstance, position, terrainNormal, angle);
             prevAngle = angle;
-            if (modelInstance2 != null) {
-                setTransform(modelInstance2, position, terrainNormal, targetAngle);
-                prevTargetAngle = targetAngle;
-            }
         }
-
+        if(modelInstance2 != null && (speed2 > 0.01f || Math.abs(targetAngle-prevTargetAngle) > 0.01f)) {
+            setTransform(modelInstance2, position, terrainNormal, targetAngle);
+            prevTargetAngle = targetAngle;
+        }
         if(behaviour != null)
             behaviour.update(world, deltaTime);
     }
@@ -218,7 +216,6 @@ public class GameObject {
         rotationAxis.set(Vector3.Y).crs(up).nor();
         double tiltAngle = Math.acos(Vector3.Y.dot(up));
         instance.transform.setToRotationRad(rotationAxis, (float)tiltAngle);
-
         directionalMatrix.setToRotation(Vector3.Y, -angle);
 
         instance.transform.mul(directionalMatrix).trn(position);

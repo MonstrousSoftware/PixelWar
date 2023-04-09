@@ -4,7 +4,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class AI {
 
-    private static float INITIAL_UPDATE = 220f;
+    private static float INITIAL_UPDATE = 115f;
     private static float UPDATE_INTERVAL = 5f;
 
     private GameObject flag;
@@ -73,7 +73,7 @@ public class AI {
             // if unit is an airship, and it has no bomb attached, go to a reloading tower
             if(unit.type.isAirship && unit.modelInstance2 == null) {
                 int targetIndex = (int) (Math.random() * ownTowers.size);   // choose one of the towers at random
-                unit.setDestination(ownTowers.get(targetIndex).position,3f);
+                unit.setDestination(ownTowers.get(targetIndex).position,2f);
             }
             else if(!flagGuardAssigned && unit.type.isTank) {   // put first tank to defend the flag
                 unit.setDestination(flag.position, 5f);     // defend the flag
