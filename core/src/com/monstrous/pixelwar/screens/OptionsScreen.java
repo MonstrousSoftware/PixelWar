@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.monstrous.pixelwar.Main;
+import com.monstrous.pixelwar.Settings;
 import com.monstrous.pixelwar.Sounds;
 
 public class OptionsScreen implements Screen {
@@ -61,7 +62,9 @@ public class OptionsScreen implements Screen {
         Label labelTitle = new Label("OPTIONS", skin, "title");
 
         Table menuTable = new Table();
-        final CheckBox fullScreenCheckBox = new CheckBox("FULL SCREEN", skin);
+        final CheckBox fullScreenCheckBox = new CheckBox("Full Screen", skin);
+
+        final CheckBox showFPSCheckBox = new CheckBox("Show FPS", skin);
 
         final Slider soundSlider = new Slider(0,1.0f, 0.05f, false, skin);
         soundSlider.setValue((float) Math.sqrt(Sounds.getSoundVolume()));
@@ -75,8 +78,8 @@ public class OptionsScreen implements Screen {
         menuTable.add(soundSlider).width(BUTTON_WIDTH).pad(BUTTON_PAD).row();
         menuTable.add(new Label("Music Volume: ", skin));
         menuTable.add(musicSlider).width(BUTTON_WIDTH).pad(BUTTON_PAD).row();
-        menuTable.add(fullScreenCheckBox).colspan(2).width(BUTTON_WIDTH).pad(BUTTON_PAD).row();
-        menuTable.row();
+        menuTable.add(fullScreenCheckBox).colspan(2).width(BUTTON_WIDTH).pad(BUTTON_PAD/2).row();
+        menuTable.add(showFPSCheckBox).colspan(2).width(BUTTON_WIDTH).pad(BUTTON_PAD/2).row();
         menuTable.add(backButton).colspan(2).width(BUTTON_WIDTH).pad(BUTTON_PAD).row();
 
 
@@ -115,6 +118,14 @@ public class OptionsScreen implements Screen {
                     Gdx.graphics.setFullscreenMode(currentMode);
                 else
                     Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
+            }
+        });
+
+        showFPSCheckBox.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                Settings.showFPS = showFPSCheckBox.isChecked();
             }
         });
 

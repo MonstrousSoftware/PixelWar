@@ -48,7 +48,7 @@ public class GUI implements Disposable {
 
         labelSelectedType = new Label("Type", skin);
         labelSelectedType.setColor(Color.BLUE);
-        labelFPS = new Label("FPS: 0", skin);
+        labelFPS = new Label("", skin);
         labelHealth = new Label("100 %", skin);
         labelHealth.setColor(Color.BLUE);
         labelMessage.setColor(Color.RED);
@@ -99,7 +99,7 @@ public class GUI implements Disposable {
         unitButtons.add(nFL);
         unitButtons.pack();
 
-        ImageButton backButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/exit.png")))));
+        ImageButton backButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/b_exit.png")))));
 
         //TextButton backButton = new TextButton("<", skin);
 
@@ -168,9 +168,10 @@ public class GUI implements Disposable {
         if(messageTimer <= 0)
             labelMessage.setText("");
 
-        int fps = (int)(1.0f/deltaTime);
-        labelFPS.setText("FPS: "+ fps);
-
+        if(Settings.showFPS) {
+            int fps = (int) (1.0f / deltaTime);
+            labelFPS.setText("FPS: " + fps);
+        }
         nTK.setText(gameScreen.world.getTypeCount(0));
         nAS.setText(gameScreen.world.getTypeCount(1));
         nAA.setText(gameScreen.world.getTypeCount(2));
