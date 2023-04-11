@@ -25,6 +25,7 @@ public class GameScreen extends ScreenAdapter {
     private int viewHeight, viewWidth;
     private ModelBatch modelBatch;
     public World world;
+    private HealthBars healthBars;
     private MyCamController camController;
     private Environment environment;
     private MiniMap miniMap = null;
@@ -94,6 +95,7 @@ public class GameScreen extends ScreenAdapter {
         gui.setMessage("COMMENCE BATTLE!");
         Sounds.playSound(Sounds.COMMENCE);
 
+        healthBars = new HealthBars(cam);
         isGameOver = false;
     }
 
@@ -136,6 +138,8 @@ public class GameScreen extends ScreenAdapter {
         world.render(modelBatch, environment);
         modelBatch.end();
 
+        healthBars.show(world.gameObjects);
+
         //world.renderNormals(cam);
 
         miniMap.render();
@@ -172,6 +176,9 @@ public class GameScreen extends ScreenAdapter {
         game.stopMusic();
         gui.dispose();
         miniMap.dispose();
+        shadowBatch.dispose();
+        shadowLight.dispose();
+        healthBars.dispose();
     }
 
     private Vector3 tmpPos = new Vector3();

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -32,6 +33,7 @@ public class GameObject {
     public Behaviour behaviour;
     public float healthPoints;
     public Vector3 terrainNormal;
+    public Decal healthBarDecal;
 
     public GameObject(Terrain terrain, Army army, GameObjectType type, Vector3 position, float angle, Vector3 velocity) {
         this.army = army;
@@ -75,6 +77,7 @@ public class GameObject {
 
         setArmy(army);
         tmpVec = new Vector3();
+        healthBarDecal = null;
     }
 
     public void takeDamage( World world, int damage ) {

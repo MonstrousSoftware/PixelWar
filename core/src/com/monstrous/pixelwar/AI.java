@@ -4,7 +4,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class AI {
 
-    private static float INITIAL_UPDATE = 115f;
+    private static float INITIAL_UPDATE = 15f;
     private static float UPDATE_INTERVAL = 5f;
 
     private GameObject flag;

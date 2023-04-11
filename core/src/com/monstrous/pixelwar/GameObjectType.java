@@ -22,6 +22,7 @@ public class GameObjectType {
     public boolean isAA;
     public boolean isBullet;
     public boolean isBomb;
+    public boolean hasHealthBar;
     public boolean followsTerrain;
     public float timeToLive;
     public float healthPoints;
@@ -34,7 +35,7 @@ public class GameObjectType {
     public Texture iconTexture = null;
     public Texture enemyIconTexture = null;
 
-    public GameObjectType(String name, int id, String modelName, String modelName2, String textureName, boolean isScenery, float healthPoints, float timeToLive) {
+    public GameObjectType(String name, int id, String modelName, String modelName2, String textureName, boolean isScenery, float healthPoints, boolean hasHealthBar, float timeToLive ) {
         this.name = name;
         this.typeId = id;
         this.modelName = modelName;
@@ -42,6 +43,7 @@ public class GameObjectType {
         this.isScenery = isScenery;
         this.timeToLive = timeToLive;
         this.healthPoints = healthPoints;
+        this.hasHealthBar = hasHealthBar;
         this.followsTerrain = true;
         this.isMobile = false;
         this.isProjectile = false;
@@ -54,6 +56,7 @@ public class GameObjectType {
         this.isTower = false;
         this.maxSpeed = 5f;
         this.rotationSpeed = 60f;
+
 
         this.turnFactor = 12;
 
