@@ -4,7 +4,7 @@ import com.monstrous.pixelwar.GameObject;
 import com.monstrous.pixelwar.World;
 
 public class Behaviour {
-    protected GameObject go = null;
+    protected GameObject go;
 
     public Behaviour(GameObject go) {
         this.go = go;

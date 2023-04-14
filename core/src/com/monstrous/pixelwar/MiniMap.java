@@ -26,14 +26,14 @@ public class MiniMap implements Disposable {
     private Rectangle mapFrameRect;
     private int viewWidth;
     private int viewHeight;
-    private Vector3 screenCorners[];		// XZ of screen corners in world coordinates
+    //private Vector3 screenCorners[];		// XZ of screen corners in world coordinates
     private Texture heightMap;
 
     public MiniMap(float worldWidth, float worldDepth, float waterLevel) {
 
         mapSize = 200;  // pixels
         border = 10;    // pixels
-        fboMiniMap = new FrameBuffer(Pixmap.Format.RGBA8888, (int)mapSize, (int)mapSize, true);
+        fboMiniMap = new FrameBuffer(Pixmap.Format.RGBA8888, mapSize, mapSize, true);
         mapFrame = new Texture(Gdx.files.internal("frame220.png"));
         miniMapRect = new Rectangle();
         mapFrameRect = new Rectangle();
@@ -56,9 +56,9 @@ public class MiniMap implements Disposable {
         orthoCam.far = 500;
         orthoCam.update();
 
-        screenCorners = new Vector3[4];
-        for(int i = 0; i < 4; i++)
-            screenCorners[i] = new Vector3();
+//        screenCorners = new Vector3[4];
+//        for(int i = 0; i < 4; i++)
+//            screenCorners[i] = new Vector3();
 
         heightMap = new Texture(Gdx.files.internal("map.png"));
     }
@@ -98,34 +98,18 @@ public class MiniMap implements Disposable {
 
             for(GameObject go : world.gameObjects ) {
 
-                float x = -(go.position.x / Settings.worldSize) * viewWidth + viewWidth / 2;
-                float y = (go.position.z / Settings.worldSize) * viewHeight + viewHeight / 2;
+                float x = -(go.position.x / Settings.worldSize) * viewWidth + viewWidth / 2f;
+                float y = (go.position.z / Settings.worldSize) * viewHeight + viewHeight / 2f;
                 Texture symbol = go.type.iconTexture;
                 if(go.army.isEnemy)
                     symbol = go.type.enemyIconTexture;
 
                 if(symbol != null)
-                    batch.draw(symbol, x, y, viewWidth/8, viewHeight/8);
+                    batch.draw(symbol, x, y, viewWidth/8f, viewHeight/8f);
             }
 
             batch.end();
 
-            // show view frustum as a trapezium shape overlay on the mini map
-//            Vector3 planePoints[] = cam.frustum.planePoints;
-//            screenCorners[0].set(planePoints[0]);
-//            screenCorners[1].set(planePoints[1]);
-//            screenCorners[2].set(planePoints[4]);
-//            screenCorners[3].set(planePoints[5]);
-//
-//            for(int i = 0 ; i < 4; i++)
-//                orthoCam.project(screenCorners[i]);
-//
-//            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//            shapeRenderer.setColor(Color.YELLOW);
-//            for (int i = 0; i < 3; i++)
-//                shapeRenderer.line(screenCorners[i].x, screenCorners[i].y, screenCorners[i+1].x, screenCorners[i+1].y);
-//            shapeRenderer.line(screenCorners[3].x, screenCorners[3].y, screenCorners[0].x, screenCorners[0].y);
-//            shapeRenderer.end();
 
         fboMiniMap.end();
     }

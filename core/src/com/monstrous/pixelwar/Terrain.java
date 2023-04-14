@@ -140,8 +140,8 @@ public class Terrain implements Disposable {
             normalVectors[y][x] = new Vector3(normal);
 
             float reps=16;
-            float u = (float)(x*reps)/(float)(N+1);
-            float v = (float)(y*reps)/(float)(N+1);
+            float u = (x*reps)/(float)(N+1);
+            float v = (y*reps)/(float)(N+1);
             vert.position.set(positions[i]);
             vert.normal.set(normal);
             vert.uv.x = u;					// texture needs to have repeat wrapping enables to handle u,v > 1

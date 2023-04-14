@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 public class Armies {
 
-    private ObjectMap<String, Army> map = null;
+    private ObjectMap<String, Army> map;
     private Army playerArmy;
     private Army enemyArmy;
     private Army neutral;
