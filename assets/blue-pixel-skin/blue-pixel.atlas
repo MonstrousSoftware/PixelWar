@@ -1,0 +1,139 @@
+
+blue-pixel.png
+size: 512, 512
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+arrow-right
+  rotate: false
+  xy: 1, 88
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+Lilita
+  rotate: false
+  xy: 1, 154
+  size: 505, 247
+  orig: 505, 247
+  offset: 0, 0
+  index: -1
+open-sans-bold
+  rotate: false
+  xy: 1, 448
+  size: 506, 60
+  orig: 506, 60
+  offset: 0, 0
+  index: -1
+open-sans-regular-12
+  rotate: false
+  xy: 1, 403
+  size: 506, 43
+  orig: 506, 43
+  offset: 0, 0
+  index: -1
+button-down
+  rotate: false
+  xy: 175, 107
+  size: 50, 45
+  split: 7, 7, 11, 7
+  pad: 9, 9, 11, 7
+  orig: 50, 45
+  offset: 0, 0
+  index: -1
+button-over
+  rotate: false
+  xy: 227, 107
+  size: 50, 45
+  split: 10, 10, 10, 14
+  orig: 50, 45
+  offset: 0, 0
+  index: -1
+button-up
+  rotate: false
+  xy: 123, 107
+  size: 50, 45
+  split: 7, 7, 7, 11
+  pad: 11, 12, 9, 13
+  orig: 50, 45
+  offset: 0, 0
+  index: -1
+inv-slot-highlight-16x16
+  rotate: false
+  xy: 401, 136
+  size: 16, 16
+  split: 3, 3, 3, 3
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+inventory-slot-16x16
+  rotate: false
+  xy: 21, 8
+  size: 16, 16
+  split: 3, 3, 3, 4
+  pad: 3, 3, 3, 3
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+slider-bg
+  rotate: false
+  xy: 347, 120
+  size: 32, 32
+  split: 14, 14, 14, 16
+  pad: 8, 9, 11, 13
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+window
+  rotate: false
+  xy: 1, 26
+  size: 54, 60
+  split: 13, 15, 37, 14
+  pad: 13, 15, 37, 13
+  orig: 54, 60
+  offset: 0, 0
+  index: -1
+window-grey
+  rotate: false
+  xy: 67, 92
+  size: 54, 60
+  split: 13, 15, 37, 14
+  pad: 13, 15, 37, 13
+  orig: 54, 60
+  offset: 0, 0
+  index: -1
+checkbox-off
+  rotate: false
+  xy: 279, 120
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+checkbox-on
+  rotate: false
+  xy: 313, 120
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+slider-knob
+  rotate: false
+  xy: 1, 4
+  size: 18, 20
+  orig: 18, 20
+  offset: 0, 0
+  index: -1
+slider-knob-over
+  rotate: false
+  xy: 381, 132
+  size: 18, 20
+  orig: 18, 20
+  offset: 0, 0
+  index: -1
+white-pixel
+  rotate: false
+  xy: 509, 507
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
