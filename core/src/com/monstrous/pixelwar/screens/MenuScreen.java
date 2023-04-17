@@ -21,7 +21,7 @@ import com.monstrous.pixelwar.Settings;
 
 public class MenuScreen extends ScreenAdapter {
 
-    static public int BUTTON_WIDTH = 250;
+    static public int BUTTON_WIDTH = 300;
     static public int BUTTON_HEIGHT = 50;
     static public int BUTTON_PAD = 15;
 

@@ -52,7 +52,7 @@ public class GUI implements Disposable {
         labelFPS = new Label("", skin);
         labelHealth = new Label("100 %", skin);
         labelHealth.setColor(Color.BLUE);
-        labelMessage.setColor(Color.RED);
+        //labelMessage.setColor(Color.RED);
 
 
         // now place all the elements

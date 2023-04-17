@@ -9,7 +9,7 @@ public class Main extends Game {
 
 	public static final boolean RELEASE_BUILD = true;
 
-	public final String VERSION = "version 1.5 (April 11, 2023)";
+	public final String VERSION = "version 1.5 (April 17, 2023)";
 	public static String PREFERENCES_NAME = "pixelwar";
 
 	public Music music;
