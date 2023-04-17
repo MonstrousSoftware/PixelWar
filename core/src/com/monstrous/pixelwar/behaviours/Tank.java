@@ -64,5 +64,9 @@ public class Tank extends Behaviour {
             world.spawnItem(go.army, "Bullet", spawnPoint, go.targetAngle, bulletVelocity);
             Sounds.playSound(Sounds.TANK_FIRE);
         }
+
+        if(go.velocity.len2() > 0f && !go.isDying) {
+            world.spawnSmokeTrail(go.modelInstance.transform);
+        }
     }
 }

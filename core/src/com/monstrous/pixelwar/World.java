@@ -8,12 +8,11 @@ import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.monstrous.pixelwar.behaviours.Behaviour;
 
 public class World implements Disposable {
 
@@ -138,7 +137,13 @@ public class World implements Disposable {
     }
 
     public  void spawnExplosion(Vector3 position) {
+
         particleEffects.addExplosion(position);
+    }
+
+    public  void spawnSmokeTrail(Matrix4 transform) {
+
+        particleEffects.addExhaustFumes(transform);
     }
 
     public  GameObject testForCollision(GameObject bullet) {
