@@ -41,7 +41,8 @@ public class OptionsScreen implements Screen {
     public void show() {
         Gdx.app.debug("OptionsScreen", "show()");
 
-        skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
+        skin = new Skin(Gdx.files.internal("blue-pixel-skin/blue-pixel.json"));
+        //skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
         stage = new Stage(new ScreenViewport());
         rebuild();
         Gdx.input.setInputProcessor(stage);
@@ -78,8 +79,10 @@ public class OptionsScreen implements Screen {
         menuTable.add(soundSlider).width(BUTTON_WIDTH).pad(BUTTON_PAD).row();
         menuTable.add(new Label("Music Volume: ", skin));
         menuTable.add(musicSlider).width(BUTTON_WIDTH).pad(BUTTON_PAD).row();
-        menuTable.add(fullScreenCheckBox).colspan(2).width(BUTTON_WIDTH).pad(BUTTON_PAD/2).row();
-        menuTable.add(showFPSCheckBox).colspan(2).width(BUTTON_WIDTH).pad(BUTTON_PAD/2).row();
+        menuTable.add();
+        menuTable.add(fullScreenCheckBox).left().pad(BUTTON_PAD/2).row();
+        menuTable.add();
+        menuTable.add(showFPSCheckBox).left().pad(BUTTON_PAD/2).row();
         menuTable.add(backButton).colspan(2).width(BUTTON_WIDTH).pad(BUTTON_PAD).row();
 
 

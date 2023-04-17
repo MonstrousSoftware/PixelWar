@@ -35,7 +35,8 @@ public class CreditsScreen implements Screen {
     public void show() {
         Gdx.app.debug("CreditsScreen", "show()");
 
-        skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
+        skin = new Skin(Gdx.files.internal("blue-pixel-skin/blue-pixel.json"));
+        //skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
         stage = new Stage(new ScreenViewport());
         rebuild();
         Gdx.input.setInputProcessor(stage);

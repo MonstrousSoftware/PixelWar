@@ -28,7 +28,8 @@ public class GUI implements Disposable {
     public GUI(GameScreen gameScreen) {
 
         this.gameScreen = gameScreen;
-        skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
+        skin = new Skin(Gdx.files.internal("blue-pixel-skin/blue-pixel.json"));
+        //skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
         stage = new Stage(new ScreenViewport());
 
         // set message outside of resize/rebuild, so that resizing doesn't affect it
@@ -63,7 +64,7 @@ public class GUI implements Disposable {
         Table screenTable = new Table();
         stage.addActor(screenTable);
         screenTable.setFillParent(true);        // size to match stage size
-        //screenTable.setDebug(true);
+
 
         Table stats = new Table();
         stats.add(labelSelectedType).row();
@@ -78,11 +79,11 @@ public class GUI implements Disposable {
         ImageButton twButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/b_tower.png")))));
         ImageButton flButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("icons/b_flag.png")))));
 
-        nTK = new Label("4", skin, "small", Color.BLACK);
-        nAS = new Label("2", skin, "small", Color.BLACK);
-        nAA = new Label("3", skin, "small", Color.BLACK);
-        nTW = new Label("1", skin, "small", Color.BLACK);
-        nFL = new Label("1", skin, "small", Color.BLACK);
+        nTK = new Label("4", skin, "small-font", Color.BLUE);
+        nAS = new Label("2", skin, "small-font", Color.BLUE);
+        nAA = new Label("3", skin, "small-font", Color.BLUE);
+        nTW = new Label("1", skin, "small-font", Color.BLUE);
+        nFL = new Label("1", skin, "small-font", Color.BLUE);
 
 
         Table unitButtons = new Table();

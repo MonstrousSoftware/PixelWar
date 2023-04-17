@@ -48,7 +48,8 @@ public class SplashScreen extends ScreenAdapter {
         texture = new Texture( Gdx.files.internal("logo-static.png"));
         timer = Settings.splashTime;
 
-        skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
+        skin = new Skin(Gdx.files.internal("blue-pixel-skin/blue-pixel.json"));
+        //skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
         stage = new Stage(new ScreenViewport());
         rebuild();
         Gdx.input.setInputProcessor(stage);

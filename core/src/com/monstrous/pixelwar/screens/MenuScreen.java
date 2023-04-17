@@ -37,7 +37,8 @@ public class MenuScreen extends ScreenAdapter {
     public void show() {
         Gdx.app.debug("MenuScreen", "show()");
 
-        skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
+        skin = new Skin(Gdx.files.internal("blue-pixel-skin/blue-pixel.json"));
+       // skin = new Skin(Gdx.files.internal("sgx.skin/sgx-ui.json"));
         stage = new Stage(new ScreenViewport());
         rebuild();
         Gdx.input.setInputProcessor(stage);
@@ -61,14 +62,16 @@ public class MenuScreen extends ScreenAdapter {
 
         Label labelTitle = new Label(Settings.title, skin, "title");
 
-        Table menuTable = new Table();
-        TextButton newCampaignButton = new TextButton("START", skin);
-        TextButton instructionsButton = new TextButton("INSTRUCTIONS", skin);
-        TextButton optionsButton = new TextButton("OPTIONS", skin);
-        TextButton creditsButton = new TextButton("CREDITS", skin);
-        TextButton quitButton = new TextButton("QUIT", skin);
+        String buttonStyle = "big";
 
-        Label labelVersion = new Label( game.VERSION, skin, "small");
+        Table menuTable = new Table();
+        TextButton newCampaignButton = new TextButton("START", skin, buttonStyle);
+        TextButton instructionsButton = new TextButton("INSTRUCTIONS", skin, buttonStyle);
+        TextButton optionsButton = new TextButton("OPTIONS", skin, buttonStyle);
+        TextButton creditsButton = new TextButton("CREDITS", skin, buttonStyle);
+        TextButton quitButton = new TextButton("QUIT", skin, buttonStyle);
+
+        Label labelVersion = new Label( game.VERSION, skin);
 
         menuTable.add(newCampaignButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
         menuTable.add(instructionsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT).pad(BUTTON_PAD).row();
